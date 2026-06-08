@@ -170,7 +170,7 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-
         <div id="has-prediction-msg" style="display:none;font-size:10px;color:var(--green);">✅ Ya cargaste tu pronóstico</div>
       </div>
       <button class="btn btn-celeste" onclick="showScreen('ranking')">Ver el Ranking 🏆</button>
-      <button class="btn btn-outline" style="margin-top:8px;" onclick="showScreen('predict')">Ver/editar mis picks</button>
+      
     </div>
     <div class="tabs-data" style="margin-top:14px;">
       <button class="tab-data-btn active" onclick="setDatoTab('arg')" id="tab-arg">🇦🇷 Scaloneta</button>
@@ -507,14 +507,12 @@ const ADMIN_KEY = "prodemundial2026";
 const TOURNAMENT_START = new Date('2026-06-11T16:00:00-06:00');
 
 // Check admin IMMEDIATELY before anything loads
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('key') === ADMIN_KEY) {
-    document.getElementById('loading-screen').style.display = 'none';
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    document.getElementById('screen-admin').classList.add('active');
-  }
-})();
+const IS_ADMIN = new URLSearchParams(window.location.search).get('key') === ADMIN_KEY;
+if (IS_ADMIN) {
+  document.getElementById('loading-screen').style.display = 'none';
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-admin').classList.add('active');
+}
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -678,6 +676,11 @@ function init() {
   setInterval(updateCountdown, 1000);
   setInterval(() => { datoIdx = (datoIdx + 1) % DATOS[datoTab].length; showDato(); }, 12000);
   isLocked = new Date() >= TOURNAMENT_START;
+  if (IS_ADMIN) {
+    showScreen('admin');
+    listenRanking();
+    return;
+  }
   if (currentUser) {
     document.getElementById('login-box').style.display = 'none';
     document.getElementById('logged-box').style.display = 'block';
