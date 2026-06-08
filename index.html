@@ -631,8 +631,8 @@
   </div>
 
   <div class="portada-cta" id="portada-cta">
-    <button class="btn-principal" onclick="showScreen('grupos')">HACER MIS PRONÓSTICOS</button>
-    <p class="hint">Completá antes del 11 de junio 18hs (Argentina)</p>
+    <button class="btn-principal" onclick="irAPronosticos()">HACER MIS PRONÓSTICOS</button>
+    <p class="hint">📋 Solo Fase de Grupos por ahora — se cierra el 11 de junio 18hs (Argentina)</p>
   </div>
 </div>
 
@@ -671,6 +671,9 @@
     <button class="btn-accion" onclick="guardarGrupos()">GUARDAR PRONÓSTICOS</button>
   </div>
   <div id="grupos-msg" class="mt16"></div>
+  <div class="alert alert-info mt16" style="margin-top: 20px;">
+    ⏳ <strong>¿Y después?</strong> Cuando terminen los partidos de grupos (~27 de junio), vas a recibir el aviso para cargar tus pronósticos de Octavos de Final. ¡Guardá el link de la app!
+  </div>
 </div>
 
 <!-- ====== PANTALLA OCTAVOS ====== -->
@@ -1046,8 +1049,8 @@ auth.onAuthStateChanged(async user => {
       showScreenDirect('portada');
       // Cambiar el botón CTA para que pida nombre
       document.getElementById('portada-cta').innerHTML = `
-        <button class="btn-principal" onclick="showScreenDirect('nombre')">HACER MIS PRONÓSTICOS</button>
-        <p class="hint">Completá antes del 11 de junio 18hs (Argentina)</p>
+        <button class="btn-principal" onclick="irAPronosticos()">HACER MIS PRONÓSTICOS</button>
+        <p class="hint">📋 Solo Fase de Grupos por ahora — se cierra el 11 de junio 18hs (Argentina)</p>
       `;
     }, 600);
   }
@@ -1109,7 +1112,27 @@ function mostrarApp() {
     renderEspeciales();
     updateNavLocks();
     showScreen('portada');
+    // Actualizar boton CTA para usuario ya registrado
+    document.getElementById('portada-cta').innerHTML = `
+      <button class="btn-principal" onclick="showScreen('grupos')">HACER MIS PRONÓSTICOS</button>
+      <p class="hint" style="margin-top:8px;">📋 Fase de Grupos — cierra el 11 de junio 18hs (Argentina)</p>
+      <p class="hint" style="margin-top:6px; font-size:11px;">Cuando terminen los grupos, se habilitarán las siguientes fases.</p>
+    `;
   }, 600);
+}
+
+function irAPronosticos() {
+  if (!userId) {
+    // Firebase todavia no autenticó, esperar y reintentar
+    setTimeout(irAPronosticos, 500);
+    return;
+  }
+  const savedName = localStorage.getItem('pm26_nombre_' + userId);
+  if (savedName) {
+    showScreen('grupos');
+  } else {
+    showScreenDirect('nombre');
+  }
 }
 
 function logout() {
