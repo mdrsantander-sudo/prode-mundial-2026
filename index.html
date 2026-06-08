@@ -886,40 +886,42 @@ const TODOS_LOS_EQUIPOS = GRUPOS.flatMap(g => g.equipos);
 const CURIOSIDADES_RAW = [
   // 🇦🇷 Scaloneta
   { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Argentina juega el Grupo J contra Argelia (16 jun), Austria (22 jun) y Jordania (27 jun). Tres rivales al alcance.' },
-  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'El arquero Emiliano "Dibu" Martínez comparte el récord de más penales atajados en un mismo torneo de Copa del Mundo.' },
-  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Marcos Senesi (Bournemouth, ex San Lorenzo) reemplaza al lesionado Balerdi en la lista de 25 convocados.' },
-  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Lionel Messi disputará muy probablemente su quinto y último Mundial, buscando defender el título obtenido en Qatar 2022.' },
-  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'El plantel argentino se prepara en Ezeiza con una mini gira previa antes de volar a Estados Unidos.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'El Dibu Martínez comparte el récord de más penales atajados en un mismo Mundial. En Qatar 2022 fue clave en semis y final.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'La Scaloneta ya aterrizó en Estados Unidos y está concentrada para el Mundial. El debut es el 16 de junio.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Lionel Messi va por su quinto y casi seguro último Mundial, buscando defender el título de Qatar 2022.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Ángel Di María se retiró de la Selección tras Qatar 2022. No estará en este Mundial.' },
   // 🌍 Mundial
   { cat: 'Mundial', emoji: '🌍', texto: 'Por primera vez en la historia, el Mundial se juega en tres países a la vez: México, EE.UU. y Canadá.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'Es el Mundial más millonario de todos los tiempos: bolsa de premios de $871 millones de dólares. El campeón se lleva 50 millones.' },
   { cat: 'Mundial', emoji: '🌍', texto: 'El Mundial 2026 es el primero con 48 selecciones. Se juegan 104 partidos en total, un récord absoluto.' },
-  { cat: 'Mundial', emoji: '🌍', texto: 'La final se disputa el 19 de julio en el MetLife Stadium de East Rutherford, Nueva Jersey, con capacidad para 82.500 personas.' },
-  { cat: 'Mundial', emoji: '🌍', texto: 'El partido inaugural es México vs Sudáfrica el 11 de junio en el Estadio Banorte de Guadalajara.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'La final se disputa el 19 de julio en el MetLife Stadium de Nueva Jersey, con capacidad para 82.500 personas.' },
   { cat: 'Mundial', emoji: '🌍', texto: 'Con 12 grupos de 4 equipos, clasifican los 2 primeros de cada grupo más los 8 mejores terceros: 32 equipos a octavos.' },
+  // 📊 Datos del torneo
+  { cat: 'Datos', emoji: '📊', texto: 'El jugador más viejo es el arquero escocés Craig Gordon, de 43 años. El más joven es el mexicano Gilberto Mora, con 17. ¡25 años de diferencia!' },
+  { cat: 'Datos', emoji: '📊', texto: 'Gilberto Mora (17 años) podría ser el sexto jugador más joven en debutar en un Mundial. En esa lista están Pelé y Eto'o.' },
+  { cat: 'Datos', emoji: '📊', texto: 'Las ligas que más jugadores aportan: Premier League (163), Bundesliga (100), LaLiga (81), Ligue 1 (79) y Serie A (66).' },
+  { cat: 'Datos', emoji: '📊', texto: 'Panamá tiene el plantel de mayor promedio de edad (30.4 años). Costa de Marfil tiene el más joven (25.9 años).' },
+  { cat: 'Datos', emoji: '📊', texto: 'El jugador más alto es el arquero austríaco Florian Wiegele con 205 cm. El más bajo es el panameño César Yanis con 160 cm.' },
+  { cat: 'Datos', emoji: '📊', texto: 'Bosnia tiene el plantel más alto en promedio (187.3 cm) y Arabia Saudita el más bajo (178.4 cm).' },
   // 🎭 Mascotas
-  { cat: 'Mascotas', emoji: '🎭', texto: 'El Mundial 2026 tiene tres mascotas oficiales: Maple (alce de Canadá), Zayu (jaguar de México) y Clutch (águila de EE.UU.). ¡Primeras mascotas interactivas de FIFA!' },
-  { cat: 'Mascotas', emoji: '🎭', texto: 'Zayu, el jaguar mexicano, significa "unidad, fortaleza y alegría". Juega como delantero y promueve la cultura mexicana.' },
-  { cat: 'Mascotas', emoji: '🎭', texto: 'Maple, el alce canadiense, es portero, amante del arte urbano y la música. Su nombre rinde homenaje a la hoja de arce.' },
-  { cat: 'Mascotas', emoji: '🎭', texto: 'Clutch, el águila calva de EE.UU., juega de mediocampista. "Clutch" en el deporte describe al jugador que aparece en los momentos decisivos.' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'El Mundial 2026 tiene tres mascotas oficiales: Maple (alce de Canadá), Zayu (jaguar de México) y Clutch (águila de EE.UU.).' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'Zayu, el jaguar mexicano, significa "unidad, fortaleza y alegría". Juega de delantero y promueve la cultura mexicana.' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'Maple (alce canadiense) es portero y amante del arte urbano. Clutch (águila de EE.UU.) es mediocampista — siempre aparece en los momentos decisivos.' },
   // 📋 Reglas nuevas
-  { cat: 'Reglas 2026', emoji: '📋', texto: 'Nuevo formato: en fase de grupos hay dos tiempos de 30 min cada uno con descanso de 15 min entre tiempo. NO habrá empates — si termina igualado va directo a penales.' },
-  { cat: 'Reglas 2026', emoji: '📋', texto: 'Con 48 equipos, la fase de grupos tiene ahora 12 grupos en lugar de 8. Los partidos se juegan en paralelo desde el inicio.' },
-  { cat: 'Reglas 2026', emoji: '📋', texto: 'Se expande el uso de la tecnología semi-automática de fuera de juego para detectar posiciones en tiempo real con mayor precisión.' },
+  { cat: 'Reglas 2026', emoji: '📋', texto: 'Nuevo formato en grupos: dos tiempos de 30 minutos. Si termina igualado, va directo a penales. No hay empates.' },
+  { cat: 'Reglas 2026', emoji: '📋', texto: 'Se expande la tecnología semi-automática de offside para detectar posiciones en tiempo real con mayor precisión.' },
   // 🤖 Tecnología
-  { cat: 'Tecnología', emoji: '🤖', texto: 'La pelota oficial del Mundial 2026 incluye sensores internos que transmiten datos en tiempo real a los árbitros asistentes de VAR.' },
-  { cat: 'Tecnología', emoji: '🤖', texto: 'Los estadios de EE.UU. incorporan tecnología de reconocimiento facial para el acceso de 40.000 personas en minutos sin mostrar boletos físicos.' },
+  { cat: 'Tecnología', emoji: '🤖', texto: 'La pelota oficial del Mundial 2026 tiene sensores internos que transmiten datos en tiempo real al VAR.' },
+  { cat: 'Tecnología', emoji: '🤖', texto: 'Los estadios de EE.UU. usan reconocimiento facial: 40.000 personas pueden ingresar en minutos sin boleto físico.' },
   // 👗 Moda
-  { cat: 'Moda', emoji: '👗', texto: 'La camiseta titular argentina mantiene las rayas celeste y blanco clásicas con un detalle dorado en el escudo en homenaje a los campeones del mundo.' },
-  { cat: 'Moda', emoji: '👗', texto: 'Nike diseñó una colección especial con los colores de los 48 países, vendida simultáneamente en las tres sedes del torneo.' },
-  // 💈 Pelos
+  { cat: 'Moda', emoji: '👗', texto: 'La camiseta titular argentina mantiene las rayas celeste y blanco clásicas con detalle dorado en el escudo.' },
+  { cat: 'Moda', emoji: '👗', texto: 'Nike diseñó una colección especial con los colores de los 48 países, disponible en las tres sedes del torneo.' },
+  // 💈 Pelos ARG
   { cat: 'Pelos ARG', emoji: '💈', texto: 'Lautaro Martínez lleva su característico corte rapado con degradé, símbolo de su explosividad en el área.' },
   { cat: 'Pelos ARG', emoji: '💈', texto: 'El Cuti Romero mantiene su barba estratégica que lo hace ver más intimidante que cualquier delantero rival.' },
-  // ❌ Ausencias
-  { cat: 'Ausencias', emoji: '❌', texto: 'Ángel Di María se retiró de la selección argentina tras Qatar 2022. No estará en su "Mundial de despedida" en casa.' },
-  { cat: 'Ausencias', emoji: '❌', texto: 'La lesión de Balerdi antes del torneo abrió el lugar para Marcos Senesi, quien llega en gran nivel desde Bournemouth.' },
   // ⭐ Debuts
-  { cat: 'Debuts', emoji: '⭐', texto: 'Uzbekistán debuta en un Mundial por primera vez en su historia en el Grupo K junto a Portugal y Colombia.' },
-  { cat: 'Debuts', emoji: '⭐', texto: 'Cabo Verde también está en su primer Mundial. El Grupo H con España y Uruguay les presenta un gran desafío.' }
+  { cat: 'Debuts', emoji: '⭐', texto: 'Uzbekistán debuta en un Mundial por primera vez en su historia, en el Grupo K junto a Portugal y Colombia.' },
+  { cat: 'Debuts', emoji: '⭐', texto: 'Cabo Verde también es debutante. Le toca el Grupo H con España y Uruguay — todo un desafío.' }
 ];
 
 // Mezclar al azar usando Fisher-Yates
@@ -1035,10 +1037,18 @@ auth.onAuthStateChanged(async user => {
     await cargarDatos();
     mostrarApp();
   } else {
+    // Mostrar portada primero, sin nombre aún
     document.getElementById('loading-screen').style.opacity = '0';
     setTimeout(() => {
       document.getElementById('loading-screen').style.display = 'none';
-      showScreenDirect('nombre');
+      initCuriosidades();
+      updateCountdown();
+      showScreenDirect('portada');
+      // Cambiar el botón CTA para que pida nombre
+      document.getElementById('portada-cta').innerHTML = `
+        <button class="btn-principal" onclick="showScreenDirect('nombre')">HACER MIS PRONÓSTICOS</button>
+        <p class="hint">Completá antes del 11 de junio 18hs (Argentina)</p>
+      `;
     }, 600);
   }
 });
