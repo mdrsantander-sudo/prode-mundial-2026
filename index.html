@@ -4,1124 +4,1858 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Prode Mundial 2026 - Familia Santander</title>
-<meta property="og:title" content="Prode Mundial 2026 - Familia Santander">
-<meta property="og:description" content="Hacé tu prode del Mundial 2026 y competí con la familia en tiempo real">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;900&display=swap');
-*{box-sizing:border-box;margin:0;padding:0;}
-:root{--celeste:#75AADB;--gold:#F5C518;--white:#F0F8FF;--bg:#050D1E;--card:#0F2040;--card2:#162850;--muted:#6A8FAF;--green:#00E676;--red:#FF4444;--border:rgba(117,170,219,0.15);}
-body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden;}
-.screen{display:none;min-height:100vh;flex-direction:column;}
-.screen.active{display:flex;}
-.stripe-bg{background:repeating-linear-gradient(90deg,rgba(117,170,219,0.04) 0,rgba(117,170,219,0.04) 40px,transparent 40px,transparent 80px);}
-.nav{position:sticky;top:0;z-index:100;background:rgba(5,13,30,0.96);border-bottom:2px solid rgba(26,58,107,0.8);display:flex;align-items:center;justify-content:space-between;padding:9px 14px;backdrop-filter:blur(12px);}
-.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:15px;color:var(--celeste);letter-spacing:2px;}
-.nav-tabs{display:flex;gap:3px;flex-wrap:wrap;}
-.nav-tab{background:none;border:none;cursor:pointer;color:var(--muted);font-size:10px;font-weight:700;padding:4px 8px;border-radius:20px;transition:all 0.2s;font-family:'Inter',sans-serif;}
-.nav-tab.active,.nav-tab:hover{background:rgba(117,170,219,0.15);color:var(--celeste);}
-.home-hero{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;text-align:center;}
-.afa-badge{font-size:52px;margin-bottom:4px;animation:sway 3s ease-in-out infinite;}
-@keyframes sway{0%,100%{transform:rotate(-3deg) scale(1)}50%{transform:rotate(3deg) scale(1.05)}}
-.home-eyebrow{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:5px;color:var(--muted);margin-bottom:2px;}
-.home-title{font-family:'Bebas Neue',sans-serif;font-size:42px;line-height:0.9;letter-spacing:3px;color:var(--white);}
-.home-title .celeste{color:var(--celeste);font-size:56px;display:block;}
-.home-apellido{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:7px;color:var(--gold);margin-top:5px;border:1px solid rgba(245,197,24,0.3);border-radius:8px;padding:4px 16px;display:inline-block;background:rgba(245,197,24,0.06);}
-.home-sub{color:var(--muted);font-size:11px;margin:7px 0 14px;}
-.countdown-box{background:var(--card);border:1px solid var(--border);border-top:3px solid var(--celeste);border-radius:13px;padding:10px 16px;margin-bottom:7px;display:flex;gap:14px;}
-.count-unit{text-align:center;}
-.count-num{font-family:'Bebas Neue',sans-serif;font-size:34px;color:var(--celeste);line-height:1;}
-.count-label{font-size:9px;color:var(--muted);font-weight:700;letter-spacing:1px;}
-.inaugural-note{font-size:10px;color:rgba(117,170,219,0.6);margin-bottom:14px;}
-.inaugural-note strong{color:var(--celeste);}
-.name-input-wrap{width:100%;max-width:340px;}
-.name-input{width:100%;padding:10px 15px;background:var(--card2);border:1.5px solid var(--border);border-radius:11px;color:var(--white);font-size:15px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;margin-bottom:8px;}
-.name-input:focus{border-color:var(--celeste);}
-.name-input::placeholder{color:var(--muted);}
-.btn{width:100%;padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-size:13px;font-weight:700;font-family:'Inter',sans-serif;transition:all 0.2s;}
-.btn-celeste{background:var(--celeste);color:var(--bg);}
-.btn-celeste:hover{background:#8DBBEA;transform:translateY(-1px);}
-.btn-outline{background:transparent;color:var(--white);border:1.5px solid var(--border);}
-.btn-outline:hover{border-color:var(--celeste);color:var(--celeste);}
-.btn-green{background:var(--green);color:var(--bg);}
-.btn-sm{width:auto;padding:6px 12px;font-size:11px;}
-.tabs-data{display:flex;gap:4px;margin-bottom:9px;flex-wrap:wrap;justify-content:center;max-width:360px;}
-.tab-data-btn{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:10px;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;}
-.tab-data-btn.active{background:rgba(117,170,219,0.2);border-color:var(--celeste);color:var(--celeste);}
-.dato-card{background:var(--card);border-left:3px solid var(--celeste);border-radius:0 10px 10px 0;padding:11px 14px;text-align:left;max-width:360px;width:100%;cursor:pointer;transition:all 0.3s;margin-top:3px;}
-.dato-card:hover{border-color:var(--gold);}
-.dato-emoji{font-size:19px;margin-bottom:3px;}
-.dato-badge{font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1.5px;margin-bottom:3px;}
-.dato-text{font-size:11px;color:#A0C4E0;line-height:1.6;}
-.dato-hint{font-size:10px;color:var(--muted);margin-top:3px;}
-.predict-wrap{flex:1;padding:16px;max-width:600px;margin:0 auto;width:100%;}
-.phase-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--celeste);letter-spacing:2px;margin-bottom:3px;}
-.phase-sub{font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
-.progress-bar-wrap{margin-bottom:16px;}
-.progress-steps{display:flex;justify-content:space-between;margin-bottom:5px;}
-.progress-step{font-size:9px;color:var(--muted);font-weight:700;text-align:center;flex:1;}
-.progress-step.active{color:var(--celeste);}
-.progress-bar{height:4px;background:var(--card2);border-radius:2px;}
-.progress-fill{height:100%;background:var(--celeste);border-radius:2px;transition:width 0.4s;}
-.phase-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:10px;}
-.phase-card-label{font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
-.field-label{font-size:10px;font-weight:700;color:var(--muted);margin-bottom:4px;display:block;letter-spacing:0.3px;}
-.field-select{width:100%;padding:8px 11px;background:var(--card2);border:1.5px solid var(--border);border-radius:9px;color:var(--white);font-size:13px;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
-.field-select:focus{border-color:var(--celeste);}
-.field-select option{background:#162850;}
-.field-group{margin-bottom:10px;}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
-.grid-4{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.wins-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:6px;}
-.wins-btn{padding:9px 4px;background:var(--card2);border:1.5px solid var(--border);border-radius:9px;color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;text-align:center;font-family:'Inter',sans-serif;}
-.wins-btn.selected{background:rgba(117,170,219,0.15);border-color:var(--celeste);color:var(--celeste);}
-.nav-btns{display:flex;gap:8px;margin-top:14px;}
-.pts-badge{display:inline-block;background:rgba(245,197,24,0.1);border:1px solid rgba(245,197,24,0.25);border-radius:20px;padding:2px 9px;font-size:9px;color:var(--gold);font-weight:700;margin-left:6px;}
-.confirm-card{background:var(--card);border:1px solid rgba(0,230,118,0.35);border-radius:13px;padding:20px;text-align:center;animation:fadeUp 0.5s ease;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
-.pts-summary{background:rgba(117,170,219,0.05);border:1px solid rgba(117,170,219,0.15);border-radius:10px;padding:10px 13px;margin-bottom:12px;}
-.pts-summary-title{font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1px;margin-bottom:8px;}
-.pts-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:4px;}
-.pts-row strong{color:var(--white);}
-.pts-total{display:flex;justify-content:space-between;font-size:11px;font-weight:700;color:var(--gold);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
-.jugador-section{padding:16px;max-width:700px;margin:0 auto;width:100%;}
-.section-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--white);letter-spacing:2px;margin-bottom:10px;}
-.jugador-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:8px;}
-.jugador-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px;transition:all 0.2s;}
-.jugador-card:hover{border-color:rgba(117,170,219,0.4);transform:translateY(-1px);}
-.jugador-pos{font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1px;margin-bottom:2px;}
-.jugador-name{font-size:12px;font-weight:700;margin-bottom:2px;}
-.jugador-club-now{font-size:10px;color:var(--gold);}
-.jugador-club-arg{font-size:9px;color:var(--muted);margin-top:2px;}
-.jugador-dato{font-size:10px;color:#90B4D0;margin-top:5px;line-height:1.5;border-top:1px solid var(--border);padding-top:4px;}
-.preds-wrap{flex:1;padding:14px;}
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:9px;}
-.pred-card{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;position:relative;overflow:hidden;transition:all 0.25s;}
-.pred-card:hover{border-color:rgba(117,170,219,0.4);transform:translateY(-2px);}
-.pred-card-top{position:absolute;top:0;left:0;right:0;height:3px;}
-.pred-name{font-size:14px;font-weight:700;margin-bottom:7px;}
-.pred-section{font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1px;margin:7px 0 3px;}
-.pred-row{display:flex;align-items:flex-start;gap:5px;margin-bottom:4px;}
-.pred-icon{font-size:11px;width:14px;flex-shrink:0;}
-.pred-key{font-size:10px;color:var(--muted);min-width:70px;font-weight:600;}
-.pred-val{font-size:10px;font-weight:600;flex:1;}
-.ranking-wrap{flex:1;padding:14px;}
-.podium{display:flex;align-items:flex-end;justify-content:center;gap:8px;margin:10px 0 22px;}
-.podium-place{display:flex;flex-direction:column;align-items:center;}
-.podium-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:var(--bg);margin-bottom:4px;font-family:'Inter',sans-serif;}
-.podium-name{font-size:10px;font-weight:700;text-align:center;margin-bottom:4px;max-width:72px;color:var(--white);}
-.podium-score{font-family:'Bebas Neue',sans-serif;font-size:14px;margin-bottom:4px;}
-.podium-block{border-radius:8px 8px 0 0;width:80px;display:flex;align-items:center;justify-content:center;}
-.rank-list{display:flex;flex-direction:column;gap:6px;}
-.rank-row{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:9px 11px;display:flex;align-items:center;gap:9px;transition:all 0.3s;}
-.rank-pos{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--muted);width:20px;}
-.rank-name{flex:1;font-size:12px;font-weight:600;}
-.rank-pts{font-family:'Bebas Neue',sans-serif;font-size:17px;color:var(--celeste);}
-.badge-hot{background:rgba(255,68,68,0.12);color:var(--red);font-size:9px;font-weight:700;padding:2px 5px;border-radius:20px;border:1px solid rgba(255,68,68,0.3);}
-.badge-you{background:rgba(117,170,219,0.12);color:var(--celeste);font-size:9px;font-weight:700;padding:2px 5px;border-radius:20px;border:1px solid rgba(117,170,219,0.3);}
-.update-banner{background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.3);border-radius:9px;padding:8px 11px;margin-bottom:11px;font-size:11px;color:var(--green);font-weight:600;display:none;animation:fadeUp 0.4s ease;}
-.update-banner.show{display:flex;align-items:center;gap:6px;}
-.admin-wrap{flex:1;padding:14px;max-width:600px;margin:0 auto;width:100%;}
-.admin-section{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:13px;margin-bottom:9px;}
-.admin-section-title{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:1.5px;margin-bottom:9px;}
-.admin-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.admin-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.lock-notice{background:rgba(245,197,24,0.07);border:1px solid rgba(245,197,24,0.2);border-radius:9px;padding:7px 11px;margin-bottom:9px;font-size:10px;color:rgba(245,197,24,0.8);display:flex;gap:5px;align-items:center;}
-.loading-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;flex-direction:column;gap:16px;}
-.loading-spinner{width:40px;height:40px;border:3px solid var(--border);border-top-color:var(--celeste);border-radius:50%;animation:spin 0.8s linear infinite;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.confetti-wrap{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:9999;overflow:hidden;}
-.confetti-piece{position:absolute;top:-10px;animation:confettiFall linear forwards;border-radius:2px;}
-@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(105vh) rotate(720deg);opacity:0}}
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;500;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
+
+  :root {
+    --azul: #050D1E;
+    --azul-medio: #0A1A3A;
+    --celeste: #75AADB;
+    --celeste-claro: #A8C8E8;
+    --dorado: #F5C518;
+    --dorado-oscuro: #C9A012;
+    --blanco: #FFFFFF;
+    --gris: #8A9BB5;
+    --error: #E24B4A;
+    --exito: #1D9E75;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Barlow', sans-serif;
+    background: var(--azul);
+    color: var(--blanco);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ======= PANTALLA CARGA ======= */
+  #loading-screen {
+    position: fixed; inset: 0;
+    background: var(--azul);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease;
+  }
+  #loading-screen .escudo {
+    font-size: 80px; margin-bottom: 20px;
+    animation: pulso 1.2s ease-in-out infinite;
+  }
+  @keyframes pulso { 0%,100%{transform:scale(1)} 50%{transform:scale(1.1)} }
+  #loading-screen h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 48px; letter-spacing: 4px;
+    color: var(--celeste);
+  }
+  #loading-screen p { color: var(--gris); margin-top: 8px; }
+
+  /* ======= HEADER ======= */
+  #app-header {
+    display: none;
+    background: linear-gradient(180deg, #050D1E 0%, #071428 100%);
+    border-bottom: 2px solid var(--celeste);
+    padding: 12px 20px;
+    position: sticky; top: 0; z-index: 100;
+    justify-content: space-between; align-items: center;
+  }
+  #app-header .logo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px; letter-spacing: 3px;
+    color: var(--celeste);
+  }
+  #app-header .logo span { color: var(--dorado); }
+  #app-header .user-info {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--gris);
+  }
+  #app-header .user-info strong { color: var(--blanco); }
+  #btn-logout {
+    background: none; border: 1px solid #1A2A4A;
+    color: var(--gris); padding: 4px 10px; border-radius: 4px;
+    cursor: pointer; font-size: 12px; font-family: 'Barlow', sans-serif;
+  }
+  #btn-logout:hover { border-color: var(--celeste); color: var(--celeste); }
+
+  /* ======= NAV ======= */
+  #app-nav {
+    display: none;
+    background: #071428;
+    border-bottom: 1px solid #1A2A4A;
+    padding: 0 20px;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  #app-nav button {
+    display: inline-block;
+    background: none; border: none; border-bottom: 3px solid transparent;
+    color: var(--gris); padding: 14px 18px;
+    cursor: pointer; font-family: 'Barlow Condensed', sans-serif;
+    font-size: 15px; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; transition: all 0.2s;
+  }
+  #app-nav button:hover { color: var(--celeste); }
+  #app-nav button.active { color: var(--dorado); border-bottom-color: var(--dorado); }
+  #app-nav button.locked { opacity: 0.4; cursor: not-allowed; }
+
+  /* ======= PANTALLAS ======= */
+  .screen {
+    display: none;
+    min-height: calc(100vh - 120px);
+    padding: 20px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  .screen.active { display: block; }
+
+  /* ======= PORTADA / CURIOSIDADES ======= */
+  #screen-portada {
+    display: none;
+    padding: 0;
+    max-width: 100%;
+  }
+  #screen-portada.active { display: block; }
+
+  .portada-hero {
+    background: linear-gradient(160deg, #050D1E 0%, #071E45 50%, #050D1E 100%);
+    text-align: center;
+    padding: 40px 20px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .portada-hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 20px,
+      rgba(117,170,219,0.03) 20px, rgba(117,170,219,0.03) 21px
+    );
+  }
+  .portada-hero .escudo-grande { font-size: 70px; margin-bottom: 12px; }
+  .portada-hero h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(36px, 8vw, 72px);
+    letter-spacing: 6px; color: var(--celeste);
+    line-height: 1;
+  }
+  .portada-hero h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(20px, 5vw, 36px);
+    letter-spacing: 8px; color: var(--dorado);
+    margin-top: 4px;
+  }
+  .portada-hero .subtitulo {
+    font-size: 13px; letter-spacing: 3px;
+    color: var(--gris); margin-top: 12px;
+    text-transform: uppercase;
+  }
+
+  /* Countdown */
+  .countdown-box {
+    background: #071428;
+    border: 1px solid #1A2A4A;
+    border-top: 3px solid var(--celeste);
+    padding: 20px;
+    margin: 0 20px 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  .countdown-box .titulo {
+    font-size: 11px; letter-spacing: 3px;
+    color: var(--gris); text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .countdown-numeros {
+    display: flex; justify-content: center; gap: 16px;
+  }
+  .countdown-item { text-align: center; }
+  .countdown-item .num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 48px; color: var(--celeste);
+    line-height: 1; display: block;
+  }
+  .countdown-item .label {
+    font-size: 10px; letter-spacing: 2px;
+    color: var(--gris); text-transform: uppercase;
+  }
+  .countdown-sep {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 40px; color: #1A2A4A;
+    align-self: flex-start; margin-top: 4px;
+  }
+
+  /* Curiosidades */
+  .curiosidades-container {
+    margin: 0 20px 20px;
+    cursor: pointer;
+  }
+  .curiosidad-card {
+    background: #071428;
+    border: 1px solid #1A2A4A;
+    border-left: 4px solid var(--celeste);
+    padding: 20px;
+    border-radius: 8px;
+    min-height: 110px;
+    display: flex; align-items: flex-start; gap: 14px;
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  .curiosidad-card:hover { border-left-color: var(--dorado); }
+  .curiosidad-cat {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 4px; min-width: 44px;
+  }
+  .curiosidad-emoji { font-size: 28px; }
+  .curiosidad-cat-label {
+    font-size: 9px; letter-spacing: 1px;
+    color: var(--gris); text-transform: uppercase;
+    text-align: center;
+  }
+  .curiosidad-text {
+    flex: 1;
+    font-size: 15px; line-height: 1.5;
+    color: var(--celeste-claro);
+  }
+  .curiosidades-dots {
+    display: flex; justify-content: center;
+    gap: 6px; margin-top: 12px;
+  }
+  .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #1A2A4A; transition: background 0.3s;
+    cursor: pointer;
+  }
+  .dot.active { background: var(--celeste); }
+
+  /* Botón entrar */
+  .portada-cta {
+    text-align: center;
+    padding: 20px;
+    padding-bottom: 40px;
+  }
+  .btn-principal {
+    background: var(--celeste);
+    color: var(--azul);
+    border: none;
+    padding: 16px 48px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px; letter-spacing: 3px;
+    border-radius: 6px; cursor: pointer;
+    transition: all 0.2s;
+    display: inline-block;
+  }
+  .btn-principal:hover {
+    background: var(--dorado);
+    transform: translateY(-2px);
+  }
+  .portada-cta .hint {
+    margin-top: 10px; font-size: 12px;
+    color: var(--gris);
+  }
+
+  /* ======= INGRESO NOMBRE ======= */
+  #screen-nombre {
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    min-height: 100vh; padding: 40px 20px;
+  }
+  #screen-nombre h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 42px; color: var(--celeste);
+    letter-spacing: 4px; margin-bottom: 8px;
+  }
+  #screen-nombre p { color: var(--gris); margin-bottom: 30px; font-size: 15px; }
+  #input-nombre {
+    width: 100%; max-width: 360px;
+    padding: 14px 18px;
+    background: #071428; border: 2px solid #1A2A4A;
+    border-radius: 8px; color: var(--blanco);
+    font-family: 'Barlow', sans-serif; font-size: 18px;
+    text-align: center; outline: none;
+    transition: border-color 0.2s;
+  }
+  #input-nombre:focus { border-color: var(--celeste); }
+  #input-nombre::placeholder { color: #3A4A6A; }
+
+  /* ======= CARDS GENERALES ======= */
+  .card {
+    background: #071428;
+    border: 1px solid #1A2A4A;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card-titulo {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 20px; letter-spacing: 2px;
+    color: var(--celeste); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-titulo .fase-badge {
+    font-size: 11px; font-family: 'Barlow', sans-serif;
+    background: var(--celeste); color: var(--azul);
+    padding: 2px 8px; border-radius: 3px;
+    font-weight: 700; letter-spacing: 1px;
+  }
+
+  /* ======= SELECTOR EQUIPOS ======= */
+  .grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 14px;
+  }
+  .grupo-card {
+    background: #0A1A3A;
+    border: 1px solid #1A2A4A;
+    border-radius: 8px;
+    padding: 14px;
+  }
+  .grupo-card h4 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 16px; letter-spacing: 2px;
+    color: var(--dorado); margin-bottom: 10px;
+  }
+  .equipo-btn {
+    display: flex; align-items: center; gap: 8px;
+    width: 100%; padding: 8px 10px;
+    background: none; border: 1px solid #1A2A4A;
+    border-radius: 6px; cursor: pointer;
+    color: var(--celeste-claro); font-family: 'Barlow', sans-serif;
+    font-size: 14px; margin-bottom: 5px;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .equipo-btn:hover { border-color: var(--celeste); background: rgba(117,170,219,0.08); }
+  .equipo-btn.selected {
+    border-color: var(--dorado);
+    background: rgba(245,197,24,0.12);
+    color: var(--dorado);
+    font-weight: 600;
+  }
+  .equipo-btn .flag { font-size: 18px; }
+
+  /* ======= SELECTOR VICTORIA ARGENTINA ======= */
+  .victorias-selector {
+    display: flex; gap: 10px; flex-wrap: wrap;
+  }
+  .victoria-btn {
+    padding: 10px 20px;
+    background: #0A1A3A; border: 1px solid #1A2A4A;
+    border-radius: 6px; cursor: pointer;
+    color: var(--celeste-claro); font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px; font-weight: 600;
+    transition: all 0.15s;
+  }
+  .victoria-btn:hover { border-color: var(--celeste); }
+  .victoria-btn.selected {
+    border-color: var(--dorado); background: rgba(245,197,24,0.12);
+    color: var(--dorado);
+  }
+
+  /* ======= BOTONES ACCION ======= */
+  .btn-accion {
+    padding: 12px 30px;
+    background: var(--celeste); color: var(--azul);
+    border: none; border-radius: 6px; cursor: pointer;
+    font-family: 'Bebas Neue', cursive; font-size: 18px;
+    letter-spacing: 2px; transition: all 0.2s;
+  }
+  .btn-accion:hover { background: var(--dorado); }
+  .btn-accion:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-secundario {
+    padding: 10px 24px;
+    background: none; color: var(--gris);
+    border: 1px solid #1A2A4A; border-radius: 6px; cursor: pointer;
+    font-family: 'Barlow', sans-serif; font-size: 14px;
+    transition: all 0.2s;
+  }
+  .btn-secundario:hover { border-color: var(--celeste); color: var(--celeste); }
+
+  /* ======= RANKING ======= */
+  .ranking-tabla { width: 100%; border-collapse: collapse; }
+  .ranking-tabla th {
+    text-align: left; padding: 10px 12px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; letter-spacing: 2px;
+    color: var(--gris); text-transform: uppercase;
+    border-bottom: 1px solid #1A2A4A;
+  }
+  .ranking-tabla td { padding: 12px; border-bottom: 1px solid #0D1E3A; }
+  .ranking-tabla tr:hover td { background: rgba(117,170,219,0.05); }
+  .ranking-pos {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px; color: var(--gris);
+    text-align: center;
+  }
+  .ranking-pos.oro { color: #FFD700; }
+  .ranking-pos.plata { color: #C0C0C0; }
+  .ranking-pos.bronce { color: #CD7F32; }
+  .ranking-nombre { font-weight: 600; font-size: 16px; }
+  .ranking-pts {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 24px; color: var(--celeste);
+    text-align: right;
+  }
+  .pts-label {
+    font-size: 11px; color: var(--gris); display: block;
+  }
+
+  /* ======= ADMIN ======= */
+  .admin-fase-card {
+    background: #071428; border: 1px solid #1A2A4A;
+    border-radius: 10px; padding: 20px; margin-bottom: 16px;
+  }
+  .admin-fase-card h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 20px; letter-spacing: 2px;
+    color: var(--dorado); margin-bottom: 14px;
+  }
+  .admin-resultado-row {
+    display: flex; align-items: center;
+    gap: 10px; margin-bottom: 10px;
+  }
+  .admin-resultado-row label {
+    font-size: 13px; color: var(--gris);
+    min-width: 180px;
+  }
+  .admin-select {
+    flex: 1; padding: 8px 12px;
+    background: #0A1A3A; border: 1px solid #1A2A4A;
+    border-radius: 6px; color: var(--blanco);
+    font-family: 'Barlow', sans-serif; font-size: 14px;
+    outline: none;
+  }
+  .admin-select:focus { border-color: var(--celeste); }
+  .admin-input {
+    flex: 1; padding: 8px 12px;
+    background: #0A1A3A; border: 1px solid #1A2A4A;
+    border-radius: 6px; color: var(--blanco);
+    font-family: 'Barlow', sans-serif; font-size: 14px;
+    outline: none;
+  }
+  .admin-input:focus { border-color: var(--celeste); }
+  .fase-unlock-btn {
+    padding: 8px 18px;
+    background: var(--dorado); color: var(--azul);
+    border: none; border-radius: 6px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700;
+    transition: all 0.2s;
+  }
+  .fase-unlock-btn:hover { background: var(--celeste); }
+  .fase-lock-btn {
+    padding: 8px 18px;
+    background: #1A2A4A; color: var(--gris);
+    border: 1px solid #2A3A5A; border-radius: 6px; cursor: pointer;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px; font-weight: 700;
+  }
+
+  /* ======= PRONÓSTICOS PÚBLICOS ======= */
+  .pronosticos-user {
+    background: #0A1A3A; border: 1px solid #1A2A4A;
+    border-radius: 8px; padding: 16px; margin-bottom: 12px;
+  }
+  .pronosticos-user h4 {
+    font-weight: 600; font-size: 16px;
+    color: var(--celeste); margin-bottom: 10px;
+  }
+  .pick-item {
+    display: flex; justify-content: space-between;
+    font-size: 13px; padding: 4px 0;
+    border-bottom: 1px solid #1A2A4A;
+    color: var(--gris);
+  }
+  .pick-item:last-child { border-bottom: none; }
+  .pick-item span:last-child { color: var(--blanco); font-weight: 500; }
+
+  /* ======= FASE BLOQUEADA ======= */
+  .fase-locked {
+    text-align: center; padding: 40px 20px;
+    color: var(--gris);
+  }
+  .fase-locked .icono { font-size: 48px; margin-bottom: 14px; }
+  .fase-locked h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 28px; letter-spacing: 3px;
+    color: var(--celeste); margin-bottom: 8px;
+  }
+
+  /* ======= CONFIRMACION ======= */
+  .confirmacion {
+    text-align: center; padding: 40px 20px;
+  }
+  .confirmacion .trofeo { font-size: 60px; margin-bottom: 20px; }
+  .confirmacion h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 42px; letter-spacing: 4px;
+    color: var(--dorado); margin-bottom: 10px;
+  }
+  .confirmacion p { color: var(--gris); font-size: 16px; }
+
+  /* ======= ALERTS ======= */
+  .alert {
+    padding: 12px 16px; border-radius: 6px;
+    margin-bottom: 14px; font-size: 14px;
+  }
+  .alert-error { background: rgba(226,75,74,0.15); border: 1px solid var(--error); color: #F09595; }
+  .alert-ok { background: rgba(29,158,117,0.15); border: 1px solid var(--exito); color: #5DCAA5; }
+  .alert-info { background: rgba(117,170,219,0.1); border: 1px solid #1A3A6A; color: var(--celeste-claro); }
+
+  /* ======= TITULO SECCION ======= */
+  .section-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 32px; letter-spacing: 3px;
+    color: var(--celeste);
+  }
+
+  /* ======= MISC ======= */
+  .divider {
+    border: none; border-top: 1px solid #1A2A4A;
+    margin: 20px 0;
+  }
+  .puntos-info {
+    font-size: 12px; color: var(--dorado);
+    font-weight: 600; letter-spacing: 1px;
+  }
+  .fase-status {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; padding: 3px 10px; border-radius: 10px;
+    margin-left: 8px;
+  }
+  .fase-status.abierta { background: rgba(29,158,117,0.2); color: #5DCAA5; }
+  .fase-status.cerrada { background: rgba(226,75,74,0.2); color: #F09595; }
+  .fase-status.bloqueada { background: rgba(138,155,181,0.2); color: var(--gris); }
+
+  .mt16 { margin-top: 16px; }
+  .mt24 { margin-top: 24px; }
+  .flex-gap { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  /* ======= PANTALLA COMPLETA ======= */
+  .pantalla-completa {
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .grupos-grid { grid-template-columns: 1fr; }
+    .portada-hero h1 { font-size: 48px; }
+    .countdown-item .num { font-size: 36px; }
+  }
 </style>
 </head>
 <body>
 
-<div class="confetti-wrap" id="confetti"></div>
-
-<!-- LOADING -->
-<div class="loading-screen" id="loading-screen">
-  <div class="loading-spinner"></div>
-  <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--celeste);letter-spacing:3px;">CARGANDO...</div>
+<!-- CARGA -->
+<div id="loading-screen">
+  <div class="escudo">🇦🇷</div>
+  <h1>FAMILIA SANTANDER</h1>
+  <p>Cargando el prode...</p>
 </div>
 
-<!-- HOME -->
-<div class="screen stripe-bg" id="screen-home">
-  <div class="home-hero">
-    <div class="afa-badge">🌍</div>
-    <div class="home-eyebrow">PRODE</div>
-    <div class="home-title">MUNDIAL<span class="celeste">2026</span></div>
-    <div class="home-apellido">FAMILIA SANTANDER</div>
-    <div class="home-sub">USA · México · Canadá · 48 selecciones · 104 partidos</div>
-    <div class="countdown-box" id="countdown">
-      <div class="count-unit"><div class="count-num" id="cd-days">--</div><div class="count-label">DÍAS</div></div>
-      <div class="count-unit"><div class="count-num" id="cd-hours">--</div><div class="count-label">HORAS</div></div>
-      <div class="count-unit"><div class="count-num" id="cd-mins">--</div><div class="count-label">MINS</div></div>
-      <div class="count-unit"><div class="count-num" id="cd-secs">--</div><div class="count-label">SEGS</div></div>
-    </div>
-    <div class="inaugural-note">⚽ Inaugural: <strong>México vs Sudáfrica · 11 Jun · Estadio Azteca</strong></div>
-    <div class="name-input-wrap" id="login-box">
-      <input class="name-input" id="player-name" type="text" placeholder="¿Cómo te llamás, hincha?" maxlength="20"/>
-      <button class="btn btn-celeste" onclick="enterApp()">¡Quiero hacer el prode! ⚽</button>
-    </div>
-    <div id="logged-box" style="display:none;width:100%;max-width:340px;">
-      <div style="background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;text-align:center;margin-bottom:10px;">
-        <div style="font-size:11px;color:var(--muted);">Bienvenido de vuelta</div>
-        <div style="font-size:16px;font-weight:700;color:var(--celeste);margin:4px 0;" id="welcome-name"></div>
-        <div id="has-prediction-msg" style="display:none;font-size:10px;color:var(--green);">✅ Ya cargaste tu pronóstico</div>
+<!-- HEADER -->
+<header id="app-header">
+  <div class="logo">PRODE <span>MUNDIAL 2026</span></div>
+  <div class="user-info">
+    <span>Hola, <strong id="header-nombre">-</strong></span>
+    <button id="btn-logout" onclick="logout()">Salir</button>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav id="app-nav">
+  <button onclick="showScreen('portada')" id="nav-portada" class="active">Inicio</button>
+  <button onclick="showScreen('grupos')" id="nav-grupos">Fase Grupos</button>
+  <button onclick="showScreen('octavos')" id="nav-octavos" class="locked">Octavos</button>
+  <button onclick="showScreen('cuartos')" id="nav-cuartos" class="locked">Cuartos</button>
+  <button onclick="showScreen('semis')" id="nav-semis" class="locked">Semis y Final</button>
+  <button onclick="showScreen('especiales')" id="nav-especiales">Especiales</button>
+  <button onclick="showScreen('ranking')" id="nav-ranking">Ranking</button>
+  <button onclick="showScreen('pronosticos')" id="nav-pronosticos">Pronósticos</button>
+  <button onclick="checkAdmin()" id="nav-admin" style="color: var(--dorado);">Admin</button>
+</nav>
+
+<!-- ====== PANTALLA PORTADA ====== -->
+<div id="screen-portada" class="screen active">
+  <div class="portada-hero">
+    <div class="escudo-grande">🇦🇷</div>
+    <h1>PRODE MUNDIAL 2026</h1>
+    <h2>FAMILIA SANTANDER</h2>
+    <p class="subtitulo">11 Junio — 19 Julio · 48 Selecciones · 104 Partidos</p>
+  </div>
+
+  <div class="countdown-box" id="countdown-portada">
+    <div class="titulo">⏱ TIEMPO AL PRIMER PARTIDO</div>
+    <div class="countdown-numeros">
+      <div class="countdown-item">
+        <span class="num" id="cd-dias">00</span>
+        <span class="label">días</span>
       </div>
-      <button class="btn btn-celeste" onclick="showScreen('ranking')">Ver el Ranking 🏆</button>
-      
-    </div>
-    <div class="tabs-data" style="margin-top:14px;">
-      <button class="tab-data-btn active" onclick="setDatoTab('arg')" id="tab-arg">🇦🇷 Scaloneta</button>
-      <button class="tab-data-btn" onclick="setDatoTab('mundo')" id="tab-mundo">🌍 Mundial</button>
-      <button class="tab-data-btn" onclick="setDatoTab('reglas')" id="tab-reglas">📋 Reglas</button>
-      <button class="tab-data-btn" onclick="setDatoTab('tech')" id="tab-tech">🤖 Tecnología</button>
-      <button class="tab-data-btn" onclick="setDatoTab('moda')" id="tab-moda">👗 Moda</button>
-      <button class="tab-data-btn" onclick="setDatoTab('pelos')" id="tab-pelos">💈 Pelos</button>
-      <button class="tab-data-btn" onclick="setDatoTab('ausencias')" id="tab-ausencias">❌ Ausencias</button>
-      <button class="tab-data-btn" onclick="setDatoTab('debuts')" id="tab-debuts">⭐ Debuts</button>
-    </div>
-    <div class="dato-card" onclick="nextDato()">
-      <div class="dato-emoji" id="dato-emoji">⚽</div>
-      <div class="dato-badge" id="dato-badge">DATO</div>
-      <div class="dato-text" id="dato-text">Cargando...</div>
-      <div class="dato-hint" id="dato-hint"></div>
-    </div>
-    <div style="font-size:9px;color:var(--muted);margin-top:5px;">👆 Tocá para el siguiente · Rotan solos</div>
-    <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;">
-      <button class="btn btn-outline btn-sm" onclick="showScreen('jugadores')">👕 Plantel ARG</button>
-      <button class="btn btn-outline btn-sm" onclick="showScreen('grupos')">📊 Grupos</button>
-      <button class="btn btn-outline btn-sm" onclick="showScreen('ranking')">🏆 Ranking</button>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-item">
+        <span class="num" id="cd-horas">00</span>
+        <span class="label">horas</span>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-item">
+        <span class="num" id="cd-min">00</span>
+        <span class="label">min</span>
+      </div>
+      <div class="countdown-sep">:</div>
+      <div class="countdown-item">
+        <span class="num" id="cd-seg">00</span>
+        <span class="label">seg</span>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- GRUPOS -->
-<div class="screen" id="screen-grupos">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs">
-      <button class="nav-tab" onclick="showScreen('home')">Inicio</button>
-      <button class="nav-tab active">Grupos</button>
-      <button class="nav-tab" onclick="showScreen('predict')">Mis Picks</button>
-      <button class="nav-tab" onclick="showScreen('ranking')">Ranking</button>
+  <div class="curiosidades-container" onclick="nextCuriosidad()">
+    <div class="curiosidad-card" id="curiosidad-card">
+      <div class="curiosidad-cat">
+        <div class="curiosidad-emoji" id="cur-emoji">⚽</div>
+        <div class="curiosidad-cat-label" id="cur-cat">Mundial</div>
+      </div>
+      <div class="curiosidad-text" id="cur-text">Cargando...</div>
     </div>
+    <div class="curiosidades-dots" id="cur-dots"></div>
+    <p style="text-align:center; font-size:11px; color: var(--gris); margin-top:8px;">Tocá para ver más →</p>
   </div>
-  <div class="jugador-section">
-    <div class="section-title">📊 LOS 12 GRUPOS</div>
-    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Pasan 2 primeros de cada grupo + 8 mejores terceros → 32 equipos a 16avos</div>
-    <div id="grupos-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:9px;"></div>
-  </div>
-</div>
 
-<!-- JUGADORES -->
-<div class="screen" id="screen-jugadores">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs">
-      <button class="nav-tab" onclick="showScreen('home')">Inicio</button>
-      <button class="nav-tab active">Plantel ARG</button>
-      <button class="nav-tab" onclick="showScreen('predict')">Mis Picks</button>
-      <button class="nav-tab" onclick="showScreen('ranking')">Ranking</button>
-    </div>
-  </div>
-  <div class="jugador-section">
-    <div class="section-title">👕 PLANTEL ARG 2026</div>
-    <div class="jugador-grid" id="jugador-grid"></div>
+  <div class="portada-cta" id="portada-cta">
+    <button class="btn-principal" onclick="showScreen('grupos')">HACER MIS PRONÓSTICOS</button>
+    <p class="hint">Completá antes del 11 de junio 18hs (Argentina)</p>
   </div>
 </div>
 
-<!-- PREDICT -->
-<div class="screen" id="screen-predict">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs">
-      <button class="nav-tab" onclick="showScreen('home')">Inicio</button>
-      <button class="nav-tab" onclick="showScreen('grupos')">Grupos</button>
-      <button class="nav-tab active">Mis Picks</button>
-      <button class="nav-tab" onclick="showScreen('ranking')">Ranking</button>
+<!-- ====== PANTALLA NOMBRE ====== -->
+<div id="screen-nombre" class="screen">
+  <div style="text-align:center;">
+    <div style="font-size:60px; margin-bottom:16px;">⚽</div>
+    <h2>¿QUIÉN SOS?</h2>
+    <p>Ingresá tu nombre para guardar tus pronósticos</p>
+    <input type="text" id="input-nombre" placeholder="Tu nombre" maxlength="30" />
+    <div class="mt16">
+      <button class="btn-accion" onclick="guardarNombre()">ENTRAR AL PRODE</button>
     </div>
-  </div>
-  <div class="predict-wrap">
-    <div id="locked-notice" style="display:none;background:rgba(255,68,68,0.08);border:1px solid rgba(255,68,68,0.3);border-radius:10px;padding:12px;margin-bottom:16px;font-size:12px;color:rgba(255,150,150,0.9);text-align:center;">🔒 El prode se cerró el 11 de junio. Ya no se pueden modificar los pronósticos.</div>
-    <div class="progress-bar-wrap">
-      <div class="progress-steps" id="progress-steps"></div>
-      <div class="progress-bar"><div class="progress-fill" id="progress" style="width:16%"></div></div>
-    </div>
-    <div id="step-1">
-      <div class="phase-title">GRUPOS A AL F <span class="pts-badge">3 pts c/u · 18 pts</span></div>
-      <div class="phase-sub">¿Quién gana cada grupo?</div>
-      <div id="groups-af"></div>
-      <div class="nav-btns"><button class="btn btn-celeste" onclick="goStep(2)">Siguiente →</button></div>
-    </div>
-    <div id="step-2" style="display:none">
-      <div class="phase-title">GRUPOS G AL L <span class="pts-badge">3 pts c/u · 18 pts</span></div>
-      <div class="phase-sub">Los últimos seis grupos.</div>
-      <div id="groups-gl"></div>
-      <div class="nav-btns">
-        <button class="btn btn-outline btn-sm" onclick="goStep(1)">← Atrás</button>
-        <button class="btn btn-celeste" onclick="goStep(3)">Siguiente →</button>
-      </div>
-    </div>
-    <div id="step-3" style="display:none">
-      <div class="phase-title">OCTAVOS DE FINAL <span class="pts-badge">2 pts c/u · 16 pts</span></div>
-      <div class="phase-sub">Elegí 8 equipos que pasan a cuartos. Del 28 Jun al 3 Jul.</div>
-      <div class="phase-card">
-        <div class="phase-card-label">🎯 ELEGÍ 8 EQUIPOS QUE PASAN A CUARTOS</div>
-        <div class="grid-4" id="oct-picks"></div>
-      </div>
-      <div class="nav-btns">
-        <button class="btn btn-outline btn-sm" onclick="goStep(2)">← Atrás</button>
-        <button class="btn btn-celeste" onclick="goStep(4)">Siguiente →</button>
-      </div>
-    </div>
-    <div id="step-4" style="display:none">
-      <div class="phase-title">CUARTOS DE FINAL <span class="pts-badge">3 pts c/u · 12 pts</span></div>
-      <div class="phase-sub">Elegí 4 equipos que pasan a semifinales. Del 9 al 11 de julio.</div>
-      <div class="phase-card">
-        <div class="phase-card-label">🎯 ELEGÍ 4 EQUIPOS QUE PASAN A SEMIS</div>
-        <div class="grid-4" id="qf-picks"></div>
-      </div>
-      <div class="nav-btns">
-        <button class="btn btn-outline btn-sm" onclick="goStep(3)">← Atrás</button>
-        <button class="btn btn-celeste" onclick="goStep(5)">Siguiente →</button>
-      </div>
-    </div>
-    <div id="step-5" style="display:none">
-      <div class="phase-title">SEMIS Y FINAL <span class="pts-badge">hasta 29 pts</span></div>
-      <div class="phase-sub">El tramo decisivo.</div>
-      <div class="phase-card">
-        <div class="phase-card-label">🏟️ SEMIFINALES — 14 Y 15 JUL <span class="pts-badge">3 pts c/u</span></div>
-        <div class="grid-2">
-          <div class="field-group">
-            <label class="field-label">GANADOR SEMI 1 · Dallas</label>
-            <select class="field-select" id="p-semi1"><option value="">Elegí...</option></select>
-          </div>
-          <div class="field-group">
-            <label class="field-label">GANADOR SEMI 2 · Atlanta</label>
-            <select class="field-select" id="p-semi2"><option value="">Elegí...</option></select>
-          </div>
-        </div>
-      </div>
-      <div class="phase-card">
-        <div class="phase-card-label">🏆 FINAL — 19 JUL · METLIFE STADIUM, NUEVA JERSEY</div>
-        <div class="field-group">
-          <label class="field-label">CAMPEÓN DEL MUNDO <span class="pts-badge">15 pts</span></label>
-          <select class="field-select" id="p-champion"><option value="">Elegí...</option></select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">FINALISTA — EL QUE PIERDE <span class="pts-badge">8 pts</span></label>
-          <select class="field-select" id="p-finalist"><option value="">Elegí...</option></select>
-        </div>
-      </div>
-      <div class="nav-btns">
-        <button class="btn btn-outline btn-sm" onclick="goStep(4)">← Atrás</button>
-        <button class="btn btn-celeste" onclick="goStep(6)">Siguiente →</button>
-      </div>
-    </div>
-    <div id="step-6" style="display:none">
-      <div class="phase-title">EXTRAS <span class="pts-badge">hasta 22 pts</span></div>
-      <div class="phase-sub">Los picks que pueden voltearlo todo.</div>
-      <div class="phase-card">
-        <div class="phase-card-label">⚽ GOLEADOR DEL TORNEO <span class="pts-badge">10 pts</span></div>
-        <select class="field-select" id="p-scorer" style="margin-top:8px;"><option value="">Elegí...</option></select>
-      </div>
-      <div class="phase-card">
-        <div class="phase-card-label">🇦🇷 ¿CUÁNTOS PARTIDOS GANA ARGENTINA EN GRUPOS? <span class="pts-badge">5 pts</span></div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Argentina juega 3 partidos en grupos (vs Argelia, Austria y Jordania). ¿Cuántos gana?</div>
-        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Argentina juega 3 partidos en grupos: vs Argelia, Austria y Jordania. Elegí cuántos gana.</div>
-        <div class="wins-grid">
-          <button class="wins-btn" onclick="selectWins(0)">0<br><span style="font-size:10px">😬 Cero</span></button>
-          <button class="wins-btn" onclick="selectWins(1)">1<br><span style="font-size:10px">😐 Una</span></button>
-          <button class="wins-btn" onclick="selectWins(2)">2<br><span style="font-size:10px">😊 Dos</span></button>
-          <button class="wins-btn" onclick="selectWins(3)">3<br><span style="font-size:10px">🔥 Tres</span></button>
-        </div>
-      </div>
-      <div class="phase-card">
-        <div class="phase-card-label">🔮 SORPRESA DEL TORNEO <span class="pts-badge">7 pts</span></div>
-        <select class="field-select" id="p-surprise" style="margin-top:8px;"><option value="">Elegí...</option></select>
-      </div>
-      <div class="pts-summary" style="margin-top:14px;">
-        <div class="pts-summary-title">PUNTOS EN JUEGO</div>
-        <div class="pts-row"><span>Grupos (12×3)</span><strong>36 pts</strong></div>
-        <div class="pts-row"><span>Octavos (8×2)</span><strong>16 pts</strong></div>
-        <div class="pts-row"><span>Cuartos (4×3)</span><strong>12 pts</strong></div>
-        <div class="pts-row"><span>Semis (2×3)</span><strong>6 pts</strong></div>
-        <div class="pts-row"><span>Campeón + Finalista</span><strong>23 pts</strong></div>
-        <div class="pts-row"><span>Goleador + ARG + Sorpresa</span><strong>22 pts</strong></div>
-        <div class="pts-total"><span>MÁXIMO POSIBLE</span><strong>115 pts</strong></div>
-      </div>
-      <div class="nav-btns">
-        <button class="btn btn-outline btn-sm" onclick="goStep(5)">← Atrás</button>
-        <button class="btn btn-celeste" id="submit-btn" onclick="submitPrediction()">¡Guardar Pronóstico! 🎉</button>
-      </div>
-    </div>
-    <div id="step-7" style="display:none">
-      <div class="confirm-card">
-        <div style="font-size:48px;margin-bottom:8px;">🌍</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green);letter-spacing:2px;" id="confirm-title">¡LISTO!</div>
-        <div style="color:var(--muted);font-size:11px;margin:7px 0 0;line-height:1.7;">Pronóstico guardado en Firebase. Se bloquea el <strong>11 de junio</strong> cuando arranca el Mundial.</div>
-        <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;">
-          <button class="btn btn-celeste" onclick="showScreen('all')">Ver todos los pronósticos 👀</button>
-          <button class="btn btn-outline" onclick="showScreen('ranking')">Ver el ranking 🏆</button>
-        </div>
-      </div>
-    </div>
+    <div id="nombre-error" class="alert alert-error mt16" style="display:none; max-width:360px; margin: 16px auto 0;"></div>
   </div>
 </div>
 
-<!-- VER TODOS -->
-<div class="screen" id="screen-all">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs">
-      <button class="nav-tab" onclick="showScreen('home')">Inicio</button>
-      <button class="nav-tab" onclick="showScreen('predict')">Mis Picks</button>
-      <button class="nav-tab active">Todos</button>
-      <button class="nav-tab" onclick="showScreen('ranking')">Ranking</button>
-    </div>
+<!-- ====== PANTALLA GRUPOS ====== -->
+<div id="screen-grupos" class="screen">
+  <div class="section-header">
+    <div class="section-title">FASE GRUPOS</div>
+    <span class="puntos-info">3 pts por acierto</span>
   </div>
-  <div class="preds-wrap">
-    <div class="section-title">📋 PRONÓSTICOS — FAMILIA SANTANDER</div>
-    <div id="no-preds" style="color:var(--muted);font-size:13px;display:none;">Aún no hay pronósticos cargados.</div>
-    <div class="cards-grid" id="cards-grid"></div>
+  <div class="alert alert-info">
+    🔒 Se cierra el <strong>11 de junio a las 18hs (Argentina)</strong> — inicio de México vs Sudáfrica.
+  </div>
+  <div id="grupos-bloqueado-msg" class="alert alert-error" style="display:none;">
+    ⏰ Esta fase ya cerró. No se pueden modificar los pronósticos.
+  </div>
+
+  <p style="color: var(--gris); margin-bottom: 20px; font-size: 14px;">Seleccioná al ganador de cada grupo (el que clasificará primero).</p>
+
+  <div class="grupos-grid" id="grupos-grid"></div>
+
+  <div class="mt24 flex-gap" id="grupos-acciones">
+    <button class="btn-accion" onclick="guardarGrupos()">GUARDAR PRONÓSTICOS</button>
+  </div>
+  <div id="grupos-msg" class="mt16"></div>
+</div>
+
+<!-- ====== PANTALLA OCTAVOS ====== -->
+<div id="screen-octavos" class="screen">
+  <div class="section-header">
+    <div class="section-title">OCTAVOS DE FINAL</div>
+    <span class="puntos-info">4 pts por acierto</span>
+  </div>
+  <div id="octavos-content"></div>
+</div>
+
+<!-- ====== PANTALLA CUARTOS ====== -->
+<div id="screen-cuartos" class="screen">
+  <div class="section-header">
+    <div class="section-title">CUARTOS DE FINAL</div>
+    <span class="puntos-info">6 pts por acierto</span>
+  </div>
+  <div id="cuartos-content"></div>
+</div>
+
+<!-- ====== PANTALLA SEMIS Y FINAL ====== -->
+<div id="screen-semis" class="screen">
+  <div class="section-header">
+    <div class="section-title">SEMIS Y FINAL</div>
+    <span class="puntos-info">8 / 15 pts</span>
+  </div>
+  <div id="semis-content"></div>
+</div>
+
+<!-- ====== PANTALLA ESPECIALES ====== -->
+<div id="screen-especiales" class="screen">
+  <div class="section-header">
+    <div class="section-title">ESPECIALES</div>
+  </div>
+
+  <!-- Victorias Argentina (se cierra con grupos) -->
+  <div class="card">
+    <div class="card-titulo">🇦🇷 Victorias de Argentina en Grupos <span class="fase-badge">5 PTS</span></div>
+    <p style="color: var(--gris); font-size: 14px; margin-bottom: 14px;">Argentina juega vs Argelia, Austria y Jordania. ¿Cuántos partidos gana?</p>
+    <div class="victorias-selector">
+      <button class="victoria-btn" onclick="selectVictorias(0)" id="vic-0">0</button>
+      <button class="victoria-btn" onclick="selectVictorias(1)" id="vic-1">1</button>
+      <button class="victoria-btn" onclick="selectVictorias(2)" id="vic-2">2</button>
+      <button class="victoria-btn" onclick="selectVictorias(3)" id="vic-3">3 ✓</button>
+    </div>
+    <div id="victorias-estado" style="margin-top: 10px; font-size: 13px; color: var(--gris);"></div>
+  </div>
+
+  <!-- Goleador, Arquero, Sorpresa (antes de la final) -->
+  <div class="card" id="card-final-especiales">
+    <div class="card-titulo">🏆 Especiales de la Final</div>
+    <div id="final-especiales-content"></div>
+  </div>
+
+  <div class="mt16 flex-gap">
+    <button class="btn-accion" onclick="guardarEspeciales()">GUARDAR ESPECIALES</button>
+  </div>
+  <div id="especiales-msg" class="mt16"></div>
+</div>
+
+<!-- ====== PANTALLA RANKING ====== -->
+<div id="screen-ranking" class="screen">
+  <div class="section-header">
+    <div class="section-title">RANKING</div>
+  </div>
+  <div id="ranking-content">
+    <div style="text-align:center; color: var(--gris); padding: 40px;">Cargando ranking...</div>
   </div>
 </div>
 
-<!-- RANKING -->
-<div class="screen" id="screen-ranking">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs">
-      <button class="nav-tab" onclick="showScreen('home')">Inicio</button>
-      <button class="nav-tab" onclick="showScreen('predict')">Mis Picks</button>
-      <button class="nav-tab" onclick="showScreen('all')">Todos</button>
-      <button class="nav-tab active">Ranking</button>
-    </div>
+<!-- ====== PANTALLA PRONÓSTICOS ====== -->
+<div id="screen-pronosticos" class="screen">
+  <div class="section-header">
+    <div class="section-title">PRONÓSTICOS</div>
   </div>
-  <div class="ranking-wrap">
-    <div class="update-banner" id="update-banner">🔥 Resultado cargado. Ranking actualizado.</div>
-    <div class="section-title">🏆 RANKING — FAMILIA SANTANDER</div>
-    <div style="display:inline-flex;align-items:center;gap:5px;background:var(--card);border:1px solid var(--border);border-radius:20px;padding:3px 10px;font-size:9px;color:var(--muted);margin-bottom:12px;">⏳ Puntos activos desde el 11 de junio</div>
-    <div id="no-ranking" style="color:var(--muted);font-size:13px;display:none;">Aún no hay participantes en el ranking.</div>
-    <div class="podium" id="podium"></div>
-    <div class="rank-list" id="rank-list"></div>
+  <div id="pronosticos-content">
+    <div style="text-align:center; color: var(--gris); padding: 40px;">Cargando pronósticos...</div>
   </div>
 </div>
 
-<!-- ADMIN -->
-<div class="screen" id="screen-admin">
-  <div class="nav">
-    <div class="nav-logo">🌍 PRODE · SANTANDER</div>
-    <div class="nav-tabs"><button class="nav-tab" onclick="showScreen('ranking')">← Volver</button></div>
+<!-- ====== PANTALLA ADMIN ====== -->
+<div id="screen-admin" class="screen">
+  <div class="section-header">
+    <div class="section-title">⚙️ PANEL ADMIN</div>
   </div>
-  <div class="admin-wrap">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-      <div class="section-title" style="margin-bottom:0">PANEL ADMIN</div>
-      <div style="background:rgba(255,68,68,0.12);border:1px solid rgba(255,68,68,0.3);color:var(--red);padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;">⚙️ SECRETO</div>
-    </div>
-    <div class="lock-notice">🔒 URL: tudominio.vercel.app/admin?key=prodemundial2026</div>
-    <div class="admin-section">
-      <div class="admin-section-title">1 — GANADOR DE GRUPO</div>
-      <div class="admin-grid-2">
-        <div class="field-group">
-          <label class="field-label">GRUPO</label>
-          <select class="field-select" id="r-group">
-            <option value="">—</option>
-            <option>A</option><option>B</option><option>C</option><option>D</option>
-            <option>E</option><option>F</option><option>G</option><option>H</option>
-            <option>I</option><option>J</option><option>K</option><option>L</option>
-          </select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">GANADOR</label>
-          <select class="field-select" id="r-winner"><option value="">—</option></select>
-        </div>
-      </div>
-      <button class="btn btn-green btn-sm" onclick="adminLoadGroup()">✅ Cargar</button>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-title">2 — CLASIFICADOS A CUARTOS (octavos) · +2 pts c/u</div>
-      <div class="admin-grid-2" id="admin-oct-grid"></div>
-      <button class="btn btn-green btn-sm" style="margin-top:6px;" onclick="adminLoadOctavos()">✅ Cargar clasificados a cuartos</button>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-title">3 — CLASIFICADOS A SEMIS (cuartos) · +3 pts c/u</div>
-      <div class="admin-grid-2" id="admin-qf-grid"></div>
-      <button class="btn btn-green btn-sm" style="margin-top:6px;" onclick="adminLoadCuartos()">✅ Cargar semifinalistas</button>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-title">4 — RESULTADOS FINALES</div>
-      <div class="admin-grid-3">
-        <div class="field-group">
-          <label class="field-label">🏆 CAMPEÓN (15 pts)</label>
-          <select class="field-select" id="r-champion"><option value="">—</option></select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">⚽ GOLEADOR (10 pts)</label>
-          <select class="field-select" id="r-scorer-admin"><option value="">—</option></select>
-        </div>
-        <div class="field-group">
-          <label class="field-label">🇦🇷 VICTORIAS ARG (5 pts)</label>
-          <select class="field-select" id="r-argwins">
-            <option value="">—</option><option value="0">0</option>
-            <option value="1">1</option><option value="2">2</option><option value="3">3</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn btn-green btn-sm" onclick="adminLoadFinal()">✅ Calcular y actualizar ranking</button>
-    </div>
-    <div class="admin-section">
-      <div class="admin-section-title">LOG</div>
-      <div id="admin-log" style="font-size:10px;color:var(--muted);line-height:2;">Sin resultados cargados aún.</div>
-    </div>
+
+  <!-- Control de fases -->
+  <div class="admin-fase-card">
+    <h3>🔓 CONTROL DE FASES</h3>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Activar o desactivar cada fase para los participantes.</p>
+    <div id="admin-fases-control"></div>
   </div>
+
+  <!-- Resultados Grupos -->
+  <div class="admin-fase-card">
+    <h3>📋 RESULTADOS — FASE GRUPOS</h3>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Ingresá los ganadores reales de cada grupo.</p>
+    <div id="admin-resultados-grupos"></div>
+  </div>
+
+  <!-- Resultados Octavos -->
+  <div class="admin-fase-card">
+    <h3>⚡ RESULTADOS — OCTAVOS</h3>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Equipos que pasan a cuartos (ingresá los 16 clasificados).</p>
+    <div id="admin-resultados-octavos"></div>
+  </div>
+
+  <!-- Resultados Cuartos -->
+  <div class="admin-fase-card">
+    <h3>🥊 RESULTADOS — CUARTOS</h3>
+    <div id="admin-resultados-cuartos"></div>
+  </div>
+
+  <!-- Resultados Semis/Final -->
+  <div class="admin-fase-card">
+    <h3>🏆 RESULTADOS — SEMIS Y FINAL</h3>
+    <div id="admin-resultados-final"></div>
+  </div>
+
+  <!-- Especiales finales -->
+  <div class="admin-fase-card">
+    <h3>⭐ RESULTADOS ESPECIALES</h3>
+    <div id="admin-resultados-especiales"></div>
+  </div>
+
+  <div class="mt16 flex-gap">
+    <button class="btn-accion" onclick="calcularPuntajes()">RECALCULAR PUNTAJES</button>
+  </div>
+  <div id="admin-msg" class="mt16"></div>
 </div>
 
-<!-- ACCESS DENIED -->
-<div class="screen" id="screen-denied">
-  <div style="flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:40px;">
-    <div style="font-size:48px;">🔒</div>
-    <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--red);letter-spacing:2px;">ACCESO DENEGADO</div>
-    <div style="font-size:13px;color:var(--muted);">Clave incorrecta o no autorizado.</div>
-    <button class="btn btn-outline btn-sm" onclick="showScreen('home')">Volver al inicio</button>
-  </div>
-</div>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
 
-<script type="module">
-import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
-import { getAuth, signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
-
+<script>
+// ============================================================
+// FIREBASE CONFIG
+// ============================================================
 const firebaseConfig = {
-  apiKey: "AIzaSyAhfTyD3FzQ6L56SKpON3Qpeq3sSra1PG8",
+  apiKey: "AIzaSyDEMO_REPLACE_WITH_YOUR_KEY",
   authDomain: "prode-mundial-2026-a5f0a.firebaseapp.com",
   projectId: "prode-mundial-2026-a5f0a",
-  storageBucket: "prode-mundial-2026-a5f0a.firebasestorage.app",
-  messagingSenderId: "282890639860",
-  appId: "1:282890639860:web:aa7017f870c9c2d559c1a1"
+  storageBucket: "prode-mundial-2026-a5f0a.appspot.com",
+  messagingSenderId: "REPLACE",
+  appId: "REPLACE"
 };
 
-const ADMIN_KEY = "prodemundial2026";
-const TOURNAMENT_START = new Date('2026-06-11T16:00:00-06:00');
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
 
-// Check admin IMMEDIATELY before anything loads
-const IS_ADMIN = new URLSearchParams(window.location.search).get('key') === ADMIN_KEY;
-if (IS_ADMIN) {
-  document.getElementById('loading-screen').style.display = 'none';
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-admin').classList.add('active');
+// ============================================================
+// DATOS DEL MUNDIAL
+// ============================================================
+const GRUPOS = [
+  { id: 'A', equipos: [
+    { nombre: 'México', flag: '🇲🇽' }, { nombre: 'Sudáfrica', flag: '🇿🇦' },
+    { nombre: 'Corea del Sur', flag: '🇰🇷' }, { nombre: 'Chequia', flag: '🇨🇿' }
+  ]},
+  { id: 'B', equipos: [
+    { nombre: 'Canadá', flag: '🇨🇦' }, { nombre: 'Qatar', flag: '🇶🇦' },
+    { nombre: 'Suiza', flag: '🇨🇭' }, { nombre: 'Bosnia', flag: '🇧🇦' }
+  ]},
+  { id: 'C', equipos: [
+    { nombre: 'Brasil', flag: '🇧🇷' }, { nombre: 'Marruecos', flag: '🇲🇦' },
+    { nombre: 'Haití', flag: '🇭🇹' }, { nombre: 'Escocia', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' }
+  ]},
+  { id: 'D', equipos: [
+    { nombre: 'EE.UU.', flag: '🇺🇸' }, { nombre: 'Paraguay', flag: '🇵🇾' },
+    { nombre: 'Australia', flag: '🇦🇺' }, { nombre: 'Turquía', flag: '🇹🇷' }
+  ]},
+  { id: 'E', equipos: [
+    { nombre: 'Alemania', flag: '🇩🇪' }, { nombre: 'Curazao', flag: '🇨🇼' },
+    { nombre: 'Costa de Marfil', flag: '🇨🇮' }, { nombre: 'Ecuador', flag: '🇪🇨' }
+  ]},
+  { id: 'F', equipos: [
+    { nombre: 'Países Bajos', flag: '🇳🇱' }, { nombre: 'Japón', flag: '🇯🇵' },
+    { nombre: 'Túnez', flag: '🇹🇳' }, { nombre: 'Suecia', flag: '🇸🇪' }
+  ]},
+  { id: 'G', equipos: [
+    { nombre: 'Bélgica', flag: '🇧🇪' }, { nombre: 'Egipto', flag: '🇪🇬' },
+    { nombre: 'Irán', flag: '🇮🇷' }, { nombre: 'Nueva Zelanda', flag: '🇳🇿' }
+  ]},
+  { id: 'H', equipos: [
+    { nombre: 'España', flag: '🇪🇸' }, { nombre: 'Uruguay', flag: '🇺🇾' },
+    { nombre: 'Arabia Saudita', flag: '🇸🇦' }, { nombre: 'Cabo Verde', flag: '🇨🇻' }
+  ]},
+  { id: 'I', equipos: [
+    { nombre: 'Francia', flag: '🇫🇷' }, { nombre: 'Senegal', flag: '🇸🇳' },
+    { nombre: 'Noruega', flag: '🇳🇴' }, { nombre: 'Iraq', flag: '🇮🇶' }
+  ]},
+  { id: 'J', equipos: [
+    { nombre: 'Argentina', flag: '🇦🇷' }, { nombre: 'Argelia', flag: '🇩🇿' },
+    { nombre: 'Austria', flag: '🇦🇹' }, { nombre: 'Jordania', flag: '🇯🇴' }
+  ]},
+  { id: 'K', equipos: [
+    { nombre: 'Portugal', flag: '🇵🇹' }, { nombre: 'Colombia', flag: '🇨🇴' },
+    { nombre: 'Uzbekistán', flag: '🇺🇿' }, { nombre: 'DR Congo', flag: '🇨🇩' }
+  ]},
+  { id: 'L', equipos: [
+    { nombre: 'Inglaterra', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿' }, { nombre: 'Croacia', flag: '🇭🇷' },
+    { nombre: 'Ghana', flag: '🇬🇭' }, { nombre: 'Panamá', flag: '🇵🇦' }
+  ]}
+];
+
+const TODOS_LOS_EQUIPOS = GRUPOS.flatMap(g => g.equipos);
+
+// ============================================================
+// CURIOSIDADES (mezcladas)
+// ============================================================
+const CURIOSIDADES_RAW = [
+  // 🇦🇷 Scaloneta
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Argentina juega el Grupo J contra Argelia (16 jun), Austria (22 jun) y Jordania (27 jun). Tres rivales al alcance.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'El arquero Emiliano "Dibu" Martínez comparte el récord de más penales atajados en un mismo torneo de Copa del Mundo.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Marcos Senesi (Bournemouth, ex San Lorenzo) reemplaza al lesionado Balerdi en la lista de 25 convocados.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'Lionel Messi disputará muy probablemente su quinto y último Mundial, buscando defender el título obtenido en Qatar 2022.' },
+  { cat: 'Scaloneta', emoji: '🇦🇷', texto: 'El plantel argentino se prepara en Ezeiza con una mini gira previa antes de volar a Estados Unidos.' },
+  // 🌍 Mundial
+  { cat: 'Mundial', emoji: '🌍', texto: 'Por primera vez en la historia, el Mundial se juega en tres países a la vez: México, EE.UU. y Canadá.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'El Mundial 2026 es el primero con 48 selecciones. Se juegan 104 partidos en total, un récord absoluto.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'La final se disputa el 19 de julio en el MetLife Stadium de East Rutherford, Nueva Jersey, con capacidad para 82.500 personas.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'El partido inaugural es México vs Sudáfrica el 11 de junio en el Estadio Banorte de Guadalajara.' },
+  { cat: 'Mundial', emoji: '🌍', texto: 'Con 12 grupos de 4 equipos, clasifican los 2 primeros de cada grupo más los 8 mejores terceros: 32 equipos a octavos.' },
+  // 🎭 Mascotas
+  { cat: 'Mascotas', emoji: '🎭', texto: 'El Mundial 2026 tiene tres mascotas oficiales: Maple (alce de Canadá), Zayu (jaguar de México) y Clutch (águila de EE.UU.). ¡Primeras mascotas interactivas de FIFA!' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'Zayu, el jaguar mexicano, significa "unidad, fortaleza y alegría". Juega como delantero y promueve la cultura mexicana.' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'Maple, el alce canadiense, es portero, amante del arte urbano y la música. Su nombre rinde homenaje a la hoja de arce.' },
+  { cat: 'Mascotas', emoji: '🎭', texto: 'Clutch, el águila calva de EE.UU., juega de mediocampista. "Clutch" en el deporte describe al jugador que aparece en los momentos decisivos.' },
+  // 📋 Reglas nuevas
+  { cat: 'Reglas 2026', emoji: '📋', texto: 'Nuevo formato: en fase de grupos hay dos tiempos de 30 min cada uno con descanso de 15 min entre tiempo. NO habrá empates — si termina igualado va directo a penales.' },
+  { cat: 'Reglas 2026', emoji: '📋', texto: 'Con 48 equipos, la fase de grupos tiene ahora 12 grupos en lugar de 8. Los partidos se juegan en paralelo desde el inicio.' },
+  { cat: 'Reglas 2026', emoji: '📋', texto: 'Se expande el uso de la tecnología semi-automática de fuera de juego para detectar posiciones en tiempo real con mayor precisión.' },
+  // 🤖 Tecnología
+  { cat: 'Tecnología', emoji: '🤖', texto: 'La pelota oficial del Mundial 2026 incluye sensores internos que transmiten datos en tiempo real a los árbitros asistentes de VAR.' },
+  { cat: 'Tecnología', emoji: '🤖', texto: 'Los estadios de EE.UU. incorporan tecnología de reconocimiento facial para el acceso de 40.000 personas en minutos sin mostrar boletos físicos.' },
+  // 👗 Moda
+  { cat: 'Moda', emoji: '👗', texto: 'La camiseta titular argentina mantiene las rayas celeste y blanco clásicas con un detalle dorado en el escudo en homenaje a los campeones del mundo.' },
+  { cat: 'Moda', emoji: '👗', texto: 'Nike diseñó una colección especial con los colores de los 48 países, vendida simultáneamente en las tres sedes del torneo.' },
+  // 💈 Pelos
+  { cat: 'Pelos ARG', emoji: '💈', texto: 'Lautaro Martínez lleva su característico corte rapado con degradé, símbolo de su explosividad en el área.' },
+  { cat: 'Pelos ARG', emoji: '💈', texto: 'El Cuti Romero mantiene su barba estratégica que lo hace ver más intimidante que cualquier delantero rival.' },
+  // ❌ Ausencias
+  { cat: 'Ausencias', emoji: '❌', texto: 'Ángel Di María se retiró de la selección argentina tras Qatar 2022. No estará en su "Mundial de despedida" en casa.' },
+  { cat: 'Ausencias', emoji: '❌', texto: 'La lesión de Balerdi antes del torneo abrió el lugar para Marcos Senesi, quien llega en gran nivel desde Bournemouth.' },
+  // ⭐ Debuts
+  { cat: 'Debuts', emoji: '⭐', texto: 'Uzbekistán debuta en un Mundial por primera vez en su historia en el Grupo K junto a Portugal y Colombia.' },
+  { cat: 'Debuts', emoji: '⭐', texto: 'Cabo Verde también está en su primer Mundial. El Grupo H con España y Uruguay les presenta un gran desafío.' }
+];
+
+// Mezclar al azar usando Fisher-Yates
+function mezclarArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+let curiosidades = mezclarArray(CURIOSIDADES_RAW);
+let curIdx = 0;
+let curTimer = null;
 
-const GRUPOS=[
-  {letra:"A",teams:["México 🇲🇽","Sudáfrica 🇿🇦","Corea del Sur 🇰🇷","Chequia 🇨🇿"]},
-  {letra:"B",teams:["Canadá 🇨🇦","Qatar 🇶🇦","Suiza 🇨🇭","Bosnia 🇧🇦"]},
-  {letra:"C",teams:["Brasil 🇧🇷","Marruecos 🇲🇦","Haití 🇭🇹","Escocia 🏴󠁧󠁢󠁳󠁣󠁴󠁿"]},
-  {letra:"D",teams:["EE.UU. 🇺🇸","Paraguay 🇵🇾","Australia 🇦🇺","Turquía 🇹🇷"]},
-  {letra:"E",teams:["Alemania 🇩🇪","Curazao 🇨🇼","Costa de Marfil 🇨🇮","Ecuador 🇪🇨"]},
-  {letra:"F",teams:["Países Bajos 🇳🇱","Japón 🇯🇵","Túnez 🇹🇳","Suecia 🇸🇪"]},
-  {letra:"G",teams:["Bélgica 🇧🇪","Egipto 🇪🇬","Irán 🇮🇷","Nueva Zelanda 🇳🇿"]},
-  {letra:"H",teams:["España 🇪🇸","Uruguay 🇺🇾","Arabia Saudita 🇸🇦","Cabo Verde 🇨🇻"]},
-  {letra:"I",teams:["Francia 🇫🇷","Senegal 🇸🇳","Noruega 🇳🇴","Iraq 🇮🇶"]},
-  {letra:"J",teams:["Argentina 🇦🇷","Argelia 🇩🇿","Austria 🇦🇹","Jordania 🇯🇴"]},
-  {letra:"K",teams:["Portugal 🇵🇹","Colombia 🇨🇴","Uzbekistán 🇺🇿","DR Congo 🇨🇩"]},
-  {letra:"L",teams:["Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croacia 🇭🇷","Ghana 🇬🇭","Panamá 🇵🇦"]},
-];
-const ALL_TEAMS=GRUPOS.flatMap(g=>g.teams);
-const TOP_CANDIDATES=["Argentina 🇦🇷","Brasil 🇧🇷","Francia 🇫🇷","España 🇪🇸","Portugal 🇵🇹","Alemania 🇩🇪","Inglaterra 🏴󠁧󠁢󠁥󠁮󠁧󠁿","Países Bajos 🇳🇱","Uruguay 🇺🇾","Japón 🇯🇵","Marruecos 🇲🇦","EE.UU. 🇺🇸","México 🇲🇽","Colombia 🇨🇴","Bélgica 🇧🇪","Croacia 🇭🇷"];
-const SCORERS=["Lionel Messi 🇦🇷","Julián Álvarez 🇦🇷","Lautaro Martínez 🇦🇷","Nico González 🇦🇷","Giuliano Simeone 🇦🇷","Kylian Mbappé 🇫🇷","Erling Haaland 🇳🇴","Vinicius Jr. 🇧🇷","Harry Kane 🏴󠁧󠁢󠁥󠁮󠁧󠁿","Lamine Yamal 🇪🇸","Pedri 🇪🇸","Raphinha 🇧🇷","Rafael Leão 🇵🇹","Bukayo Saka 🏴󠁧󠁢󠁥󠁮󠁧󠁿","Romelu Lukaku 🇧🇪"];
-const STEPS_LABELS=["Grupos A–F","Grupos G–L","Octavos","Cuartos","Semis & Final","Extras"];
-const COLORS=['#75AADB','#F5C518','#FF6B9D','#00E676','#FF7043','#B39DDB','#4FC3F7','#FFCC80'];
-const PLANTEL=[
-  {pos:"🧤",name:"Dibu Martínez",club:"Aston Villa 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"Racing Club",dato:"Atajó 3 penales en cuartos de Qatar. Su festejo fue estudiado en psicología deportiva. El mejor arquero del mundo."},
-  {pos:"🧤",name:"Rulli",club:"Marsella 🇫🇷",arg:"Estudiantes LP",dato:"Suplente de Dibu. Mala suerte, ser segundo de ese arquero es casi peor que estar afuera del plantel."},
-  {pos:"🧤",name:"Juan Musso",club:"Atlético Madrid 🇪🇸",arg:"Racing Club",dato:"Otro de Racing. Reemplazó a Oblak lesionado en el Atleti. Dos arqueros mundialistas del mismo club de Avellaneda."},
-  {pos:"🛡️",name:"Otamendi",club:"Benfica 🇵🇹",arg:"Vélez Sársfield",dato:"37 años y sigue convocado. No tiene fecha de vencimiento."},
-  {pos:"🛡️",name:"Lisandro Mtz.",club:"Man. United 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"Newell's Old Boys",dato:"Lo apodan 'El Carnicero'. Ten Hag pagó +50M€. En Newell's no alcanzaba para el colectivo."},
-  {pos:"🛡️",name:"Cuti Romero",club:"Tottenham 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"Belgrano (Córdoba)",dato:"Surgió en Belgrano. Vale más de 80M€. En Córdoba lo veían jugar por 5 pesos."},
-  {pos:"🛡️",name:"Nahuel Molina",club:"Atlético Madrid 🇪🇸",arg:"Boca Juniors",dato:"Hizo inferiores en Boca pero lo cedieron. Triunfó en Italia y llegó al Atleti."},
-  {pos:"🛡️",name:"Montiel",club:"Nottm. Forest 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"River Plate",dato:"EL penal de la final de Qatar 2022. El universo eligió al pibe de Virrey del Pino."},
-  {pos:"🛡️",name:"Tagliafico",club:"Lyon 🇫🇷",arg:"Independiente",dato:"De Independiente. Ajax campeón, City y Lyon. Lateral histórico de la Scaloneta."},
-  {pos:"🛡️",name:"Marcos Senesi",club:"Bournemouth 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"San Lorenzo",dato:"De San Lorenzo. Reemplaza a Balerdi por lesión. El karma del fútbol opera en horas."},
-  {pos:"🛡️",name:"Facundo Medina",club:"RC Lens 🇫🇷",arg:"Talleres (Córdoba)",dato:"De Talleres de Córdoba. Este Mundial es su debut absoluto."},
-  {pos:"⚙️",name:"De Paul",club:"Atlético Madrid 🇪🇸",arg:"Racing Club",dato:"Motor de la Scaloneta. Scaloni sin De Paul es asado sin chimichurri."},
-  {pos:"⚙️",name:"Paredes",club:"Roma 🇮🇹",arg:"Boca Juniors",dato:"De Boca. Pasó por el PSG con Mbappé y Neymar. El pasador más limpio del plantel."},
-  {pos:"⚙️",name:"Mac Allister",club:"Liverpool 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"Argentinos Juniors",dato:"Del mismo club que formó a Messi. Figura del Liverpool campeón de la Premier."},
-  {pos:"⚙️",name:"Enzo Fernández",club:"Chelsea 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"River Plate",dato:"De River. El Chelsea pagó 121 millones de euros. No es error de tipeo."},
-  {pos:"⚙️",name:"Palacios",club:"Bayer Leverkusen 🇩🇪",arg:"River Plate",dato:"Fue al Leverkusen de Xabi Alonso y fue campeón de Bundesliga invicto en 2024."},
-  {pos:"⚙️",name:"Thiago Almada",club:"Botafogo 🇧🇷",arg:"Vélez Sársfield",dato:"Ganó la Libertadores con Botafogo. Juega en Brasil siendo argentino. Rebelde."},
-  {pos:"⚙️",name:"Nico Paz",club:"Real Betis 🇪🇸",arg:"River Plate",dato:"Con 20 años ya es figura. Hereda el número 11 histórico de Di María."},
-  {pos:"⚙️",name:"Valentín Barco",club:"Brighton 🏴󠁧󠁢󠁥󠁮󠁧󠁿",arg:"Boca Juniors",dato:"El 'Colo' Barco de Boca. Brighton lo fichó con 19 años. Primer Mundial con 20."},
-  {pos:"⚽",name:"Messi",club:"Inter Miami 🇺🇸",arg:"Newell's Old Boys",dato:"6to Mundial, 38 años durante el torneo. El balón con IA rastrea cada toque suyo 50 veces por segundo."},
-  {pos:"⚽",name:"Julián Álvarez",club:"Atlético Madrid 🇪🇸",arg:"River Plate",dato:"La Araña. 4 goles en Qatar 2022. Tiene 24 años y ya es leyenda."},
-  {pos:"⚽",name:"Lautaro",club:"Inter de Milán 🇮🇹",arg:"Racing Club",dato:"El Toro. De Racing. Goleador histórico del Inter. Depredador de área."},
-  {pos:"⚽",name:"Nico González",club:"Juventus 🇮🇹",arg:"River Plate",dato:"De River. Su primer Mundial. Extremo versátil."},
-  {pos:"⚽",name:"G. Simeone",club:"Atlético Madrid 🇪🇸",arg:"Talleres (Córdoba)",dato:"Hijo del Cholo. Lleva el apellido más pesado del fútbol con naturalidad."},
-  {pos:"⚽",name:"José López",club:"Palmeiras 🇧🇷",arg:"Huracán",dato:"De Huracán de Parque Patricios. La gran sorpresa de la convocatoria."},
-];
+function initCuriosidades() {
+  const dots = document.getElementById('cur-dots');
+  dots.innerHTML = curiosidades.map((_, i) =>
+    `<div class="dot ${i === 0 ? 'active' : ''}" onclick="goToCuriosidad(${i}); event.stopPropagation();"></div>`
+  ).join('');
+  showCuriosidad(0);
+  resetCurTimer();
+}
 
-const DATOS={
-  arg:[
-    {e:"🚨",b:"NOVEDAD",t:"Balerdi fuera por desgarro en el sóleo. Senesi (ex San Lorenzo, hoy Bournemouth) es el reemplazante. El karma del fútbol opera en horas.",h:"💪 Fuerza, Flaco"},
-    {e:"🏠",b:"DATO SCALONETA",t:"Racing Club formó a Dibu Martínez, Lautaro Martínez y Juan Musso. Tres titulares mundialistas del mismo club de Avellaneda.",h:"⚽ Todo de Racing"},
-    {e:"💸",b:"DATO SCALONETA",t:"Enzo Fernández costó 121 millones de euros. Con esa plata se compra el plantel entero de 10 clubes argentinos. Un. Solo. Jugador.",h:"🤯 El mercado"},
-    {e:"😂",b:"CHISTE ARGENTO",t:"De Paul era indiscutible en la Scaloneta y en la relación con Tini. Solo en la relación fue suplente al final. El universo da y quita.",h:"💔 El universo opera"},
-    {e:"💀",b:"CHISTE ARGENTO",t:"Montiel metió el penal de la final de Qatar. Antes lo criticaban bastante. Ahora tiene una estatua mental en cada casa argentina.",h:"🏆 Justicia poética"},
-    {e:"😤",b:"DATO SCALONETA",t:"Otamendi tiene 37 años y sigue convocado. Cuando era juvenil, sus compañeros actuales tenían 7 u 8 años. Ya jugaba de 5 en primera.",h:"👴 No tiene fecha de vencimiento"},
-    {e:"🗓️",b:"DATO SCALONETA",t:"Argentina debuta el 16 de junio contra Argelia en el Grupo J. También enfrenta a Austria (22 Jun) y Jordania (27 Jun).",h:"📅 Marcá el calendario"},
-  ],
-  mundo:[
-    {e:"🤯",b:"DATO MUNDIAL",t:"El Mundial 2026 tiene 48 selecciones: 104 partidos. Es el primero con 16avos de final. Italia NO está — tercera eliminación consecutiva.",h:"📊 Nuevo formato"},
-    {e:"🏟️",b:"DATO MUNDIAL",t:"El Estadio Azteca ya albergó DOS finales mundialistas (1970 y 1986). En 2026 organiza el partido inaugural. Tres eventos históricos.",h:"🏟️ Historia pura"},
-    {e:"😭",b:"DATO MUNDIAL",t:"Brasil fue eliminado de Qatar 2022 por Croacia en penales. Neymar convirtió en el alargue y llegó Livaković. Todavía lloran.",h:"🇭🇷 No todas son Argentina"},
-    {e:"🇲🇦",b:"DATO MUNDIAL",t:"Marruecos fue la primera selección africana en las semis de un Mundial. Sus jugadores festejaron con sus madres en la cancha.",h:"❤️ El partido más emotivo"},
-    {e:"🌟",b:"DATO MUNDIAL",t:"Lamine Yamal nació el mismo día que España ganó la Eurocopa 2008. Lo llaman 'el niño del destino'. Con 17 años en el Mundial 2026.",h:"✨ Destino"},
-    {e:"🏆",b:"DATO MUNDIAL",t:"La final es el 19 de julio en el MetLife Stadium de Nueva Jersey. Los semifinalistas juegan 8 partidos — uno más que en Qatar.",h:"📅 Final en Nueva York"},
-  ],
-  reglas:[
-    {e:"⏱️",b:"NUEVA REGLA 2026",t:"Límite de 5 segundos para saques de meta y de banda. Se terminó la pérdida de tiempo.",h:"⚡ Más ritmo"},
-    {e:"🔄",b:"NUEVA REGLA 2026",t:"El jugador reemplazado tiene máximo 10 segundos para salir. Si tarda más, su equipo juega con un hombre menos un minuto.",h:"🏃 Que corran"},
-    {e:"🏥",b:"NUEVA REGLA 2026",t:"Las atenciones médicas se hacen fuera de la cancha. El partido no se detiene por varios minutos.",h:"✅ Adiós al teatro"},
-    {e:"📹",b:"NUEVA REGLA 2026",t:"El VAR ahora puede intervenir en revisión de segundas amarillas y saques de esquina mal sancionados.",h:"🎥 El VAR se expande"},
-  ],
-  tech:[
-    {e:"⚽",b:"TECNOLOGÍA 2026",t:"El balón oficial tiene un sensor interno que rastrea cada toque 50 veces por segundo. Transmite datos en tiempo real al VAR.",h:"🤖 El balón más inteligente"},
-    {e:"📡",b:"TECNOLOGÍA 2026",t:"Los 1.248 futbolistas fueron escaneados en 3D para crear modelos tridimensionales, mejorando la tecnología de offside semiautomático.",h:"🎮 El Mundial más digital"},
-    {e:"🧬",b:"TECNOLOGÍA 2026",t:"La FIFA provee un asistente de IA para las 48 selecciones con simulaciones y análisis de rivales. Igualdad tecnológica.",h:"🌍 IA para todos"},
-    {e:"📊",b:"TECNOLOGÍA 2026",t:"El Mundial 2026 genera datos que cuadruplican los de Qatar 2022. Cada partido analizado en tiempo real con inteligencia artificial.",h:"💡 Datos sin límite"},
-  ],
-  moda:[
-    {e:"👕",b:"MODA MUNDIAL 2026",t:"El 'Blokecore' es furor: camisetas de selecciones combinadas con sastrería o jeans. Ya no son solo para la cancha.",h:"🔥 El trend del momento"},
-    {e:"🕹️",b:"MODA MUNDIAL 2026",t:"Revival Retro: vuelven los cuellos en V y tipografías de los 80 y 90. Las camisetas nuevas parecen de México 86 o Italia 90.",h:"⏮️ Vintage es el futuro"},
-    {e:"⭐",b:"MODA MUNDIAL 2026",t:"La camiseta de Argentina lleva las tres estrellas con los años de los mundiales ganados. Un detalle de alta costura que la hizo la más vendida del mundo.",h:"🇦🇷 La más buscada"},
-    {e:"🏙️",b:"MODA MUNDIAL 2026",t:"El 'Athleisure': indumentaria de selecciones con motivos de las ciudades anfitrionas — Nueva York, México DF y Toronto en una sola prenda.",h:"🌆 Ciudades en la ropa"},
-    {e:"🧣",b:"MODA MUNDIAL 2026",t:"Bufandas que entrelazan las banderas de las tres sedes: EE.UU., México y Canadá. El souvenir más buscado del Mundial.",h:"🛍️ Coleccionable"},
-  ],
-  pelos:[
-    {e:"✂️",b:"PELOS DE LA SCALONETA",t:"El Buzz Cut con High Fade de Enzo Fernández: rapado milimétrico con degradado muy alto. El corte más pedido en barberías argentinas.",h:"💈 El look del Chelsea"},
-    {e:"🕸️",b:"PELOS DE LA SCALONETA",t:"El Low Fade Texturizado de Julián Álvarez: degradado bajo desde la nuca con volumen texturizado arriba. Elegante sin esforzarse.",h:"💈 El look del Araña"},
-    {e:"⚡",b:"PELOS DE LA SCALONETA",t:"El Estilo Edgy de De Paul: platinados intensos, decoloraciones con efecto glow y líneas geométricas navajadas en las sienes.",h:"💈 El más arriesgado"},
-    {e:"🧔",b:"PELOS DE LA SCALONETA",t:"El Mid Fade Clásico de Paredes: degradado medio pulido conectado con barba corta muy bien delineada.",h:"💈 El más prolijo"},
-    {e:"🎨",b:"PELOS DE LA SCALONETA",t:"Las Franjas del Dibu Martínez: interviene su corte con detalles de color en los laterales. Un amuleto visual en todas las citas.",h:"💈 El más peculiar"},
-  ],
-  ausencias:[
-    {e:"🇮🇹",b:"❌ AUSENCIA NOTABLE",t:"Italia no va al Mundial 2026. Es su TERCERA eliminación consecutiva. El país con 4 títulos mundiales lleva 12 años sin ir. El fútbol puede ser muy cruel.",h:"😬 Los Azzurri en casa viendo la tele"},
-    {e:"🇵🇱",b:"❌ AUSENCIA NOTABLE",t:"Polonia cayó ante Suecia en el playoff UEFA. Lewandowski termina su carrera mundialista sin llevar a su selección. El mejor jugador polaco de la historia, afuera.",h:"😭 Lewy llora"},
-    {e:"🇩🇰",b:"❌ AUSENCIA NOTABLE",t:"Dinamarca fue eliminada por Chequia en el playoff. Una de las selecciones más regulares de Europa en la última década, fuera. El fútbol no respeta reputaciones.",h:"🎸 Dinamarca en casa"},
-    {e:"🇨🇱",b:"❌ AUSENCIA NOTABLE",t:"Chile no clasificó al Mundial. La generación dorada de Vidal, Alexis y Bravo que ganó dos Copas América (2015 y 2016) ya no existe. El recambio no llegó a tiempo.",h:"😔 La Roja en casa"},
-    {e:"🇧🇴",b:"❌ AUSENCIA NOTABLE",t:"Bolivia cayó ante Iraq en el playoff intercontinental. Iraq, que no iba a un Mundial desde 1986, los eliminó. Bolivia jamás ganó un partido mundialista.",h:"🙏 Mejor suerte la próxima"},
-  ],
-  debuts:[
-    {e:"🇨🇼",b:"⭐ DEBUT HISTÓRICO",t:"Curazao va a su primer Mundial. La pequeña isla caribeña de 150.000 habitantes clasificó a través de CONCACAF. Tiene menos habitantes que Rosario.",h:"🏝️ Milagro caribeño"},
-    {e:"🇺🇿",b:"⭐ DEBUT HISTÓRICO",t:"Uzbekistán debuta en un Mundial por primera vez. La selección centroasiática, que no existía como nación hasta 1991, llega al torneo más grande.",h:"🌏 Asia tiene más representantes"},
-    {e:"🇨🇻",b:"⭐ DEBUT HISTÓRICO",t:"Cabo Verde llega a su primer Mundial. Las islas del Atlántico, con apenas 600.000 habitantes, en el Grupo H junto a España y Uruguay.",h:"🏝️ Las islas del Atlántico"},
-    {e:"🇨🇩",b:"⭐ REGRESO HISTÓRICO",t:"DR Congo vuelve a un Mundial por primera vez desde 1974 — hace 52 años. En esa época se llamaba Zaire. El fútbol africano tiene memoria.",h:"🌍 52 años de espera"},
-    {e:"🇮🇶",b:"⭐ REGRESO HISTÓRICO",t:"Iraq clasificó en el último playoff, venciendo a Bolivia. Vuelven desde 1986, hace 40 años. Fueron el último equipo en clasificarse el 1° de abril.",h:"🎉 El último boleto del mundo"},
-  ],
+function showCuriosidad(idx) {
+  curIdx = idx;
+  const c = curiosidades[idx];
+  document.getElementById('cur-emoji').textContent = c.emoji;
+  document.getElementById('cur-cat').textContent = c.cat;
+  document.getElementById('cur-text').textContent = c.texto;
+  document.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+}
+
+function nextCuriosidad() {
+  showCuriosidad((curIdx + 1) % curiosidades.length);
+  resetCurTimer();
+}
+
+function goToCuriosidad(idx) { showCuriosidad(idx); resetCurTimer(); }
+
+function resetCurTimer() {
+  if (curTimer) clearInterval(curTimer);
+  curTimer = setInterval(() => showCuriosidad((curIdx + 1) % curiosidades.length), 6000);
+}
+
+// ============================================================
+// COUNTDOWN
+// ============================================================
+const PRIMER_PARTIDO = new Date('2026-06-11T21:00:00-03:00'); // 18hs Argentina = 21 UTC-3
+
+function updateCountdown() {
+  const ahora = new Date();
+  const diff = PRIMER_PARTIDO - ahora;
+  if (diff <= 0) {
+    document.getElementById('countdown-portada').innerHTML =
+      '<div class="titulo">🎉 ¡EL MUNDIAL YA COMENZÓ!</div>';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cd-dias').textContent = String(d).padStart(2, '0');
+  document.getElementById('cd-horas').textContent = String(h).padStart(2, '0');
+  document.getElementById('cd-min').textContent = String(m).padStart(2, '0');
+  document.getElementById('cd-seg').textContent = String(s).padStart(2, '0');
+}
+
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// ============================================================
+// ESTADO DE LA APP
+// ============================================================
+let userId = null;
+let userName = null;
+let predictions = {};
+let faseConfig = {
+  grupos: { abierta: true, deadline: PRIMER_PARTIDO.getTime() },
+  octavos: { abierta: false, deadline: null },
+  cuartos: { abierta: false, deadline: null },
+  semis: { abierta: false, deadline: null },
+  especiales_final: { abierta: false, deadline: null }
+};
+let resultados = {};
+let adminMode = false;
+let equiposClasificados = {
+  octavos: [],
+  cuartos: [],
+  semis: []
 };
 
-let currentUser = null;
-let currentUserId = null;
-let selectedWins = null;
-let step = 1;
-let datoTab = 'arg';
-let datoIdx = 0;
-let isLocked = false;
+const ADMIN_KEY = 'prodemundial2026';
+const FASE_GRUPOS_DEADLINE = PRIMER_PARTIDO.getTime();
 
-// AUTH
-onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    currentUserId = user.uid;
-    const savedName = localStorage.getItem('prode_name');
-    if (savedName) {
-      currentUser = savedName;
-      await saveUser(savedName);
-      checkExistingPrediction();
-    }
-    init();
+function gruposAbiertos() {
+  return Date.now() < FASE_GRUPOS_DEADLINE || adminMode;
+}
+
+// ============================================================
+// AUTH Y NOMBRE
+// ============================================================
+auth.signInAnonymously().catch(console.error);
+
+auth.onAuthStateChanged(async user => {
+  if (!user) return;
+  userId = user.uid;
+
+  const savedName = localStorage.getItem('pm26_nombre_' + userId);
+  if (savedName) {
+    userName = savedName;
+    await cargarDatos();
+    mostrarApp();
   } else {
-    signInAnonymously(auth);
+    document.getElementById('loading-screen').style.opacity = '0';
+    setTimeout(() => {
+      document.getElementById('loading-screen').style.display = 'none';
+      showScreenDirect('nombre');
+    }, 600);
   }
 });
 
-async function saveUser(name) {
-  await setDoc(doc(db, 'users', currentUserId), { name, updatedAt: new Date() }, { merge: true });
-}
-
-async function checkExistingPrediction() {
-  const predDoc = await getDoc(doc(db, 'predictions', currentUserId));
-  if (predDoc.exists()) {
-    document.getElementById('has-prediction-msg').style.display = 'block';
-  }
-}
-
-function init() {
-  document.getElementById('loading-screen').style.display = 'none';
-  checkAdmin();
-  buildGroupSelects();
-  buildGruposInfo();
-  buildOctavosGrid();
-  buildCuartosGrid();
-  buildAdminGrids();
-  populateAllSelects();
-  renderJugadores();
-  buildProgressSteps();
-  showDato();
-  updateCountdown();
-  setInterval(updateCountdown, 1000);
-  setInterval(() => { datoIdx = (datoIdx + 1) % DATOS[datoTab].length; showDato(); }, 12000);
-  isLocked = new Date() >= TOURNAMENT_START;
-  if (IS_ADMIN) {
-    showScreen('admin');
-    listenRanking();
+async function guardarNombre() {
+  const n = document.getElementById('input-nombre').value.trim();
+  if (!n) {
+    document.getElementById('nombre-error').textContent = 'Ingresá tu nombre';
+    document.getElementById('nombre-error').style.display = 'block';
     return;
   }
-  if (currentUser) {
-    document.getElementById('login-box').style.display = 'none';
-    document.getElementById('logged-box').style.display = 'block';
-    document.getElementById('welcome-name').textContent = currentUser;
-    showScreen('home');
-  } else {
-    showScreen('home');
-  }
-  listenRanking();
+  localStorage.setItem('pm26_nombre_' + userId, n);
+  userName = n;
+
+  try {
+    await db.collection('users').doc(userId).set({
+      nombre: n, fechaRegistro: new Date().toISOString()
+    }, { merge: true });
+  } catch(e) { console.error(e); }
+
+  await cargarDatos();
+  mostrarApp();
+}
+
+async function cargarDatos() {
+  try {
+    // Predicciones del usuario
+    const predDoc = await db.collection('predictions').doc(userId).get();
+    if (predDoc.exists) predictions = predDoc.data() || {};
+
+    // Configuracion de fases
+    const configDoc = await db.collection('config').doc('fases').get();
+    if (configDoc.exists) {
+      const cf = configDoc.data();
+      Object.assign(faseConfig, cf);
+    }
+
+    // Resultados
+    const resDoc = await db.collection('config').doc('resultados').get();
+    if (resDoc.exists) resultados = resDoc.data() || {};
+
+    // Equipos clasificados
+    const clasDoc = await db.collection('config').doc('clasificados').get();
+    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { octavos: [], cuartos: [], semis: [] };
+
+  } catch(e) { console.error('Error cargando datos:', e); }
+}
+
+function mostrarApp() {
+  document.getElementById('loading-screen').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('app-header').style.display = 'flex';
+    document.getElementById('app-nav').style.display = 'block';
+    document.getElementById('header-nombre').textContent = userName;
+    initCuriosidades();
+    renderGrupos();
+    renderEspeciales();
+    updateNavLocks();
+    showScreen('portada');
+  }, 600);
+}
+
+function logout() {
+  localStorage.removeItem('pm26_nombre_' + userId);
+  location.reload();
+}
+
+// ============================================================
+// NAVEGACION
+// ============================================================
+const screenIds = ['portada','nombre','grupos','octavos','cuartos','semis','especiales','ranking','pronosticos','admin'];
+
+function showScreenDirect(id) {
+  screenIds.forEach(s => {
+    const el = document.getElementById('screen-' + s);
+    if (el) el.classList.remove('active');
+  });
+  const target = document.getElementById('screen-' + id);
+  if (target) target.classList.add('active');
+}
+
+function showScreen(id) {
+  if (id === 'octavos' && !faseConfig.octavos.abierta && !adminMode) return;
+  if (id === 'cuartos' && !faseConfig.cuartos.abierta && !adminMode) return;
+  if (id === 'semis' && !faseConfig.semis.abierta && !adminMode) return;
+
+  showScreenDirect(id);
+
+  document.querySelectorAll('#app-nav button').forEach(b => b.classList.remove('active'));
+  const navBtn = document.getElementById('nav-' + id);
+  if (navBtn) navBtn.classList.add('active');
+
+  if (id === 'ranking') cargarRanking();
+  if (id === 'pronosticos') cargarPronosticos();
+  if (id === 'octavos') renderFaseDinamica('octavos');
+  if (id === 'cuartos') renderFaseDinamica('cuartos');
+  if (id === 'semis') renderFaseDinamica('semis');
+  if (id === 'admin') renderAdmin();
+}
+
+function updateNavLocks() {
+  ['octavos','cuartos','semis'].forEach(f => {
+    const btn = document.getElementById('nav-' + f);
+    if (btn) btn.classList.toggle('locked', !faseConfig[f].abierta);
+  });
 }
 
 function checkAdmin() {
-  const params = new URLSearchParams(window.location.search);
-  const key = params.get('key');
+  if (adminMode) { showScreen('admin'); return; }
+  const key = prompt('Clave de administrador:');
   if (key === ADMIN_KEY) {
+    adminMode = true;
+    updateNavLocks();
     showScreen('admin');
+  } else if (key !== null) {
+    alert('Clave incorrecta');
   }
 }
 
-window.enterApp = async function() {
-  const name = document.getElementById('player-name').value.trim();
-  if (!name) {
-    document.getElementById('player-name').style.borderColor = 'var(--red)';
-    setTimeout(() => document.getElementById('player-name').style.borderColor = 'var(--border)', 1200);
-    return;
-  }
-  currentUser = name;
-  localStorage.setItem('prode_name', name);
-  await saveUser(name);
-  document.getElementById('login-box').style.display = 'none';
-  document.getElementById('logged-box').style.display = 'block';
-  document.getElementById('welcome-name').textContent = name;
-  showScreen('predict');
-};
-
-window.showScreen = function(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const map = { home:'screen-home', grupos:'screen-grupos', jugadores:'screen-jugadores', predict:'screen-predict', all:'screen-all', ranking:'screen-ranking', admin:'screen-admin', denied:'screen-denied' };
-  const el = document.getElementById(map[id] || id);
-  if (el) el.classList.add('active');
-  if (id === 'all') loadAllPredictions();
-  if (id === 'predict') loadMyPrediction();
-  window.scrollTo(0, 0);
-};
-
-function buildProgressSteps() {
-  const container = document.getElementById('progress-steps');
-  container.innerHTML = STEPS_LABELS.map((l, i) => `<span class="progress-step${i===0?' active':''}" id="ps${i+1}">${l}</span>`).join('');
-}
-
-function buildGroupSelects() {
-  ['groups-af','groups-gl'].forEach((id, half) => {
-    const div = document.getElementById(id);
-    if (!div) return;
-    div.innerHTML = '';
-    GRUPOS.slice(half*6, (half+1)*6).forEach(g => {
-      const d = document.createElement('div');
-      d.className = 'phase-card';
-      d.innerHTML = `<div class="phase-card-label">GRUPO ${g.letra}</div><div style="font-size:10px;color:var(--muted);margin-bottom:8px;">${g.teams.join(' · ')}</div><div class="field-group"><label class="field-label">¿QUIÉN GANA? (3 pts)</label><select class="field-select" id="pg-${g.letra}"><option value="">Elegí...</option>${g.teams.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>`;
-      div.appendChild(d);
-    });
-  });
-}
-
-function buildGruposInfo() {
+// ============================================================
+// RENDER GRUPOS
+// ============================================================
+function renderGrupos() {
   const grid = document.getElementById('grupos-grid');
-  if (!grid || grid.children.length > 0) return;
-  GRUPOS.forEach(g => {
-    const div = document.createElement('div');
-    div.style.cssText = 'background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px;';
-    div.innerHTML = `<div style="font-size:9px;color:var(--celeste);font-weight:700;letter-spacing:1px;margin-bottom:5px;">GRUPO ${g.letra}</div>${g.teams.map((t,i)=>`<div style="font-size:11px;padding:2px 0;color:${i===0?'var(--white)':'var(--muted)'}">${i===0?'⭐ ':' '}${t}</div>`).join('')}`;
-    grid.appendChild(div);
-  });
-}
+  const bloqueadoMsg = document.getElementById('grupos-bloqueado-msg');
+  const acciones = document.getElementById('grupos-acciones');
+  const cerrado = !gruposAbiertos();
 
-function buildOctavosGrid() {
-  const div = document.getElementById('oct-picks');
-  if (!div) return;
-  div.innerHTML = '';
-  for (let i = 1; i <= 8; i++) {
-    const d = document.createElement('div');
-    d.className = 'field-group';
-    d.innerHTML = `<label class="field-label">PICK ${i}</label><select class="field-select" id="poct-${i}"><option value="">Elegí...</option>${TOP_CANDIDATES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>`;
-    div.appendChild(d);
+  if (cerrado) {
+    bloqueadoMsg.style.display = 'block';
+    acciones.style.display = 'none';
   }
+
+  grid.innerHTML = GRUPOS.map(g => `
+    <div class="grupo-card">
+      <h4>GRUPO ${g.id}</h4>
+      ${g.equipos.map(e => {
+        const sel = predictions['grupo_' + g.id] === e.nombre;
+        return `<button class="equipo-btn ${sel ? 'selected' : ''}"
+          onclick="${cerrado ? '' : `selectGrupo('${g.id}', '${e.nombre}', this)`}"
+          ${cerrado ? 'style="cursor:default"' : ''}>
+          <span class="flag">${e.flag}</span>${e.nombre}
+          ${sel ? ' ✓' : ''}
+        </button>`;
+      }).join('')}
+    </div>
+  `).join('');
 }
 
-function buildCuartosGrid() {
-  const div = document.getElementById('qf-picks');
-  if (!div) return;
-  div.innerHTML = '';
-  for (let i = 1; i <= 4; i++) {
-    const d = document.createElement('div');
-    d.className = 'field-group';
-    d.innerHTML = `<label class="field-label">PICK ${i}</label><select class="field-select" id="pqf-${i}"><option value="">Elegí...</option>${TOP_CANDIDATES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>`;
-    div.appendChild(d);
-  }
-}
-
-function buildAdminGrids() {
-  const octDiv = document.getElementById('admin-oct-grid');
-  if (octDiv && octDiv.children.length === 0) {
-    for (let i = 1; i <= 8; i++) {
-      const d = document.createElement('div');
-      d.className = 'field-group';
-      d.innerHTML = `<label class="field-label">CLASIFICADO ${i}</label><select class="field-select" id="roct-${i}"><option value="">—</option>${TOP_CANDIDATES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>`;
-      octDiv.appendChild(d);
-    }
-  }
-  const qfDiv = document.getElementById('admin-qf-grid');
-  if (qfDiv && qfDiv.children.length === 0) {
-    for (let i = 1; i <= 4; i++) {
-      const d = document.createElement('div');
-      d.className = 'field-group';
-      d.innerHTML = `<label class="field-label">SEMIFINALISTA ${i}</label><select class="field-select" id="rqf-${i}"><option value="">—</option>${TOP_CANDIDATES.map(t=>`<option value="${t}">${t}</option>`).join('')}</select>`;
-      qfDiv.appendChild(d);
-    }
-  }
-}
-
-function populateAllSelects() {
-  ['p-semi1','p-semi2','p-champion','p-finalist','p-surprise','r-winner','r-champion'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = '<option value="">—</option>';
-    ALL_TEAMS.forEach(t => { const o = document.createElement('option'); o.value = t; o.textContent = t; el.appendChild(o); });
+function selectGrupo(grupoId, equipo, btn) {
+  predictions['grupo_' + grupoId] = equipo;
+  const card = btn.closest('.grupo-card');
+  card.querySelectorAll('.equipo-btn').forEach(b => {
+    b.classList.remove('selected');
+    b.textContent = b.textContent.replace(' ✓', '');
   });
-  ['p-scorer','r-scorer-admin'].forEach(id => {
-    const el = document.getElementById(id);
-    if (!el) return;
-    el.innerHTML = '<option value="">—</option>';
-    SCORERS.forEach(s => { const o = document.createElement('option'); o.value = s; o.textContent = s; el.appendChild(o); });
-  });
+  btn.classList.add('selected');
+  if (!btn.textContent.includes(' ✓')) btn.textContent += ' ✓';
 }
 
-function renderJugadores() {
-  const grid = document.getElementById('jugador-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  PLANTEL.forEach(j => {
-    const div = document.createElement('div');
-    div.className = 'jugador-card';
-    div.innerHTML = `<div class="jugador-pos">${j.pos}</div><div class="jugador-name">${j.name}</div><div class="jugador-club-now">${j.club}</div><div class="jugador-club-arg">🏠 ${j.arg}</div><div class="jugador-dato">${j.dato}</div>`;
-    grid.appendChild(div);
-  });
-}
-
-function updateCountdown() {
-  const diff = TOURNAMENT_START - new Date();
-  if (diff <= 0) {
-    document.getElementById('countdown').innerHTML = '<div style="font-family:Bebas Neue,sans-serif;font-size:20px;color:var(--green);letter-spacing:2px">🏆 ¡EL MUNDIAL ARRANCÓ!</div>';
+async function guardarGrupos() {
+  if (!gruposAbiertos()) { alert('La fase ya cerró.'); return; }
+  const faltantes = GRUPOS.filter(g => !predictions['grupo_' + g.id]);
+  if (faltantes.length > 0) {
+    document.getElementById('grupos-msg').innerHTML =
+      `<div class="alert alert-error">Falta seleccionar ganador de grupo: ${faltantes.map(g => g.id).join(', ')}</div>`;
     return;
   }
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor((diff%86400000)/3600000);
-  const m = Math.floor((diff%3600000)/60000);
-  const s = Math.floor((diff%60000)/1000);
-  document.getElementById('cd-days').textContent = String(d).padStart(2,'0');
-  document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
-  document.getElementById('cd-mins').textContent = String(m).padStart(2,'0');
-  document.getElementById('cd-secs').textContent = String(s).padStart(2,'0');
-}
-
-window.setDatoTab = function(tab) {
-  datoTab = tab; datoIdx = 0;
-  ['arg','mundo','reglas','tech','moda','pelos','ausencias','debuts'].forEach(t => {
-    const el = document.getElementById('tab-'+t); if (el) el.classList.toggle('active', t===tab);
-  });
-  showDato();
-};
-
-function showDato() {
-  const d = DATOS[datoTab][datoIdx];
-  document.getElementById('dato-emoji').textContent = d.e;
-  document.getElementById('dato-badge').textContent = d.b;
-  document.getElementById('dato-text').textContent = d.t;
-  document.getElementById('dato-hint').textContent = d.h;
-}
-window.nextDato = function() { datoIdx = (datoIdx+1) % DATOS[datoTab].length; showDato(); };
-
-window.goStep = function(n) {
-  document.getElementById('step-'+step).style.display = 'none';
-  step = n;
-  const el = document.getElementById('step-'+step);
-  if (el) el.style.display = 'block';
-  const pct = Math.round((n/7)*100);
-  document.getElementById('progress').style.width = pct+'%';
-  STEPS_LABELS.forEach((_, i) => { const el = document.getElementById('ps'+(i+1)); if(el) el.classList.toggle('active', i+1===n); });
-};
-
-window.selectWins = function(n) {
-  selectedWins = n;
-  document.querySelectorAll('.wins-btn').forEach((b,i) => b.classList.toggle('selected', i===n));
-};
-
-async function loadMyPrediction() {
-  if (!currentUserId) return;
-  if (isLocked) document.getElementById('locked-notice').style.display = 'block';
-  const predDoc = await getDoc(doc(db, 'predictions', currentUserId));
-  if (!predDoc.exists()) return;
-  const data = predDoc.data();
-  GRUPOS.forEach(g => {
-    const el = document.getElementById('pg-'+g.letra);
-    if (el && data.groups && data.groups[g.letra]) el.value = data.groups[g.letra];
-  });
-  for (let i = 1; i <= 8; i++) {
-    const el = document.getElementById('poct-'+i);
-    if (el && data.octavos && data.octavos[i-1]) el.value = data.octavos[i-1];
-  }
-  for (let i = 1; i <= 4; i++) {
-    const el = document.getElementById('pqf-'+i);
-    if (el && data.cuartos && data.cuartos[i-1]) el.value = data.cuartos[i-1];
-  }
-  ['p-semi1','p-semi2','p-champion','p-finalist','p-scorer','p-surprise'].forEach(id => {
-    const key = {semi1:'semi1',semi2:'semi2',champion:'champion',finalist:'finalist',scorer:'scorer',surprise:'surprise'}[id.replace('p-','')];
-    const el = document.getElementById(id);
-    if (el && data[key]) el.value = data[key];
-  });
-  if (data.argWins !== undefined) {
-    selectedWins = data.argWins;
-    document.querySelectorAll('.wins-btn').forEach((b,i) => b.classList.toggle('selected', i===data.argWins));
-  }
-  if (isLocked) {
-    document.querySelectorAll('.field-select, .wins-btn').forEach(el => el.disabled = true);
-    document.getElementById('submit-btn').style.display = 'none';
+  try {
+    await db.collection('predictions').doc(userId).set(predictions, { merge: true });
+    document.getElementById('grupos-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Pronósticos de grupos guardados correctamente.</div>';
+  } catch(e) {
+    document.getElementById('grupos-msg').innerHTML =
+      `<div class="alert alert-error">Error guardando: ${e.message}</div>`;
   }
 }
 
-window.submitPrediction = async function() {
-  if (isLocked) { alert('El prode ya está cerrado.'); return; }
-  if (!currentUserId) { alert('Por favor ingresá tu nombre primero.'); return; }
-  if (selectedWins === null) { alert('¡Falta elegir cuántos partidos gana Argentina!'); return; }
-  const groups = {};
-  GRUPOS.forEach(g => { groups[g.letra] = document.getElementById('pg-'+g.letra)?.value || ''; });
-  const octavos = [];
-  for (let i = 1; i <= 8; i++) { octavos.push(document.getElementById('poct-'+i)?.value || ''); }
-  const cuartos = [];
-  for (let i = 1; i <= 4; i++) { cuartos.push(document.getElementById('pqf-'+i)?.value || ''); }
-  const prediction = {
-    userId: currentUserId, name: currentUser,
-    groups, octavos, cuartos,
-    semi1: document.getElementById('p-semi1').value,
-    semi2: document.getElementById('p-semi2').value,
-    champion: document.getElementById('p-champion').value,
-    finalist: document.getElementById('p-finalist').value,
-    scorer: document.getElementById('p-scorer').value,
-    argWins: selectedWins,
-    surprise: document.getElementById('p-surprise').value,
-    submittedAt: new Date(),
+// ============================================================
+// RENDER FASES DINÁMICAS (OCTAVOS / CUARTOS / SEMIS)
+// ============================================================
+function renderFaseDinamica(fase) {
+  const content = document.getElementById(fase + '-content');
+  const config = faseConfig[fase];
+
+  if (!config.abierta) {
+    content.innerHTML = `
+      <div class="fase-locked">
+        <div class="icono">🔒</div>
+        <h3>FASE NO DISPONIBLE AÚN</h3>
+        <p>Esta sección se habilitará cuando terminen los partidos de la fase anterior.</p>
+        <p style="margin-top: 8px;">La administradora la activará en el momento indicado.</p>
+      </div>`;
+    return;
+  }
+
+  const equiposDisponibles = equiposClasificados[fase] || [];
+  const cerrado = config.deadline && Date.now() > config.deadline && !adminMode;
+
+  const configs = {
+    octavos: { picks: 16, label: 'Ganador Octavos', pts: 4, prefix: 'oct_' },
+    cuartos: { picks: 8, label: 'Ganador Cuartos', pts: 6, prefix: 'cua_' },
+    semis: { picks: 4, label: 'Ganador Semis', pts: 8, prefix: 'sem_' }
   };
-  await setDoc(doc(db, 'predictions', currentUserId), prediction);
-  await setDoc(doc(db, 'scores', currentUserId), { name: currentUser, total: 0, breakdown: {} }, { merge: true });
-  goStep(7); document.getElementById('confirm-title').textContent = '¡LISTO, ' + (currentUser||'CAMPEÓN').toUpperCase() + '!';
-  launchConfetti();
-};
+  const fc = configs[fase];
 
-async function loadAllPredictions() {
-  const grid = document.getElementById('cards-grid');
-  grid.innerHTML = '<div style="color:var(--muted);font-size:12px;">Cargando pronósticos...</div>';
-  const snapshot = await getDocs(collection(db, 'predictions'));
-  if (snapshot.empty) {
-    grid.innerHTML = '';
-    document.getElementById('no-preds').style.display = 'block';
+  if (equiposDisponibles.length === 0) {
+    content.innerHTML = `
+      <div class="fase-locked">
+        <div class="icono">⏳</div>
+        <h3>EQUIPOS CLASIFICADOS AÚN NO CARGADOS</h3>
+        <p>La administradora está cargando los equipos clasificados.</p>
+      </div>`;
     return;
   }
-  document.getElementById('no-preds').style.display = 'none';
-  grid.innerHTML = '';
-  let i = 0;
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    const color = COLORS[i % COLORS.length];
-    const isYou = docSnap.id === currentUserId;
-    const div = document.createElement('div');
-    div.className = 'pred-card';
-    const grpHtml = Object.entries(p.groups||{}).map(([g,t])=>`<div class="pred-row"><span class="pred-icon">🏆</span><span class="pred-key">Grp ${g}</span><span class="pred-val">${t||'—'}</span></div>`).join('');
-    const octHtml = (p.octavos||[]).filter(Boolean).map(t=>`<div class="pred-row"><span class="pred-icon">🎯</span><span class="pred-key">A cuartos</span><span class="pred-val">${t}</span></div>`).join('');
-    const qfHtml = (p.cuartos||[]).filter(Boolean).map(t=>`<div class="pred-row"><span class="pred-icon">🎯</span><span class="pred-key">A semis</span><span class="pred-val">${t}</span></div>`).join('');
-    div.innerHTML = `<div class="pred-card-top" style="background:${color}"></div><div class="pred-name" style="color:${color}">${p.name}${isYou?' <span class="badge-you">VOS</span>':''}</div><div class="pred-section">GRUPOS</div>${grpHtml}<div class="pred-section">OCTAVOS</div>${octHtml}<div class="pred-section">CUARTOS</div>${qfHtml}<div class="pred-section">FINAL</div><div class="pred-row"><span class="pred-icon">🥇</span><span class="pred-key">Campeón</span><span class="pred-val">${p.champion||'—'}</span></div><div class="pred-row"><span class="pred-icon">⚽</span><span class="pred-key">Goleador</span><span class="pred-val">${p.scorer||'—'}</span></div><div class="pred-row"><span class="pred-icon">🇦🇷</span><span class="pred-key">Arg gana</span><span class="pred-val">${p.argWins !== undefined ? p.argWins+' partidos' : '—'}</span></div>`;
-    grid.appendChild(div);
-    i++;
-  });
-}
 
-function listenRanking() {
-  onSnapshot(collection(db, 'scores'), (snapshot) => {
-    const scores = [];
-    snapshot.forEach(docSnap => {
-      scores.push({ id: docSnap.id, ...docSnap.data() });
+  // Armar llaves de partidos
+  const pares = [];
+  for (let i = 0; i < equiposDisponibles.length; i += 2) {
+    if (equiposDisponibles[i+1]) {
+      pares.push([equiposDisponibles[i], equiposDisponibles[i+1]]);
+    }
+  }
+
+  let html = '';
+  if (cerrado) html += '<div class="alert alert-error">⏰ Esta fase ya cerró.</div>';
+  if (config.deadline) {
+    const d = new Date(config.deadline);
+    html += `<div class="alert alert-info">⏱ Cierra: ${d.toLocaleDateString('es-AR')} ${d.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'})}hs (Argentina)</div>`;
+  }
+
+  html += '<div class="grupos-grid">';
+  pares.forEach((par, idx) => {
+    const key = fc.prefix + idx;
+    html += `
+      <div class="grupo-card">
+        <h4>LLAVE ${idx + 1}</h4>
+        ${par.map(e => {
+          const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+          const sel = predictions[key] === e;
+          return `<button class="equipo-btn ${sel ? 'selected' : ''}"
+            onclick="${cerrado ? '' : `selectFasePick('${key}', '${e}', this)`}"
+            ${cerrado ? 'style="cursor:default"' : ''}>
+            <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+          </button>`;
+        }).join('')}
+      </div>`;
+  });
+  html += '</div>';
+
+  if (!cerrado) {
+    html += `<div class="mt24 flex-gap">
+      <button class="btn-accion" onclick="guardarFase('${fase}')">GUARDAR</button>
+    </div>`;
+  }
+  html += `<div id="${fase}-msg" class="mt16"></div>`;
+
+  // Para semis agregar campeón y finalista
+  if (fase === 'semis') {
+    const semifinalistas = equiposDisponibles;
+    html += `<hr class="divider">
+    <div class="card">
+      <div class="card-titulo">🏆 Final — Campeón <span class="fase-badge">15 PTS</span></div>
+      <div class="grupos-grid">`;
+    semifinalistas.forEach(e => {
+      const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+      const sel = predictions['campeon'] === e;
+      html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
+        onclick="${cerrado ? '' : `selectFasePick('campeon', '${e}', this)`}"
+        ${cerrado ? 'style="cursor:default"' : ''}>
+        <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+      </button>`;
     });
-    scores.sort((a,b) => (b.total||0) - (a.total||0));
-    renderRanking(scores);
+    html += '</div></div>';
+
+    html += `<div class="card">
+      <div class="card-titulo">🥈 Finalista <span class="fase-badge">8 PTS</span></div>
+      <div class="grupos-grid">`;
+    semifinalistas.forEach(e => {
+      const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+      const sel = predictions['finalista'] === e;
+      html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
+        onclick="${cerrado ? '' : `selectFasePick('finalista', '${e}', this)`}"
+        ${cerrado ? 'style="cursor:default"' : ''}>
+        <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+      </button>`;
+    });
+    html += '</div></div>';
+  }
+
+  content.innerHTML = html;
+}
+
+function selectFasePick(key, equipo, btn) {
+  predictions[key] = equipo;
+  const card = btn.closest('.grupo-card, .card');
+  if (card) {
+    card.querySelectorAll('.equipo-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.textContent = b.textContent.replace(' ✓', '');
+    });
+  }
+  btn.classList.add('selected');
+  if (!btn.textContent.includes(' ✓')) btn.textContent += ' ✓';
+}
+
+async function guardarFase(fase) {
+  try {
+    await db.collection('predictions').doc(userId).set(predictions, { merge: true });
+    const msgEl = document.getElementById(fase + '-msg');
+    if (msgEl) msgEl.innerHTML = '<div class="alert alert-ok">✅ Guardado correctamente.</div>';
+  } catch(e) {
+    const msgEl = document.getElementById(fase + '-msg');
+    if (msgEl) msgEl.innerHTML = `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// ESPECIALES
+// ============================================================
+function selectVictorias(n) {
+  if (!gruposAbiertos()) return;
+  predictions['victorias_arg'] = n;
+  [0,1,2,3].forEach(i => {
+    document.getElementById('vic-' + i).classList.toggle('selected', i === n);
   });
 }
 
-function renderRanking(scores) {
-  const podium = document.getElementById('podium');
-  const rankList = document.getElementById('rank-list');
-  if (!podium || !rankList) return;
-  podium.innerHTML = ''; rankList.innerHTML = '';
-  if (scores.length === 0) {
-    document.getElementById('no-ranking').style.display = 'block';
+function renderEspeciales() {
+  const sel = predictions['victorias_arg'];
+  if (sel !== undefined) {
+    document.getElementById('vic-' + sel).classList.add('selected');
+  }
+
+  const finalAbierta = faseConfig.especiales_final.abierta;
+  const content = document.getElementById('final-especiales-content');
+
+  if (!finalAbierta) {
+    content.innerHTML = `
+      <div class="fase-locked" style="padding: 20px 0;">
+        <div class="icono" style="font-size:32px;">🔒</div>
+        <h3 style="font-size:20px;">DISPONIBLE ANTES DE LA FINAL</h3>
+        <p style="font-size:13px;">Goleador, Mejor Arquero y Sorpresa del torneo se habilitan justo antes de la gran final.</p>
+      </div>`;
     return;
   }
-  document.getElementById('no-ranking').style.display = 'none';
-  const order = [scores[1], scores[0], scores[2]].filter(Boolean);
-  const heights = [75,108,55];
-  const medals = ['🥈','🥇','🥉'];
-  const colors = ['#C0C0C0','#F5C518','#CD7F32'];
-  order.forEach((p,i) => {
-    const pl = document.createElement('div');
-    pl.className = 'podium-place';
-    pl.innerHTML = `<div class="podium-avatar" style="background:${colors[i]}">${(p.name||'?').slice(0,2).toUpperCase()}</div><div class="podium-name">${p.name||'?'}</div><div class="podium-score" style="color:${colors[i]}">${p.total||0} pts</div><div class="podium-block" style="height:${heights[i]}px;background:${colors[i]}22;border:1px solid ${colors[i]}55"><div style="font-size:20px">${medals[i]}</div></div>`;
-    podium.appendChild(pl);
+
+  const cerrado = !adminMode && faseConfig.especiales_final.deadline &&
+    Date.now() > faseConfig.especiales_final.deadline;
+
+  content.innerHTML = `
+    <p style="color: var(--gris); font-size: 14px; margin-bottom: 14px;">
+      Completá tus picks antes de la final del 19 de julio.
+    </p>
+
+    <div class="admin-resultado-row">
+      <label style="color: var(--celeste-claro);">⚽ Goleador del torneo <span class="puntos-info">(10 pts)</span></label>
+    </div>
+    <input type="text" class="admin-input" id="input-goleador"
+      value="${predictions['goleador'] || ''}"
+      placeholder="Ej: Lautaro Martínez"
+      ${cerrado ? 'disabled' : ''} style="margin-bottom: 14px; width: 100%; max-width: 340px;" />
+
+    <div class="admin-resultado-row">
+      <label style="color: var(--celeste-claro);">🧤 Mejor arquero <span class="puntos-info">(8 pts)</span></label>
+    </div>
+    <input type="text" class="admin-input" id="input-arquero"
+      value="${predictions['arquero'] || ''}"
+      placeholder="Ej: Dibu Martínez"
+      ${cerrado ? 'disabled' : ''} style="margin-bottom: 14px; width: 100%; max-width: 340px;" />
+
+    <div class="admin-resultado-row">
+      <label style="color: var(--celeste-claro);">🌟 Sorpresa del torneo <span class="puntos-info">(7 pts)</span></label>
+    </div>
+    <input type="text" class="admin-input" id="input-sorpresa"
+      value="${predictions['sorpresa'] || ''}"
+      placeholder="Ej: Marruecos"
+      ${cerrado ? 'disabled' : ''} style="width: 100%; max-width: 340px;" />
+  `;
+}
+
+async function guardarEspeciales() {
+  if (!gruposAbiertos() && predictions['victorias_arg'] === undefined) {
+    // solo permitir especiales finales si esa fase está abierta
+  }
+  const goleador = document.getElementById('input-goleador');
+  const arquero = document.getElementById('input-arquero');
+  const sorpresa = document.getElementById('input-sorpresa');
+
+  if (goleador) predictions['goleador'] = goleador.value.trim();
+  if (arquero) predictions['arquero'] = arquero.value.trim();
+  if (sorpresa) predictions['sorpresa'] = sorpresa.value.trim();
+
+  try {
+    await db.collection('predictions').doc(userId).set(predictions, { merge: true });
+    document.getElementById('especiales-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Especiales guardados correctamente.</div>';
+  } catch(e) {
+    document.getElementById('especiales-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// RANKING
+// ============================================================
+async function cargarRanking() {
+  try {
+    const snap = await db.collection('scores').orderBy('total', 'desc').get();
+    const content = document.getElementById('ranking-content');
+
+    if (snap.empty) {
+      content.innerHTML = '<div class="alert alert-info">Los puntajes se calcularán cuando se carguen los primeros resultados.</div>';
+      return;
+    }
+
+    let html = '<table class="ranking-tabla"><thead><tr><th>Pos</th><th>Participante</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
+    snap.docs.forEach((doc, i) => {
+      const d = doc.data();
+      const posClass = i === 0 ? 'oro' : i === 1 ? 'plata' : i === 2 ? 'bronce' : '';
+      const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+      html += `<tr>
+        <td class="ranking-pos ${posClass}">${medalla || (i+1)}</td>
+        <td class="ranking-nombre">${d.nombre || 'Anónimo'}</td>
+        <td class="ranking-pts">${d.total || 0}<span class="pts-label">pts</span></td>
+      </tr>`;
+    });
+    html += '</tbody></table>';
+    content.innerHTML = html;
+  } catch(e) {
+    document.getElementById('ranking-content').innerHTML =
+      `<div class="alert alert-error">Error cargando ranking: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// PRONÓSTICOS PÚBLICOS
+// ============================================================
+async function cargarPronosticos() {
+  try {
+    const [predsSnap, usersSnap] = await Promise.all([
+      db.collection('predictions').get(),
+      db.collection('users').get()
+    ]);
+
+    const usuarios = {};
+    usersSnap.docs.forEach(d => { usuarios[d.id] = d.data().nombre; });
+
+    const content = document.getElementById('pronosticos-content');
+    if (predsSnap.empty) {
+      content.innerHTML = '<div class="alert alert-info">Aún no hay pronósticos cargados.</div>';
+      return;
+    }
+
+    let html = '';
+    predsSnap.docs.forEach(doc => {
+      const d = doc.data();
+      const nombre = usuarios[doc.id] || 'Anónimo';
+      const grupos = GRUPOS.map(g => {
+        const pick = d['grupo_' + g.id];
+        return pick ? `<div class="pick-item"><span>Grupo ${g.id}</span><span>${pick}</span></div>` : '';
+      }).join('');
+      const victorias = d.victorias_arg !== undefined
+        ? `<div class="pick-item"><span>🇦🇷 Victorias ARG</span><span>${d.victorias_arg}</span></div>` : '';
+      const campeon = d.campeon ? `<div class="pick-item"><span>🏆 Campeón</span><span>${d.campeon}</span></div>` : '';
+      const finalista = d.finalista ? `<div class="pick-item"><span>🥈 Finalista</span><span>${d.finalista}</span></div>` : '';
+      const goleador = d.goleador ? `<div class="pick-item"><span>⚽ Goleador</span><span>${d.goleador}</span></div>` : '';
+      const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
+      const sorpresa = d.sorpresa ? `<div class="pick-item"><span>🌟 Sorpresa</span><span>${d.sorpresa}</span></div>` : '';
+
+      if (!grupos && !victorias && !campeon) return;
+      html += `<div class="pronosticos-user">
+        <h4>${nombre}</h4>
+        ${grupos}${victorias}${campeon}${finalista}${goleador}${arquero}${sorpresa}
+      </div>`;
+    });
+    content.innerHTML = html || '<div class="alert alert-info">Aún no hay pronósticos.</div>';
+  } catch(e) {
+    document.getElementById('pronosticos-content').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// ADMIN
+// ============================================================
+function renderAdmin() {
+  renderAdminFasesControl();
+  renderAdminResultadosGrupos();
+  renderAdminResultadosOctavos();
+  renderAdminResultadosCuartos();
+  renderAdminResultadosFinal();
+  renderAdminEspeciales();
+}
+
+function renderAdminFasesControl() {
+  const fases = [
+    { id: 'octavos', label: 'Octavos de Final' },
+    { id: 'cuartos', label: 'Cuartos de Final' },
+    { id: 'semis', label: 'Semis y Final' },
+    { id: 'especiales_final', label: 'Especiales de la Final' }
+  ];
+
+  document.getElementById('admin-fases-control').innerHTML = fases.map(f => {
+    const abierta = faseConfig[f.id] && faseConfig[f.id].abierta;
+    const deadlineVal = faseConfig[f.id] && faseConfig[f.id].deadline
+      ? new Date(faseConfig[f.id].deadline).toISOString().slice(0, 16) : '';
+    return `
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
+        <span style="min-width:160px; font-size:14px; color: var(--celeste-claro);">${f.label}</span>
+        <span class="fase-status ${abierta ? 'abierta' : 'cerrada'}">${abierta ? '● Abierta' : '● Cerrada'}</span>
+        <button class="${abierta ? 'fase-lock-btn' : 'fase-unlock-btn'}"
+          onclick="toggleFase('${f.id}', ${!abierta})">
+          ${abierta ? 'Cerrar fase' : 'Abrir fase'}
+        </button>
+        <input type="datetime-local" class="admin-input" id="deadline-${f.id}"
+          value="${deadlineVal}" style="max-width:200px;"
+          placeholder="Cierre automático" />
+        <button class="btn-secundario" onclick="guardarDeadline('${f.id}')">Guardar fecha cierre</button>
+      </div>`;
+  }).join('');
+}
+
+async function toggleFase(faseId, abrir) {
+  faseConfig[faseId] = faseConfig[faseId] || {};
+  faseConfig[faseId].abierta = abrir;
+  try {
+    await db.collection('config').doc('fases').set(faseConfig, { merge: true });
+    updateNavLocks();
+    renderAdminFasesControl();
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Fase "${faseId}" ${abrir ? 'abierta' : 'cerrada'}.</div>`;
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+async function guardarDeadline(faseId) {
+  const val = document.getElementById('deadline-' + faseId).value;
+  if (!val) return;
+  // Convertir hora local Argentina (UTC-3) a timestamp
+  const dt = new Date(val);
+  const argOffset = -3 * 60;
+  const localOffset = dt.getTimezoneOffset();
+  const corrected = new Date(dt.getTime() + (localOffset - argOffset) * 60000);
+  faseConfig[faseId] = faseConfig[faseId] || {};
+  faseConfig[faseId].deadline = corrected.getTime();
+  try {
+    await db.collection('config').doc('fases').set(faseConfig, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Fecha de cierre guardada.</div>';
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function renderAdminResultadosGrupos() {
+  document.getElementById('admin-resultados-grupos').innerHTML =
+    GRUPOS.map(g => `
+      <div class="admin-resultado-row">
+        <label>Ganador Grupo ${g.id}:</label>
+        <select class="admin-select" id="res-grupo-${g.id}">
+          <option value="">-- No cargado --</option>
+          ${g.equipos.map(e =>
+            `<option value="${e.nombre}" ${resultados['grupo_' + g.id] === e.nombre ? 'selected' : ''}>${e.flag} ${e.nombre}</option>`
+          ).join('')}
+        </select>
+      </div>`
+    ).join('') +
+    `<div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarResultadosGrupos()">GUARDAR RESULTADOS GRUPOS</button>
+    </div>`;
+}
+
+async function guardarResultadosGrupos() {
+  GRUPOS.forEach(g => {
+    const val = document.getElementById('res-grupo-' + g.id).value;
+    if (val) resultados['grupo_' + g.id] = val;
   });
-  scores.slice(3).forEach((p,i) => {
-    const row = document.createElement('div');
-    row.className = 'rank-row';
-    const isYou = p.id === currentUserId;
-    row.innerHTML = `<div class="rank-pos">${i+4}</div><div class="rank-name">${p.name||'?'}${isYou?' <span class="badge-you">VOS</span>':''}${i===0?' <span class="badge-hot">🔥 EN RACHA</span>':''}</div><div class="rank-pts">${p.total||0} pts</div>`;
-    rankList.appendChild(row);
+  try {
+    await db.collection('config').doc('resultados').set(resultados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Resultados de grupos guardados.</div>';
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function renderAdminResultadosOctavos() {
+  const equipos = equiposClasificados.octavos || [];
+  document.getElementById('admin-resultados-octavos').innerHTML = `
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">
+      Ingresá los 32 clasificados en orden (se forman 16 llaves en pares: 1vs2, 3vs4, etc.)
+    </p>
+    ${Array.from({length: 32}, (_, i) => `
+      <div class="admin-resultado-row">
+        <label>Clasificado ${i+1}:</label>
+        <input type="text" class="admin-input" id="clas-oct-${i}"
+          value="${equipos[i] || ''}" placeholder="Nombre del equipo" />
+      </div>`
+    ).join('')}
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarClasificados('octavos', 32)">GUARDAR CLASIFICADOS OCTAVOS</button>
+    </div>`;
+}
+
+function renderAdminResultadosCuartos() {
+  const equipos = equiposClasificados.cuartos || [];
+  document.getElementById('admin-resultados-cuartos').innerHTML = `
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">16 equipos que pasan a cuartos</p>
+    ${Array.from({length: 16}, (_, i) => `
+      <div class="admin-resultado-row">
+        <label>Clasificado ${i+1}:</label>
+        <input type="text" class="admin-input" id="clas-cua-${i}"
+          value="${equipos[i] || ''}" placeholder="Nombre del equipo" />
+      </div>`
+    ).join('')}
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarClasificados('cuartos', 16)">GUARDAR CLASIFICADOS CUARTOS</button>
+    </div>`;
+}
+
+function renderAdminResultadosFinal() {
+  const equipos = equiposClasificados.semis || [];
+  const resCampeon = resultados['campeon'] || '';
+  const resFinalista = resultados['finalista'] || '';
+  document.getElementById('admin-resultados-final').innerHTML = `
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">8 equipos semifinalistas</p>
+    ${Array.from({length: 8}, (_, i) => `
+      <div class="admin-resultado-row">
+        <label>Semifinalista ${i+1}:</label>
+        <input type="text" class="admin-input" id="clas-sem-${i}"
+          value="${equipos[i] || ''}" placeholder="Nombre del equipo" />
+      </div>`
+    ).join('')}
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarClasificados('semis', 8)">GUARDAR SEMIFINALISTAS</button>
+    </div>
+    <hr class="divider">
+    <div class="admin-resultado-row">
+      <label>🏆 Campeón real:</label>
+      <input type="text" class="admin-input" id="res-campeon" value="${resCampeon}" placeholder="Campeón" />
+    </div>
+    <div class="admin-resultado-row">
+      <label>🥈 Finalista real:</label>
+      <input type="text" class="admin-input" id="res-finalista" value="${resFinalista}" placeholder="Finalista" />
+    </div>
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarResultadosFinal()">GUARDAR FINAL</button>
+    </div>`;
+}
+
+async function guardarClasificados(fase, cantidad) {
+  const prefix = fase === 'octavos' ? 'oct' : fase === 'cuartos' ? 'cua' : 'sem';
+  const lista = [];
+  for (let i = 0; i < cantidad; i++) {
+    const val = document.getElementById(`clas-${prefix}-${i}`).value.trim();
+    if (val) lista.push(val);
+  }
+  equiposClasificados[fase] = lista;
+  try {
+    await db.collection('config').doc('clasificados').set(equiposClasificados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Clasificados de ${fase} guardados (${lista.length} equipos).</div>`;
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+async function guardarResultadosFinal() {
+  resultados['campeon'] = document.getElementById('res-campeon').value.trim();
+  resultados['finalista'] = document.getElementById('res-finalista').value.trim();
+  try {
+    await db.collection('config').doc('resultados').set(resultados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Resultados de la final guardados.</div>';
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function renderAdminEspeciales() {
+  document.getElementById('admin-resultados-especiales').innerHTML = `
+    <div class="admin-resultado-row">
+      <label>⚽ Goleador real:</label>
+      <input type="text" class="admin-input" id="res-goleador" value="${resultados['goleador'] || ''}" placeholder="Nombre del goleador" />
+    </div>
+    <div class="admin-resultado-row">
+      <label>🧤 Mejor arquero real:</label>
+      <input type="text" class="admin-input" id="res-arquero" value="${resultados['arquero'] || ''}" placeholder="Nombre del arquero" />
+    </div>
+    <div class="admin-resultado-row">
+      <label>🌟 Sorpresa del torneo real:</label>
+      <input type="text" class="admin-input" id="res-sorpresa" value="${resultados['sorpresa'] || ''}" placeholder="País sorpresa" />
+    </div>
+    <div class="admin-resultado-row">
+      <label>🇦🇷 Victorias ARG reales:</label>
+      <select class="admin-select" id="res-victorias">
+        ${[0,1,2,3].map(n => `<option value="${n}" ${resultados['victorias_arg'] == n ? 'selected' : ''}>${n}</option>`).join('')}
+      </select>
+    </div>
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarResultadosEspeciales()">GUARDAR ESPECIALES</button>
+    </div>`;
+}
+
+async function guardarResultadosEspeciales() {
+  resultados['goleador'] = document.getElementById('res-goleador').value.trim();
+  resultados['arquero'] = document.getElementById('res-arquero').value.trim();
+  resultados['sorpresa'] = document.getElementById('res-sorpresa').value.trim();
+  resultados['victorias_arg'] = parseInt(document.getElementById('res-victorias').value);
+  try {
+    await db.collection('config').doc('resultados').set(resultados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-ok">✅ Resultados especiales guardados.</div>';
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// CALCULAR PUNTAJES
+// ============================================================
+async function calcularPuntajes() {
+  document.getElementById('admin-msg').innerHTML =
+    '<div class="alert alert-info">⏳ Calculando puntajes...</div>';
+  try {
+    const [predsSnap, usersSnap] = await Promise.all([
+      db.collection('predictions').get(),
+      db.collection('users').get()
+    ]);
+
+    const usuarios = {};
+    usersSnap.docs.forEach(d => { usuarios[d.id] = d.data().nombre; });
+
+    const batch = db.batch();
+
+    predsSnap.docs.forEach(doc => {
+      const p = doc.data();
+      let total = 0;
+
+      // Grupos (3 pts)
+      GRUPOS.forEach(g => {
+        if (p['grupo_' + g.id] && resultados['grupo_' + g.id] &&
+            p['grupo_' + g.id] === resultados['grupo_' + g.id]) total += 3;
+      });
+
+      // Octavos (4 pts)
+      for (let i = 0; i < 16; i++) {
+        const key = 'oct_' + i;
+        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 4;
+      }
+
+      // Cuartos (6 pts)
+      for (let i = 0; i < 8; i++) {
+        const key = 'cua_' + i;
+        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 6;
+      }
+
+      // Semis (8 pts)
+      for (let i = 0; i < 4; i++) {
+        const key = 'sem_' + i;
+        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 8;
+      }
+
+      // Campeón (15 pts) y Finalista (8 pts)
+      if (p.campeon && resultados.campeon && p.campeon === resultados.campeon) total += 15;
+      if (p.finalista && resultados.finalista && p.finalista === resultados.finalista) total += 8;
+
+      // Victorias Argentina (5 pts)
+      if (p.victorias_arg !== undefined && resultados.victorias_arg !== undefined &&
+          p.victorias_arg == resultados.victorias_arg) total += 5;
+
+      // Goleador (10 pts)
+      if (p.goleador && resultados.goleador &&
+          p.goleador.toLowerCase().trim() === resultados.goleador.toLowerCase().trim()) total += 10;
+
+      // Arquero (8 pts)
+      if (p.arquero && resultados.arquero &&
+          p.arquero.toLowerCase().trim() === resultados.arquero.toLowerCase().trim()) total += 8;
+
+      // Sorpresa (7 pts)
+      if (p.sorpresa && resultados.sorpresa &&
+          p.sorpresa.toLowerCase().trim() === resultados.sorpresa.toLowerCase().trim()) total += 7;
+
+      const scoreRef = db.collection('scores').doc(doc.id);
+      batch.set(scoreRef, {
+        nombre: usuarios[doc.id] || 'Anónimo',
+        total,
+        updatedAt: new Date().toISOString()
+      });
+    });
+
+    await batch.commit();
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Puntajes recalculados para ${predsSnap.size} participantes.</div>`;
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// ============================================================
+// INIT
+// ============================================================
+document.getElementById('input-nombre') &&
+  document.getElementById('input-nombre').addEventListener('keypress', e => {
+    if (e.key === 'Enter') guardarNombre();
   });
-}
 
-// ADMIN FUNCTIONS
-window.adminLoadGroup = async function() {
-  const group = document.getElementById('r-group').value;
-  const winner = document.getElementById('r-winner').value;
-  if (!group || !winner) { alert('Elegí grupo y ganador'); return; }
-  const snapshot = await getDocs(collection(db, 'predictions'));
-  const updates = [];
-  snapshot.forEach(docSnap => {
-    const p = docSnap.data();
-    if (p.groups && p.groups[group] === winner) {
-      updates.push({ id: docSnap.id, name: p.name, pts: 3 });
-    }
-  });
-  for (const u of updates) {
-    const scoreDoc = await getDoc(doc(db, 'scores', u.id));
-    const current = scoreDoc.exists() ? (scoreDoc.data().total || 0) : 0;
-    await setDoc(doc(db, 'scores', u.id), { name: u.name, total: current + u.pts }, { merge: true });
-  }
-  showUpdateBanner(`Grupo ${group}: ${winner.split(' ')[0]} ganó · +3 pts a ${updates.length} persona(s)`);
-  logAdmin(`Grupo ${group}: ${winner}`);
-  launchConfetti();
-};
-
-window.adminLoadOctavos = async function() {
-  const clasificados = [];
-  for (let i = 1; i <= 8; i++) { const v = document.getElementById('roct-'+i)?.value; if(v) clasificados.push(v); }
-  if (!clasificados.length) { alert('Cargá al menos un clasificado'); return; }
-  const snapshot = await getDocs(collection(db, 'predictions'));
-  for (const docSnap of snapshot.docs) {
-    const p = docSnap.data();
-    let pts = 0;
-    (p.octavos||[]).forEach(pick => { if(clasificados.includes(pick)) pts += 2; });
-    if (pts > 0) {
-      const scoreDoc = await getDoc(doc(db, 'scores', docSnap.id));
-      const current = scoreDoc.exists() ? (scoreDoc.data().total || 0) : 0;
-      await setDoc(doc(db, 'scores', docSnap.id), { name: p.name, total: current + pts }, { merge: true });
-    }
-  }
-  showUpdateBanner(`Octavos cargados: ${clasificados.length} clasificados · +2 pts por acierto`);
-  logAdmin(`Octavos: ${clasificados.map(t=>t.split(' ')[0]).join(', ')}`);
-  launchConfetti();
-};
-
-window.adminLoadCuartos = async function() {
-  const semis = [];
-  for (let i = 1; i <= 4; i++) { const v = document.getElementById('rqf-'+i)?.value; if(v) semis.push(v); }
-  if (!semis.length) { alert('Cargá al menos un semifinalista'); return; }
-  const snapshot = await getDocs(collection(db, 'predictions'));
-  for (const docSnap of snapshot.docs) {
-    const p = docSnap.data();
-    let pts = 0;
-    (p.cuartos||[]).forEach(pick => { if(semis.includes(pick)) pts += 3; });
-    if (pts > 0) {
-      const scoreDoc = await getDoc(doc(db, 'scores', docSnap.id));
-      const current = scoreDoc.exists() ? (scoreDoc.data().total || 0) : 0;
-      await setDoc(doc(db, 'scores', docSnap.id), { name: p.name, total: current + pts }, { merge: true });
-    }
-  }
-  showUpdateBanner(`Cuartos cargados: ${semis.length} semifinalistas · +3 pts por acierto`);
-  logAdmin(`Cuartos: ${semis.map(t=>t.split(' ')[0]).join(', ')}`);
-  launchConfetti();
-};
-
-window.adminLoadFinal = async function() {
-  const champ = document.getElementById('r-champion').value;
-  const argw = document.getElementById('r-argwins').value;
-  const scorer = document.getElementById('r-scorer-admin').value;
-  if (!champ && !argw && !scorer) { alert('Cargá al menos un resultado'); return; }
-  const snapshot = await getDocs(collection(db, 'predictions'));
-  for (const docSnap of snapshot.docs) {
-    const p = docSnap.data();
-    let pts = 0;
-    if (champ && p.champion === champ) pts += 15;
-    if (argw && p.argWins === parseInt(argw)) pts += 5;
-    if (scorer && p.scorer && scorer.includes(p.scorer.split(' ')[0])) pts += 10;
-    if (pts > 0) {
-      const scoreDoc = await getDoc(doc(db, 'scores', docSnap.id));
-      const current = scoreDoc.exists() ? (scoreDoc.data().total || 0) : 0;
-      await setDoc(doc(db, 'scores', docSnap.id), { name: p.name, total: current + pts }, { merge: true });
-    }
-  }
-  showUpdateBanner('Resultados finales cargados. Ranking actualizado.');
-  logAdmin(`Campeón: ${champ||'—'} · Goleador: ${scorer||'—'} · Arg: ${argw||'—'}`);
-  launchConfetti();
-};
-
-function showUpdateBanner(msg) {
-  const b = document.getElementById('update-banner');
-  if (!b) return;
-  b.textContent = '🔥 ' + msg;
-  b.classList.add('show');
-  setTimeout(() => b.classList.remove('show'), 6000);
-}
-
-function logAdmin(txt) {
-  const log = document.getElementById('admin-log');
-  if (!log) return;
-  log.innerHTML = `<span style="color:var(--green)">✅ ${new Date().toLocaleTimeString('es-AR')}</span> — ${txt}<br>` + log.innerHTML;
-}
-
-function launchConfetti() {
-  const wrap = document.getElementById('confetti');
-  wrap.innerHTML = '';
-  const cols = ['#75AADB','#FFFFFF','#F5C518','#00E676','#FF6B9D'];
-  for (let i = 0; i < 70; i++) {
-    const p = document.createElement('div');
-    p.className = 'confetti-piece';
-    p.style.left = Math.random()*100+'vw';
-    p.style.background = cols[Math.floor(Math.random()*cols.length)];
-    const sz = (7+Math.random()*9)+'px';
-    p.style.width = sz; p.style.height = sz;
-    p.style.animationDuration = (2.5+Math.random()*2)+'s';
-    p.style.animationDelay = (Math.random()*0.8)+'s';
-    p.style.borderRadius = Math.random()>0.5?'50%':'2px';
-    wrap.appendChild(p);
-    setTimeout(() => p.remove(), 5000);
-  }
-}
 </script>
 </body>
 </html>
