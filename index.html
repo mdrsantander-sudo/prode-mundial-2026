@@ -506,6 +506,16 @@ const firebaseConfig = {
 const ADMIN_KEY = "prodemundial2026";
 const TOURNAMENT_START = new Date('2026-06-11T16:00:00-06:00');
 
+// Check admin IMMEDIATELY before anything loads
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('key') === ADMIN_KEY) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-admin').classList.add('active');
+  }
+})();
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
