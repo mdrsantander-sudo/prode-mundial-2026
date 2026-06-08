@@ -328,12 +328,14 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-
         <select class="field-select" id="p-scorer" style="margin-top:8px;"><option value="">Elegí...</option></select>
       </div>
       <div class="phase-card">
-        <div class="phase-card-label">🇦🇷 ¿CUÁNTOS GANA ARGENTINA EN GRUPOS? <span class="pts-badge">5 pts</span></div>
+        <div class="phase-card-label">🇦🇷 ¿CUÁNTOS PARTIDOS GANA ARGENTINA EN GRUPOS? <span class="pts-badge">5 pts</span></div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Argentina juega 3 partidos en grupos (vs Argelia, Austria y Jordania). ¿Cuántos gana?</div>
+        <div style="font-size:10px;color:var(--muted);margin-bottom:8px;">Argentina juega 3 partidos en grupos: vs Argelia, Austria y Jordania. Elegí cuántos gana.</div>
         <div class="wins-grid">
-          <button class="wins-btn" onclick="selectWins(0)">0<br><span style="font-size:8px">😬</span></button>
-          <button class="wins-btn" onclick="selectWins(1)">1<br><span style="font-size:8px">😐</span></button>
-          <button class="wins-btn" onclick="selectWins(2)">2<br><span style="font-size:8px">😊</span></button>
-          <button class="wins-btn" onclick="selectWins(3)">3<br><span style="font-size:8px">🔥</span></button>
+          <button class="wins-btn" onclick="selectWins(0)">0<br><span style="font-size:10px">😬 Cero</span></button>
+          <button class="wins-btn" onclick="selectWins(1)">1<br><span style="font-size:10px">😐 Una</span></button>
+          <button class="wins-btn" onclick="selectWins(2)">2<br><span style="font-size:10px">😊 Dos</span></button>
+          <button class="wins-btn" onclick="selectWins(3)">3<br><span style="font-size:10px">🔥 Tres</span></button>
         </div>
       </div>
       <div class="phase-card">
@@ -358,7 +360,7 @@ body{background:var(--bg);color:var(--white);font-family:'Inter',sans-serif;min-
     <div id="step-7" style="display:none">
       <div class="confirm-card">
         <div style="font-size:48px;margin-bottom:8px;">🌍</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green);letter-spacing:2px;">¡LISTO, SANTANDER!</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--green);letter-spacing:2px;" id="confirm-title">¡LISTO!</div>
         <div style="color:var(--muted);font-size:11px;margin:7px 0 0;line-height:1.7;">Pronóstico guardado en Firebase. Se bloquea el <strong>11 de junio</strong> cuando arranca el Mundial.</div>
         <div style="margin-top:14px;display:flex;flex-direction:column;gap:7px;">
           <button class="btn btn-celeste" onclick="showScreen('all')">Ver todos los pronósticos 👀</button>
@@ -922,7 +924,7 @@ window.submitPrediction = async function() {
   };
   await setDoc(doc(db, 'predictions', currentUserId), prediction);
   await setDoc(doc(db, 'scores', currentUserId), { name: currentUser, total: 0, breakdown: {} }, { merge: true });
-  goStep(7);
+  goStep(7); document.getElementById('confirm-title').textContent = '¡LISTO, ' + (currentUser||'CAMPEÓN').toUpperCase() + '!';
   launchConfetti();
 };
 
