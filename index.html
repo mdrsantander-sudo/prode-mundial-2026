@@ -257,7 +257,7 @@
 
   /* ======= INGRESO NOMBRE ======= */
   #screen-nombre {
-    display: flex; flex-direction: column;
+    display: none; flex-direction: column;
     align-items: center; justify-content: center;
     min-height: 100vh; padding: 40px 20px;
   }
@@ -575,6 +575,7 @@
 <nav id="app-nav">
   <button onclick="showScreen('portada')" id="nav-portada" class="active">Inicio</button>
   <button onclick="showScreen('grupos')" id="nav-grupos">Fase Grupos</button>
+  <button onclick="showScreen('dieciseis')" id="nav-dieciseis" class="locked">16avos</button>
   <button onclick="showScreen('octavos')" id="nav-octavos" class="locked">Octavos</button>
   <button onclick="showScreen('cuartos')" id="nav-cuartos" class="locked">Cuartos</button>
   <button onclick="showScreen('semis')" id="nav-semis" class="locked">Semis y Final</button>
@@ -630,6 +631,17 @@
     <p style="text-align:center; font-size:11px; color: var(--gris); margin-top:8px;">Tocá para ver más →</p>
   </div>
 
+  <!-- RANKING EN PORTADA (visible desde fase 2) -->
+  <div id="portada-ranking" style="display:none; margin: 0 20px 20px;">
+    <div style="font-size:11px; letter-spacing:3px; color:var(--gris); text-transform:uppercase; text-align:center; margin-bottom:12px;">🏆 Ranking actual</div>
+    <div id="portada-ranking-tabla" style="background:#071428; border:1px solid #1A2A4A; border-radius:8px; overflow:hidden;">
+      <div style="text-align:center; color:var(--gris); padding:20px; font-size:14px;">Cargando...</div>
+    </div>
+    <div style="text-align:center; margin-top:8px;">
+      <button class="btn-secundario" onclick="showScreen('ranking')" style="font-size:12px; padding:6px 16px;">Ver ranking completo</button>
+    </div>
+  </div>
+
   <div class="portada-cta" id="portada-cta">
     <button class="btn-principal" onclick="irAPronosticos()">HACER MIS PRONÓSTICOS</button>
     <p class="hint">📋 Solo Fase de Grupos por ahora — se cierra el 11 de junio 18hs (Argentina)</p>
@@ -637,7 +649,7 @@
 </div>
 
 <!-- ====== PANTALLA NOMBRE ====== -->
-<div id="screen-nombre" class="screen">
+<div id="screen-nombre" class="screen" style="display:none;">
   <div style="text-align:center;">
     <div style="font-size:60px; margin-bottom:16px;">⚽</div>
     <h2>¿QUIÉN SOS?</h2>
@@ -667,13 +679,34 @@
 
   <div class="grupos-grid" id="grupos-grid"></div>
 
+  <!-- Victorias Argentina al final de grupos -->
+  <div class="card" style="margin-top:24px; border-left: 4px solid var(--dorado);">
+    <div class="card-titulo">🇦🇷 ¿Cuántos partidos gana Argentina en grupos? <span class="fase-badge">5 PTS</span></div>
+    <p style="color: var(--gris); font-size: 14px; margin-bottom: 14px;">Argentina juega vs Argelia, Austria y Jordania.</p>
+    <div class="victorias-selector">
+      <button class="victoria-btn" onclick="selectVictorias(0)" id="vic-0">0</button>
+      <button class="victoria-btn" onclick="selectVictorias(1)" id="vic-1">1</button>
+      <button class="victoria-btn" onclick="selectVictorias(2)" id="vic-2">2</button>
+      <button class="victoria-btn" onclick="selectVictorias(3)" id="vic-3">3 ✓</button>
+    </div>
+  </div>
+
   <div class="mt24 flex-gap" id="grupos-acciones">
     <button class="btn-accion" onclick="guardarGrupos()">GUARDAR PRONÓSTICOS</button>
   </div>
   <div id="grupos-msg" class="mt16"></div>
   <div class="alert alert-info mt16" style="margin-top: 20px;">
-    ⏳ <strong>¿Y después?</strong> Cuando terminen los partidos de grupos (~27 de junio), vas a recibir el aviso para cargar tus pronósticos de Octavos de Final. ¡Guardá el link de la app!
+    ⏳ <strong>¿Y después?</strong> Cuando terminen los partidos de grupos (~27 de junio), se habilitan los 16avos de Final. Guardá el link — te va a llegar el aviso por el grupo familiar.
   </div>
+</div>
+
+<!-- ====== PANTALLA 16AVOS ====== -->
+<div id="screen-dieciseis" class="screen">
+  <div class="section-header">
+    <div class="section-title">16AVOS DE FINAL</div>
+    <span class="puntos-info">4 pts por acierto</span>
+  </div>
+  <div id="dieciseis-content"></div>
 </div>
 
 <!-- ====== PANTALLA OCTAVOS ====== -->
@@ -709,18 +742,7 @@
     <div class="section-title">ESPECIALES</div>
   </div>
 
-  <!-- Victorias Argentina (se cierra con grupos) -->
-  <div class="card">
-    <div class="card-titulo">🇦🇷 Victorias de Argentina en Grupos <span class="fase-badge">5 PTS</span></div>
-    <p style="color: var(--gris); font-size: 14px; margin-bottom: 14px;">Argentina juega vs Argelia, Austria y Jordania. ¿Cuántos partidos gana?</p>
-    <div class="victorias-selector">
-      <button class="victoria-btn" onclick="selectVictorias(0)" id="vic-0">0</button>
-      <button class="victoria-btn" onclick="selectVictorias(1)" id="vic-1">1</button>
-      <button class="victoria-btn" onclick="selectVictorias(2)" id="vic-2">2</button>
-      <button class="victoria-btn" onclick="selectVictorias(3)" id="vic-3">3 ✓</button>
-    </div>
-    <div id="victorias-estado" style="margin-top: 10px; font-size: 13px; color: var(--gris);"></div>
-  </div>
+
 
   <!-- Goleador, Arquero, Sorpresa (antes de la final) -->
   <div class="card" id="card-final-especiales">
@@ -772,6 +794,13 @@
     <h3>📋 RESULTADOS — FASE GRUPOS</h3>
     <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Ingresá los ganadores reales de cada grupo.</p>
     <div id="admin-resultados-grupos"></div>
+  </div>
+
+  <!-- Clasificados 16avos -->
+  <div class="admin-fase-card">
+    <h3>🔢 CLASIFICADOS — 16AVOS</h3>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Ingresá los 32 clasificados en orden (se forman 16 llaves: 1vs2, 3vs4, etc.)</p>
+    <div id="admin-clasificados-dieciseis"></div>
   </div>
 
   <!-- Resultados Octavos -->
@@ -941,6 +970,34 @@ let curiosidades = mezclarArray(CURIOSIDADES_RAW);
 let curIdx = 0;
 let curTimer = null;
 
+async function cargarPortadaRanking() {
+  const octAbierta = faseConfig && faseConfig.octavos && faseConfig.octavos.abierta;
+  const rankDiv = document.getElementById('portada-ranking');
+  if (!rankDiv) return;
+  if (!octAbierta) { rankDiv.style.display = 'none'; return; }
+  rankDiv.style.display = 'block';
+  try {
+    const snap = await db.collection('scores').orderBy('total', 'desc').limit(10).get();
+    const tabla = document.getElementById('portada-ranking-tabla');
+    if (snap.empty) {
+      tabla.innerHTML = '<div style="text-align:center;color:var(--gris);padding:16px;font-size:13px;">Aún sin puntajes cargados.</div>';
+      return;
+    }
+    let html = '';
+    snap.docs.forEach((doc, i) => {
+      const d = doc.data();
+      const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
+      const esYo = doc.id === userId ? 'background:rgba(117,170,219,0.08);' : '';
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #0D1E3A;${esYo}">
+        <span style="font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gris);min-width:28px;text-align:center;">${medalla || (i+1)}</span>
+        <span style="flex:1;font-size:15px;font-weight:${doc.id===userId?'700':'400'};color:${doc.id===userId?'var(--celeste)':'var(--blanco)'};">${d.nombre || 'Anónimo'}${doc.id===userId?' (vos)':''}</span>
+        <span style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--celeste);">${d.total||0}<span style="font-size:10px;color:var(--gris);"> pts</span></span>
+      </div>`;
+    });
+    tabla.innerHTML = html;
+  } catch(e) { console.error(e); }
+}
+
 function initCuriosidades() {
   const dots = document.getElementById('cur-dots');
   dots.innerHTML = curiosidades.map((_, i) =>
@@ -1005,6 +1062,7 @@ let userName = null;
 let predictions = {};
 let faseConfig = {
   grupos: { abierta: true, deadline: PRIMER_PARTIDO.getTime() },
+  dieciseis: { abierta: false, deadline: null },
   octavos: { abierta: false, deadline: null },
   cuartos: { abierta: false, deadline: null },
   semis: { abierta: false, deadline: null },
@@ -1013,6 +1071,7 @@ let faseConfig = {
 let resultados = {};
 let adminMode = false;
 let equiposClasificados = {
+  dieciseis: [],
   octavos: [],
   cuartos: [],
   semis: []
@@ -1112,6 +1171,7 @@ function mostrarApp() {
     renderEspeciales();
     updateNavLocks();
     showScreen('portada');
+    cargarPortadaRanking();
     // Actualizar boton CTA para usuario ya registrado
     document.getElementById('portada-cta').innerHTML = `
       <button class="btn-principal" onclick="showScreen('grupos')">HACER MIS PRONÓSTICOS</button>
@@ -1143,18 +1203,25 @@ function logout() {
 // ============================================================
 // NAVEGACION
 // ============================================================
-const screenIds = ['portada','nombre','grupos','octavos','cuartos','semis','especiales','ranking','pronosticos','admin'];
+const screenIds = ['portada','nombre','grupos','dieciseis','octavos','cuartos','semis','especiales','ranking','pronosticos','admin'];
 
 function showScreenDirect(id) {
   screenIds.forEach(s => {
     const el = document.getElementById('screen-' + s);
-    if (el) el.classList.remove('active');
+    if (el) {
+      el.classList.remove('active');
+      el.style.display = 'none';
+    }
   });
   const target = document.getElementById('screen-' + id);
-  if (target) target.classList.add('active');
+  if (target) {
+    target.style.display = id === 'nombre' ? 'flex' : 'block';
+    target.classList.add('active');
+  }
 }
 
 function showScreen(id) {
+  if (id === 'dieciseis' && !faseConfig.dieciseis.abierta && !adminMode) return;
   if (id === 'octavos' && !faseConfig.octavos.abierta && !adminMode) return;
   if (id === 'cuartos' && !faseConfig.cuartos.abierta && !adminMode) return;
   if (id === 'semis' && !faseConfig.semis.abierta && !adminMode) return;
@@ -1167,6 +1234,7 @@ function showScreen(id) {
 
   if (id === 'ranking') cargarRanking();
   if (id === 'pronosticos') cargarPronosticos();
+  if (id === 'dieciseis') renderFaseDinamica('dieciseis');
   if (id === 'octavos') renderFaseDinamica('octavos');
   if (id === 'cuartos') renderFaseDinamica('cuartos');
   if (id === 'semis') renderFaseDinamica('semis');
@@ -1174,7 +1242,7 @@ function showScreen(id) {
 }
 
 function updateNavLocks() {
-  ['octavos','cuartos','semis'].forEach(f => {
+  ['dieciseis','octavos','cuartos','semis'].forEach(f => {
     const btn = document.getElementById('nav-' + f);
     if (btn) btn.classList.toggle('locked', !faseConfig[f].abierta);
   });
@@ -1273,9 +1341,10 @@ function renderFaseDinamica(fase) {
   const cerrado = config.deadline && Date.now() > config.deadline && !adminMode;
 
   const configs = {
-    octavos: { picks: 16, label: 'Ganador Octavos', pts: 4, prefix: 'oct_' },
-    cuartos: { picks: 8, label: 'Ganador Cuartos', pts: 6, prefix: 'cua_' },
-    semis: { picks: 4, label: 'Ganador Semis', pts: 8, prefix: 'sem_' }
+    dieciseis: { picks: 32, label: 'Ganador 16avos', pts: 4, prefix: 'die_' },
+    octavos: { picks: 16, label: 'Ganador Octavos', pts: 6, prefix: 'oct_' },
+    cuartos: { picks: 8, label: 'Ganador Cuartos', pts: 8, prefix: 'cua_' },
+    semis: { picks: 4, label: 'Ganador Semis', pts: 12, prefix: 'sem_' }
   };
   const fc = configs[fase];
 
@@ -1562,6 +1631,7 @@ async function cargarPronosticos() {
 function renderAdmin() {
   renderAdminFasesControl();
   renderAdminResultadosGrupos();
+  renderAdminClasificadosDieciseis();
   renderAdminResultadosOctavos();
   renderAdminResultadosCuartos();
   renderAdminResultadosFinal();
@@ -1570,6 +1640,7 @@ function renderAdmin() {
 
 function renderAdminFasesControl() {
   const fases = [
+    { id: 'dieciseis', label: '16avos de Final' },
     { id: 'octavos', label: 'Octavos de Final' },
     { id: 'cuartos', label: 'Cuartos de Final' },
     { id: 'semis', label: 'Semis y Final' },
@@ -1658,6 +1729,39 @@ async function guardarResultadosGrupos() {
     await db.collection('config').doc('resultados').set(resultados, { merge: true });
     document.getElementById('admin-msg').innerHTML =
       '<div class="alert alert-ok">✅ Resultados de grupos guardados.</div>';
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+function renderAdminClasificadosDieciseis() {
+  const equipos = equiposClasificados.dieciseis || [];
+  const el = document.getElementById('admin-clasificados-dieciseis');
+  if (!el) return;
+  el.innerHTML = Array.from({length: 32}, (_, i) => `
+    <div class="admin-resultado-row">
+      <label>Clasificado ${i+1}:</label>
+      <input type="text" class="admin-input" id="clas-die-${i}"
+        value="${equipos[i] || ''}" placeholder="Nombre del equipo" />
+    </div>`
+  ).join('') +
+  `<div class="mt16 flex-gap">
+    <button class="btn-accion" onclick="guardarClasificadosDieciseis()">GUARDAR CLASIFICADOS 16AVOS</button>
+  </div>`;
+}
+
+async function guardarClasificadosDieciseis() {
+  const lista = [];
+  for (let i = 0; i < 32; i++) {
+    const val = document.getElementById('clas-die-' + i).value.trim();
+    if (val) lista.push(val);
+  }
+  equiposClasificados.dieciseis = lista;
+  try {
+    await db.collection('config').doc('clasificados').set(equiposClasificados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ ${lista.length} clasificados a 16avos guardados.</div>`;
   } catch(e) {
     document.getElementById('admin-msg').innerHTML =
       `<div class="alert alert-error">Error: ${e.message}</div>`;
@@ -1826,22 +1930,28 @@ async function calcularPuntajes() {
             p['grupo_' + g.id] === resultados['grupo_' + g.id]) total += 3;
       });
 
-      // Octavos (4 pts)
+      // 16avos (4 pts)
       for (let i = 0; i < 16; i++) {
-        const key = 'oct_' + i;
+        const key = 'die_' + i;
         if (p[key] && resultados[key] && p[key] === resultados[key]) total += 4;
       }
 
-      // Cuartos (6 pts)
+      // Octavos (6 pts)
       for (let i = 0; i < 8; i++) {
-        const key = 'cua_' + i;
+        const key = 'oct_' + i;
         if (p[key] && resultados[key] && p[key] === resultados[key]) total += 6;
       }
 
-      // Semis (8 pts)
+      // Cuartos (8 pts)
       for (let i = 0; i < 4; i++) {
-        const key = 'sem_' + i;
+        const key = 'cua_' + i;
         if (p[key] && resultados[key] && p[key] === resultados[key]) total += 8;
+      }
+
+      // Semis (12 pts)
+      for (let i = 0; i < 2; i++) {
+        const key = 'sem_' + i;
+        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 12;
       }
 
       // Campeón (15 pts) y Finalista (8 pts)
