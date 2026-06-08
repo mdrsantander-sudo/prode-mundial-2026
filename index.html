@@ -573,16 +573,7 @@
 
 <!-- NAV -->
 <nav id="app-nav">
-  <button onclick="showScreen('portada')" id="nav-portada" class="active">Inicio</button>
-  <button onclick="showScreen('grupos')" id="nav-grupos">Fase Grupos</button>
-  <button onclick="showScreen('dieciseis')" id="nav-dieciseis" class="locked">16avos</button>
-  <button onclick="showScreen('octavos')" id="nav-octavos" class="locked">Octavos</button>
-  <button onclick="showScreen('cuartos')" id="nav-cuartos" class="locked">Cuartos</button>
-  <button onclick="showScreen('semis')" id="nav-semis" class="locked">Semis y Final</button>
-  <button onclick="showScreen('especiales')" id="nav-especiales">Especiales</button>
-  <button onclick="showScreen('ranking')" id="nav-ranking">Ranking</button>
-  <button onclick="showScreen('pronosticos')" id="nav-pronosticos">Pronósticos</button>
-  <button onclick="checkAdmin()" id="nav-admin" style="color: var(--dorado);">Admin</button>
+  <div id="nav-buttons-container" style="display:inline-flex; white-space:nowrap;"></div>
 </nav>
 
 <!-- ====== PANTALLA PORTADA ====== -->
@@ -1105,6 +1096,7 @@ auth.onAuthStateChanged(async user => {
       document.getElementById('loading-screen').style.display = 'none';
       initCuriosidades();
       updateCountdown();
+      renderNav('portada');
       showScreenDirect('portada');
       // Cambiar el botón CTA para que pida nombre
       document.getElementById('portada-cta').innerHTML = `
@@ -1169,7 +1161,7 @@ function mostrarApp() {
     initCuriosidades();
     renderGrupos();
     renderEspeciales();
-    updateNavLocks();
+    renderNav('portada');
     showScreen('portada');
     cargarPortadaRanking();
     // Actualizar boton CTA para usuario ya registrado
@@ -1228,9 +1220,7 @@ function showScreen(id) {
 
   showScreenDirect(id);
 
-  document.querySelectorAll('#app-nav button').forEach(b => b.classList.remove('active'));
-  const navBtn = document.getElementById('nav-' + id);
-  if (navBtn) navBtn.classList.add('active');
+  renderNav(id);
 
   if (id === 'ranking') cargarRanking();
   if (id === 'pronosticos') cargarPronosticos();
@@ -1241,11 +1231,43 @@ function showScreen(id) {
   if (id === 'admin') renderAdmin();
 }
 
+function renderNav(activeId) {
+  const container = document.getElementById('nav-buttons-container');
+  if (!container) return;
+
+  // Always show: Inicio, Grupos
+  const items = [
+    { id: 'portada', label: 'Inicio', always: true },
+    { id: 'grupos', label: 'Grupos', always: true },
+  ];
+
+  // Add phases that are unlocked
+  if (faseConfig.dieciseis && faseConfig.dieciseis.abierta)
+    items.push({ id: 'dieciseis', label: '16avos' });
+  if (faseConfig.octavos && faseConfig.octavos.abierta)
+    items.push({ id: 'octavos', label: 'Octavos' });
+  if (faseConfig.cuartos && faseConfig.cuartos.abierta)
+    items.push({ id: 'cuartos', label: 'Cuartos' });
+  if (faseConfig.semis && faseConfig.semis.abierta)
+    items.push({ id: 'semis', label: 'Semis y Final' });
+
+  // Always after phases: Especiales, Ranking, Pronosticos
+  items.push({ id: 'especiales', label: 'Especiales' });
+  items.push({ id: 'ranking', label: 'Ranking' });
+  items.push({ id: 'pronosticos', label: 'Pronósticos' });
+
+  container.innerHTML = items.map(item => `
+    <button onclick="showScreen('${item.id}')"
+      id="nav-${item.id}"
+      class="${activeId === item.id ? 'active' : ''}">
+      ${item.label}
+    </button>
+  `).join('') +
+  `<button onclick="checkAdmin()" id="nav-admin" style="color: var(--dorado);">Admin</button>`;
+}
+
 function updateNavLocks() {
-  ['dieciseis','octavos','cuartos','semis'].forEach(f => {
-    const btn = document.getElementById('nav-' + f);
-    if (btn) btn.classList.toggle('locked', !faseConfig[f].abierta);
-  });
+  renderNav(document.querySelector('#app-nav button.active')?.id?.replace('nav-','') || 'portada');
 }
 
 function checkAdmin() {
@@ -1604,15 +1626,15 @@ async function cargarPronosticos() {
         const pick = d['grupo_' + g.id];
         return pick ? `<div class="pick-item"><span>Grupo ${g.id}</span><span>${pick}</span></div>` : '';
       }).join('');
-      const victorias = d.victorias_arg !== undefined
-        ? `<div class="pick-item"><span>🇦🇷 Victorias ARG</span><span>${d.victorias_arg}</span></div>` : '';
+      const victorias = (d.victorias_arg !== undefined && d.victorias_arg !== null)
+        ? `<div class="pick-item"><span>🇦🇷 Partidos ganados ARG</span><span>${d.victorias_arg} partido${d.victorias_arg !== 1 ? 's' : ''}</span></div>` : '';
       const campeon = d.campeon ? `<div class="pick-item"><span>🏆 Campeón</span><span>${d.campeon}</span></div>` : '';
       const finalista = d.finalista ? `<div class="pick-item"><span>🥈 Finalista</span><span>${d.finalista}</span></div>` : '';
       const goleador = d.goleador ? `<div class="pick-item"><span>⚽ Goleador</span><span>${d.goleador}</span></div>` : '';
       const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
       const sorpresa = d.sorpresa ? `<div class="pick-item"><span>🌟 Sorpresa</span><span>${d.sorpresa}</span></div>` : '';
 
-      if (!grupos && !victorias && !campeon) return;
+      if (!grupos && !victorias && !campeon && !goleador) return;
       html += `<div class="pronosticos-user">
         <h4>${nombre}</h4>
         ${grupos}${victorias}${campeon}${finalista}${goleador}${arquero}${sorpresa}
