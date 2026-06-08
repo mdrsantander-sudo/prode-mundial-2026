@@ -681,7 +681,7 @@ function init() {
 
 function checkAdmin() {
   const params = new URLSearchParams(window.location.search);
-  if (params.get('admin') === 'true' || window.location.pathname === '/admin') {
+  if (if (params.get('key') === ADMIN_KEY) { === 'true' || window.location.pathname === '/admin') {
     const key = params.get('key');
     if (key === ADMIN_KEY) {
       showScreen('admin');
