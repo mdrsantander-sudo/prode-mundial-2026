@@ -962,26 +962,29 @@ let curIdx = 0;
 let curTimer = null;
 
 async function cargarPortadaRanking() {
-  const octAbierta = faseConfig && faseConfig.octavos && faseConfig.octavos.abierta;
   const rankDiv = document.getElementById('portada-ranking');
   if (!rankDiv) return;
-  if (!octAbierta) { rankDiv.style.display = 'none'; return; }
-  rankDiv.style.display = 'block';
   try {
-    const snap = await db.collection('scores').orderBy('total', 'desc').limit(10).get();
+    const snap = await db.collection('scores').orderBy('total', 'desc').limit(5).get();
     const tabla = document.getElementById('portada-ranking-tabla');
-    if (snap.empty) {
-      tabla.innerHTML = '<div style="text-align:center;color:var(--gris);padding:16px;font-size:13px;">Aún sin puntajes cargados.</div>';
+    // Filtrar anónimos y sin nombre
+    const docs = snap.docs.filter(doc => {
+      const d = doc.data();
+      return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
+    });
+    if (docs.length === 0) {
+      rankDiv.style.display = 'none';
       return;
     }
+    rankDiv.style.display = 'block';
     let html = '';
-    snap.docs.forEach((doc, i) => {
+    docs.forEach((doc, i) => {
       const d = doc.data();
       const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
       const esYo = doc.id === userId ? 'background:rgba(117,170,219,0.08);' : '';
       html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #0D1E3A;${esYo}">
         <span style="font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gris);min-width:28px;text-align:center;">${medalla || (i+1)}</span>
-        <span style="flex:1;font-size:15px;font-weight:${doc.id===userId?'700':'400'};color:${doc.id===userId?'var(--celeste)':'var(--blanco)'};">${d.nombre || 'Anónimo'}${doc.id===userId?' (vos)':''}</span>
+        <span style="flex:1;font-size:15px;font-weight:${doc.id===userId?'700':'400'};color:${doc.id===userId?'var(--celeste)':'var(--blanco)'};">${d.nombre}${doc.id===userId?' 👈':''}</span>
         <span style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--celeste);">${d.total||0}<span style="font-size:10px;color:var(--gris);"> pts</span></span>
       </div>`;
     });
@@ -1580,14 +1583,19 @@ async function cargarRanking() {
       return;
     }
 
+    const docsValidos = snap.docs.filter(doc => {
+      const d = doc.data();
+      return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
+    });
     let html = '<table class="ranking-tabla"><thead><tr><th>Pos</th><th>Participante</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
-    snap.docs.forEach((doc, i) => {
+    docsValidos.forEach((doc, i) => {
       const d = doc.data();
       const posClass = i === 0 ? 'oro' : i === 1 ? 'plata' : i === 2 ? 'bronce' : '';
       const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
-      html += `<tr>
+      const esYo = doc.id === userId ? ' style="background:rgba(117,170,219,0.06);"' : '';
+      html += `<tr${esYo}>
         <td class="ranking-pos ${posClass}">${medalla || (i+1)}</td>
-        <td class="ranking-nombre">${d.nombre || 'Anónimo'}</td>
+        <td class="ranking-nombre">${d.nombre}${doc.id === userId ? ' 👈' : ''}</td>
         <td class="ranking-pts">${d.total || 0}<span class="pts-label">pts</span></td>
       </tr>`;
     });
