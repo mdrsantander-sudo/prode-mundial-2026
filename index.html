@@ -1658,7 +1658,18 @@ async function cargarPronosticos() {
 // ============================================================
 // ADMIN
 // ============================================================
-function renderAdmin() {
+async function renderAdmin() {
+  // Recargar datos frescos de Firebase antes de renderizar
+  try {
+    const [resDoc, clasDoc, faseDoc] = await Promise.all([
+      db.collection('config').doc('resultados').get(),
+      db.collection('config').doc('clasificados').get(),
+      db.collection('config').doc('fases').get()
+    ]);
+    if (resDoc.exists) resultados = resDoc.data() || {};
+    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { dieciseis: [], octavos: [], cuartos: [], semis: [] };
+    if (faseDoc.exists) Object.assign(faseConfig, faseDoc.data());
+  } catch(e) { console.error('Error recargando datos admin:', e); }
   renderAdminFasesControl();
   renderAdminResultadosGrupos();
   renderAdminClasificadosDieciseis();
