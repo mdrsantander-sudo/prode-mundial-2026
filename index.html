@@ -1970,138 +1970,31 @@ async function guardarClasificadosDieciseis() {
 function renderAdminResultadosDieciseis() {
   const el = document.getElementById('admin-resultados-dieciseis');
   if (!el) return;
-  el.innerHTML = `
+  const equipos = equiposClasificados.dieciseis || [];
+  if (equipos.length < 2) {
+    el.innerHTML = '<div class="alert alert-info">Primero cargá los 32 clasificados arriba.</div>';
+    return;
+  }
+  let html = '';
+  for (let i = 0; i < 16; i++) {
+    const e1 = equipos[i*2] || '';
+    const e2 = equipos[i*2+1] || '';
+    if (!e1 || !e2) continue;
+    const res = resultados['die_' + i] || '';
+    html += `
       <div class="admin-resultado-row">
-        <label>Llave 1: Alemania vs Paraguay</label>
-        <select class="admin-select" id="res-die-0">
+        <label>Llave ${i+1}: ${e1} vs ${e2}</label>
+        <select class="admin-select" id="res-die-${i}">
           <option value="">-- Sin resultado --</option>
-          <option value="Alemania" ${resultados['die_0'] === 'Alemania' ? 'selected' : ''}>Alemania</option>
-          <option value="Paraguay" ${resultados['die_0'] === 'Paraguay' ? 'selected' : ''}>Paraguay</option>
+          <option value="${e1}" ${res === e1 ? 'selected' : ''}>${e1}</option>
+          <option value="${e2}" ${res === e2 ? 'selected' : ''}>${e2}</option>
         </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 2: Francia vs Suecia</label>
-        <select class="admin-select" id="res-die-1">
-          <option value="">-- Sin resultado --</option>
-          <option value="Francia" ${resultados['die_1'] === 'Francia' ? 'selected' : ''}>Francia</option>
-          <option value="Suecia" ${resultados['die_1'] === 'Suecia' ? 'selected' : ''}>Suecia</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 3: Sudáfrica vs Canadá</label>
-        <select class="admin-select" id="res-die-2">
-          <option value="">-- Sin resultado --</option>
-          <option value="Sudáfrica" ${resultados['die_2'] === 'Sudáfrica' ? 'selected' : ''}>Sudáfrica</option>
-          <option value="Canadá" ${resultados['die_2'] === 'Canadá' ? 'selected' : ''}>Canadá</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 4: Países Bajos vs Marruecos</label>
-        <select class="admin-select" id="res-die-3">
-          <option value="">-- Sin resultado --</option>
-          <option value="Países Bajos" ${resultados['die_3'] === 'Países Bajos' ? 'selected' : ''}>Países Bajos</option>
-          <option value="Marruecos" ${resultados['die_3'] === 'Marruecos' ? 'selected' : ''}>Marruecos</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 5: Portugal vs Croacia</label>
-        <select class="admin-select" id="res-die-4">
-          <option value="">-- Sin resultado --</option>
-          <option value="Portugal" ${resultados['die_4'] === 'Portugal' ? 'selected' : ''}>Portugal</option>
-          <option value="Croacia" ${resultados['die_4'] === 'Croacia' ? 'selected' : ''}>Croacia</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 6: España vs Austria</label>
-        <select class="admin-select" id="res-die-5">
-          <option value="">-- Sin resultado --</option>
-          <option value="España" ${resultados['die_5'] === 'España' ? 'selected' : ''}>España</option>
-          <option value="Austria" ${resultados['die_5'] === 'Austria' ? 'selected' : ''}>Austria</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 7: USA vs Bosnia</label>
-        <select class="admin-select" id="res-die-6">
-          <option value="">-- Sin resultado --</option>
-          <option value="USA" ${resultados['die_6'] === 'USA' ? 'selected' : ''}>USA</option>
-          <option value="Bosnia" ${resultados['die_6'] === 'Bosnia' ? 'selected' : ''}>Bosnia</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 8: Bélgica vs Senegal</label>
-        <select class="admin-select" id="res-die-7">
-          <option value="">-- Sin resultado --</option>
-          <option value="Bélgica" ${resultados['die_7'] === 'Bélgica' ? 'selected' : ''}>Bélgica</option>
-          <option value="Senegal" ${resultados['die_7'] === 'Senegal' ? 'selected' : ''}>Senegal</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 9: Brasil vs Japón</label>
-        <select class="admin-select" id="res-die-8">
-          <option value="">-- Sin resultado --</option>
-          <option value="Brasil" ${resultados['die_8'] === 'Brasil' ? 'selected' : ''}>Brasil</option>
-          <option value="Japón" ${resultados['die_8'] === 'Japón' ? 'selected' : ''}>Japón</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 10: Costa de Marfil vs Noruega</label>
-        <select class="admin-select" id="res-die-9">
-          <option value="">-- Sin resultado --</option>
-          <option value="Costa de Marfil" ${resultados['die_9'] === 'Costa de Marfil' ? 'selected' : ''}>Costa de Marfil</option>
-          <option value="Noruega" ${resultados['die_9'] === 'Noruega' ? 'selected' : ''}>Noruega</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 11: México vs Ecuador</label>
-        <select class="admin-select" id="res-die-10">
-          <option value="">-- Sin resultado --</option>
-          <option value="México" ${resultados['die_10'] === 'México' ? 'selected' : ''}>México</option>
-          <option value="Ecuador" ${resultados['die_10'] === 'Ecuador' ? 'selected' : ''}>Ecuador</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 12: Inglaterra vs R. del Congo</label>
-        <select class="admin-select" id="res-die-11">
-          <option value="">-- Sin resultado --</option>
-          <option value="Inglaterra" ${resultados['die_11'] === 'Inglaterra' ? 'selected' : ''}>Inglaterra</option>
-          <option value="R. del Congo" ${resultados['die_11'] === 'R. del Congo' ? 'selected' : ''}>R. del Congo</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 13: Argentina vs Cabo Verde</label>
-        <select class="admin-select" id="res-die-12">
-          <option value="">-- Sin resultado --</option>
-          <option value="Argentina" ${resultados['die_12'] === 'Argentina' ? 'selected' : ''}>Argentina</option>
-          <option value="Cabo Verde" ${resultados['die_12'] === 'Cabo Verde' ? 'selected' : ''}>Cabo Verde</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 14: Australia vs Egipto</label>
-        <select class="admin-select" id="res-die-13">
-          <option value="">-- Sin resultado --</option>
-          <option value="Australia" ${resultados['die_13'] === 'Australia' ? 'selected' : ''}>Australia</option>
-          <option value="Egipto" ${resultados['die_13'] === 'Egipto' ? 'selected' : ''}>Egipto</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 15: Suiza vs Argelia</label>
-        <select class="admin-select" id="res-die-14">
-          <option value="">-- Sin resultado --</option>
-          <option value="Suiza" ${resultados['die_14'] === 'Suiza' ? 'selected' : ''}>Suiza</option>
-          <option value="Argelia" ${resultados['die_14'] === 'Argelia' ? 'selected' : ''}>Argelia</option>
-        </select>
-      </div>
-      <div class="admin-resultado-row">
-        <label>Llave 16: Colombia vs Ghana</label>
-        <select class="admin-select" id="res-die-15">
-          <option value="">-- Sin resultado --</option>
-          <option value="Colombia" ${resultados['die_15'] === 'Colombia' ? 'selected' : ''}>Colombia</option>
-          <option value="Ghana" ${resultados['die_15'] === 'Ghana' ? 'selected' : ''}>Ghana</option>
-        </select>
-      </div>
-    <div class="mt16 flex-gap">
-      <button class="btn-accion" onclick="guardarResultadosDieciseis()">GUARDAR RESULTADOS 16AVOS</button>
-    </div>`;
+      </div>`;
+  }
+  html += `<div class="mt16 flex-gap">
+    <button class="btn-accion" onclick="guardarResultadosDieciseis()">GUARDAR RESULTADOS 16AVOS</button>
+  </div>`;
+  el.innerHTML = html;
 }
 
 async function guardarResultadosDieciseis() {
