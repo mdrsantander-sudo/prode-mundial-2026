@@ -586,7 +586,7 @@
   </div>
 
   <div class="countdown-box" id="countdown-portada">
-    <div class="titulo">⏱ TIEMPO AL PRIMER PARTIDO</div>
+    <div class="titulo" id="cd-titulo">⏱ TIEMPO AL PRIMER PARTIDO</div>
     <div class="countdown-numeros">
       <div class="countdown-item">
         <span class="num" id="cd-dias">00</span>
@@ -1027,14 +1027,56 @@ function resetCurTimer() {
 // ============================================================
 const PRIMER_PARTIDO = new Date('2026-06-11T21:00:00-03:00'); // 18hs Argentina = 21 UTC-3
 
+function getFaseActiva() {
+  const fases = [
+    { id: 'dieciseis', label: '🔥 16AVOS ABIERTOS' },
+    { id: 'octavos', label: '🔥 OCTAVOS ABIERTOS' },
+    { id: 'cuartos', label: '🔥 CUARTOS ABIERTOS' },
+    { id: 'semis', label: '🔥 SEMIS Y FINAL ABIERTOS' },
+    { id: 'especiales_final', label: '🔥 ESPECIALES ABIERTOS' }
+  ];
+  for (const f of fases) {
+    if (faseConfig[f.id] && faseConfig[f.id].abierta && faseConfig[f.id].deadline && Date.now() < faseConfig[f.id].deadline) {
+      return { label: f.label, deadline: faseConfig[f.id].deadline };
+    }
+  }
+  return null;
+}
+
 function updateCountdown() {
   const ahora = new Date();
+  const faseActiva = getFaseActiva();
+
+  if (faseActiva) {
+    const diff = faseActiva.deadline - ahora.getTime();
+    if (diff <= 0) {
+      document.getElementById('cd-titulo').textContent = '🔒 ¡Tiempo cerrado!';
+      document.getElementById('cd-dias').textContent = '00';
+      document.getElementById('cd-horas').textContent = '00';
+      document.getElementById('cd-min').textContent = '00';
+      document.getElementById('cd-seg').textContent = '00';
+      return;
+    }
+    document.getElementById('cd-titulo').textContent = faseActiva.label + ' — Cierra en:';
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-dias').textContent = String(d).padStart(2, '0');
+    document.getElementById('cd-horas').textContent = String(h).padStart(2, '0');
+    document.getElementById('cd-min').textContent = String(m).padStart(2, '0');
+    document.getElementById('cd-seg').textContent = String(s).padStart(2, '0');
+    return;
+  }
+
+  // Sin fase activa con deadline: mostrar countdown al primer partido o mensaje mundial comenzó
   const diff = PRIMER_PARTIDO - ahora;
   if (diff <= 0) {
     document.getElementById('countdown-portada').innerHTML =
-      '<div class="titulo">🎉 ¡EL MUNDIAL YA COMENZÓ!</div>';
+      '<div class="titulo" id="cd-titulo">🎉 ¡EL MUNDIAL YA COMENZÓ!</div>';
     return;
   }
+  document.getElementById('cd-titulo').textContent = '⏱ TIEMPO AL PRIMER PARTIDO';
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
@@ -1630,22 +1672,72 @@ async function cargarPronosticos() {
     predsSnap.docs.forEach(doc => {
       const d = doc.data();
       const nombre = usuarios[doc.id] || 'Anónimo';
+      if (!nombre || nombre === 'Anónimo' || nombre.trim() === '') return;
+
+      // Grupos
       const grupos = GRUPOS.map(g => {
         const pick = d['grupo_' + g.id];
         return pick ? `<div class="pick-item"><span>Grupo ${g.id}</span><span>${pick}</span></div>` : '';
       }).join('');
-      const victorias = (d.victorias_arg !== undefined && d.victorias_arg !== null)
-        ? `<div class="pick-item"><span>🇦🇷 Partidos ganados ARG</span><span>${d.victorias_arg} partido${d.victorias_arg !== 1 ? 's' : ''}</span></div>` : '';
+
+      // 16avos
+      const equipos16 = equiposClasificados.dieciseis || [];
+      let dieciseis = '';
+      if (faseConfig.dieciseis && faseConfig.dieciseis.abierta) {
+        for (let i = 0; i < 16; i++) {
+          const pick = d['die_' + i];
+          if (pick) {
+            const eq1 = equipos16[i*2] || `Partido ${i+1} - Local`;
+            const eq2 = equipos16[i*2+1] || `Partido ${i+1} - Visitante`;
+            dieciseis += `<div class="pick-item"><span>⚔️ ${eq1} vs ${eq2}</span><span>${pick}</span></div>`;
+          }
+        }
+      }
+
+      // Octavos
+      let octavos = '';
+      if (faseConfig.octavos && faseConfig.octavos.abierta) {
+        for (let i = 0; i < 8; i++) {
+          const pick = d['oct_' + i];
+          if (pick) octavos += `<div class="pick-item"><span>⚔️ Octavos P${i+1}</span><span>${pick}</span></div>`;
+        }
+      }
+
+      // Cuartos
+      let cuartos = '';
+      if (faseConfig.cuartos && faseConfig.cuartos.abierta) {
+        for (let i = 0; i < 4; i++) {
+          const pick = d['cua_' + i];
+          if (pick) cuartos += `<div class="pick-item"><span>⚔️ Cuartos P${i+1}</span><span>${pick}</span></div>`;
+        }
+      }
+
+      // Semis y Final
       const campeon = d.campeon ? `<div class="pick-item"><span>🏆 Campeón</span><span>${d.campeon}</span></div>` : '';
       const finalista = d.finalista ? `<div class="pick-item"><span>🥈 Finalista</span><span>${d.finalista}</span></div>` : '';
+
+      // Especiales
+      const victorias = (d.victorias_arg !== undefined && d.victorias_arg !== null)
+        ? `<div class="pick-item"><span>🇦🇷 Victorias ARG grupos</span><span>${d.victorias_arg} partido${d.victorias_arg !== 1 ? 's' : ''}</span></div>` : '';
       const goleador = d.goleador ? `<div class="pick-item"><span>⚽ Goleador</span><span>${d.goleador}</span></div>` : '';
       const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
       const sorpresa = d.sorpresa ? `<div class="pick-item"><span>🌟 Sorpresa</span><span>${d.sorpresa}</span></div>` : '';
 
-      if (!grupos && !victorias && !campeon && !goleador) return;
+      const tieneAlgo = grupos || dieciseis || octavos || cuartos || campeon || goleador;
+      if (!tieneAlgo) return;
+
+      // Armar secciones con título
+      let secciones = '';
+      if (grupos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Fase Grupos</div>${grupos}${victorias}`;
+      if (dieciseis) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">16avos de Final</div>${dieciseis}`;
+      if (octavos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Octavos de Final</div>${octavos}`;
+      if (cuartos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Cuartos de Final</div>${cuartos}`;
+      if (campeon || finalista) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Final</div>${campeon}${finalista}`;
+      if (goleador || arquero || sorpresa) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Especiales</div>${goleador}${arquero}${sorpresa}`;
+
       html += `<div class="pronosticos-user">
         <h4>${nombre}</h4>
-        ${grupos}${victorias}${campeon}${finalista}${goleador}${arquero}${sorpresa}
+        ${secciones}
       </div>`;
     });
     content.innerHTML = html || '<div class="alert alert-info">Aún no hay pronósticos.</div>';
