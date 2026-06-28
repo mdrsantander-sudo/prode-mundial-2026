@@ -173,7 +173,7 @@
   .countdown-item { text-align: center; }
   .countdown-item .num {
     font-family: 'Bebas Neue', cursive;
-    font-size: 48px; color: var(--celeste);
+    font-size: 64px; color: var(--celeste);
     line-height: 1; display: block;
   }
   .countdown-item .label {
@@ -549,7 +549,7 @@
   @media (max-width: 600px) {
     .grupos-grid { grid-template-columns: 1fr; }
     .portada-hero h1 { font-size: 48px; }
-    .countdown-item .num { font-size: 36px; }
+    .countdown-item .num { font-size: 48px; }
   }
 </style>
 </head>
@@ -587,7 +587,7 @@
 
   <div class="countdown-box" id="countdown-portada">
     <div class="titulo" id="cd-titulo">⏱ TIEMPO AL PRIMER PARTIDO</div>
-    <div class="countdown-numeros">
+    <div class="countdown-numeros" id="cd-numeros">
       <div class="countdown-item">
         <span class="num" id="cd-dias">00</span>
         <span class="label">días</span>
@@ -1046,45 +1046,55 @@ function getFaseActiva() {
 function updateCountdown() {
   const ahora = new Date();
   const faseActiva = getFaseActiva();
+  const titulo = document.getElementById('cd-titulo');
+  const numeros = document.getElementById('cd-numeros');
+  const dias = document.getElementById('cd-dias');
+  const horas = document.getElementById('cd-horas');
+  const min = document.getElementById('cd-min');
+  const seg = document.getElementById('cd-seg');
+
+  // Si algún elemento no existe, salir (DOM no listo)
+  if (!titulo || !numeros || !dias) return;
 
   if (faseActiva) {
     const diff = faseActiva.deadline - ahora.getTime();
+    numeros.style.display = 'flex';
     if (diff <= 0) {
-      document.getElementById('cd-titulo').textContent = '🔒 ¡Tiempo cerrado!';
-      document.getElementById('cd-dias').textContent = '00';
-      document.getElementById('cd-horas').textContent = '00';
-      document.getElementById('cd-min').textContent = '00';
-      document.getElementById('cd-seg').textContent = '00';
+      titulo.textContent = '🔒 ¡Tiempo cerrado!';
+      dias.textContent = '00'; horas.textContent = '00';
+      min.textContent = '00'; seg.textContent = '00';
       return;
     }
-    document.getElementById('cd-titulo').textContent = faseActiva.label + ' — Cierra en:';
+    titulo.textContent = faseActiva.label + ' — Cierra en:';
     const d = Math.floor(diff / 86400000);
     const h = Math.floor((diff % 86400000) / 3600000);
     const m = Math.floor((diff % 3600000) / 60000);
     const s = Math.floor((diff % 60000) / 1000);
-    document.getElementById('cd-dias').textContent = String(d).padStart(2, '0');
-    document.getElementById('cd-horas').textContent = String(h).padStart(2, '0');
-    document.getElementById('cd-min').textContent = String(m).padStart(2, '0');
-    document.getElementById('cd-seg').textContent = String(s).padStart(2, '0');
+    dias.textContent = String(d).padStart(2, '0');
+    horas.textContent = String(h).padStart(2, '0');
+    min.textContent = String(m).padStart(2, '0');
+    seg.textContent = String(s).padStart(2, '0');
     return;
   }
 
-  // Sin fase activa con deadline: mostrar countdown al primer partido o mensaje mundial comenzó
+  // Sin fase activa — el mundial ya comenzó
   const diff = PRIMER_PARTIDO - ahora;
   if (diff <= 0) {
-    document.getElementById('countdown-portada').innerHTML =
-      '<div class="titulo" id="cd-titulo">🎉 ¡EL MUNDIAL YA COMENZÓ!</div>';
+    titulo.textContent = '🎉 ¡EL MUNDIAL YA COMENZÓ!';
+    numeros.style.display = 'none';
     return;
   }
-  document.getElementById('cd-titulo').textContent = '⏱ TIEMPO AL PRIMER PARTIDO';
+  // Todavia no empezó el mundial
+  titulo.textContent = '⏱ TIEMPO AL PRIMER PARTIDO';
+  numeros.style.display = 'flex';
   const d = Math.floor(diff / 86400000);
   const h = Math.floor((diff % 86400000) / 3600000);
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
-  document.getElementById('cd-dias').textContent = String(d).padStart(2, '0');
-  document.getElementById('cd-horas').textContent = String(h).padStart(2, '0');
-  document.getElementById('cd-min').textContent = String(m).padStart(2, '0');
-  document.getElementById('cd-seg').textContent = String(s).padStart(2, '0');
+  dias.textContent = String(d).padStart(2, '0');
+  horas.textContent = String(h).padStart(2, '0');
+  min.textContent = String(m).padStart(2, '0');
+  seg.textContent = String(s).padStart(2, '0');
 }
 
 // ============================================================
@@ -1240,6 +1250,8 @@ function mostrarApp() {
       `;
     }
     document.getElementById('portada-cta').innerHTML = ctaHtml;
+    // Actualizar countdown DESPUES de cargar faseConfig de Firebase
+    updateCountdown();
   }, 600);
 }
 
