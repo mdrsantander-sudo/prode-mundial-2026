@@ -1221,7 +1221,14 @@ function mostrarApp() {
     let ctaHtml = '';
     if (fasesActivas.length > 0) {
       const fa = fasesActivas[0];
-      const deadlineStr = fa.deadline ? (() => { const d = new Date(fa.deadline); return ` — cierra ${d.toLocaleDateString('es-AR')} ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}hs`; })() : '';
+      const deadlineStr = fa.deadline ? (() => {
+        const d = new Date(fa.deadline);
+        const dia = String(d.getDate()).padStart(2,'0');
+        const mes = String(d.getMonth()+1).padStart(2,'0');
+        const hs = String(d.getHours()).padStart(2,'0');
+        const min = String(d.getMinutes()).padStart(2,'0');
+        return ` — cierra ${dia}/${mes} ${hs}:${min}hs`;
+      })() : '';
       ctaHtml = `
         <button class="btn-principal" onclick="showScreen('${fa.id}')">HACER MIS PRONÓSTICOS</button>
         <p class="hint" style="margin-top:8px;">🔥 ${fa.label} abiertos${deadlineStr}</p>
@@ -1455,7 +1462,11 @@ function renderFaseDinamica(fase) {
   if (cerrado) html += '<div class="alert alert-error">⏰ Esta fase ya cerró.</div>';
   if (config.deadline) {
     const d = new Date(config.deadline);
-    html += `<div class="alert alert-info">⏱ Cierra: ${d.toLocaleDateString('es-AR')} ${d.toLocaleTimeString('es-AR', {hour:'2-digit',minute:'2-digit'})}hs (Argentina)</div>`;
+    const dia = String(d.getDate()).padStart(2,'0');
+    const mes = String(d.getMonth()+1).padStart(2,'0');
+    const hs = String(d.getHours()).padStart(2,'0');
+    const min = String(d.getMinutes()).padStart(2,'0');
+    html += `<div class="alert alert-info">⏱ Cierra: ${dia}/${mes} ${hs}:${min}hs</div>`;
   }
 
   html += '<div class="grupos-grid">';
@@ -1852,13 +1863,10 @@ async function guardarDeadline(faseId) {
     return;
   }
 
-  // Convertir hora local Argentina (UTC-3) a timestamp
+  // Guardar timestamp directo (sin conversion de timezone)
   const dt = new Date(val);
-  const argOffset = -3 * 60;
-  const localOffset = dt.getTimezoneOffset();
-  const corrected = new Date(dt.getTime() + (localOffset - argOffset) * 60000);
   faseConfig[faseId] = faseConfig[faseId] || {};
-  faseConfig[faseId].deadline = corrected.getTime();
+  faseConfig[faseId].deadline = dt.getTime();
   try {
     await db.collection('config').doc('fases').set(faseConfig, { merge: true });
     updateCountdown();
