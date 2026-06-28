@@ -1817,8 +1817,19 @@ async function toggleFase(faseId, abrir) {
 }
 
 async function guardarDeadline(faseId) {
-  const val = document.getElementById('deadline-' + faseId).value;
-  if (!val) return;
+  // Leer el valor ANTES de cualquier re-render
+  const el = document.getElementById('deadline-' + faseId);
+  if (!el) {
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-error">Error: no se encontró el campo de fecha.</div>';
+    return;
+  }
+  const val = el.value;
+  if (!val) {
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-error">⚠️ Primero seleccioná una fecha y hora de cierre.</div>';
+    return;
+  }
   // Convertir hora local Argentina (UTC-3) a timestamp
   const dt = new Date(val);
   const argOffset = -3 * 60;
@@ -1828,11 +1839,14 @@ async function guardarDeadline(faseId) {
   faseConfig[faseId].deadline = corrected.getTime();
   try {
     await db.collection('config').doc('fases').set(faseConfig, { merge: true });
+    updateCountdown();
     document.getElementById('admin-msg').innerHTML =
-      '<div class="alert alert-ok">✅ Fecha de cierre guardada.</div>';
+      `<div class="alert alert-ok">✅ Fecha de cierre guardada para ${faseId}.</div>`;
+    // Re-render DESPUES de guardar para mostrar el valor correcto
+    renderAdminFasesControl();
   } catch(e) {
     document.getElementById('admin-msg').innerHTML =
-      `<div class="alert alert-error">Error: ${e.message}</div>`;
+      `<div class="alert alert-error">Error al guardar: ${e.message}</div>`;
   }
 }
 
