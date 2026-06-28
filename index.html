@@ -1087,6 +1087,9 @@ function updateCountdown() {
   document.getElementById('cd-seg').textContent = String(s).padStart(2, '0');
 }
 
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
 // ============================================================
 // ESTADO DE LA APP
 // ============================================================
@@ -1101,10 +1104,6 @@ let faseConfig = {
   semis: { abierta: false, deadline: null },
   especiales_final: { abierta: false, deadline: null }
 };
-
-// Iniciar countdown despues de faseConfig
-setInterval(updateCountdown, 1000);
-updateCountdown();
 let resultados = {};
 let adminMode = false;
 let equiposClasificados = {
@@ -1147,7 +1146,7 @@ auth.onAuthStateChanged(async user => {
       // Cambiar el botón CTA para que pida nombre
       document.getElementById('portada-cta').innerHTML = `
         <button class="btn-principal" onclick="irAPronosticos()">HACER MIS PRONÓSTICOS</button>
-        <p class="hint">📋 Solo Fase de Grupos por ahora — se cierra el 11 de junio 18hs (Argentina)</p>
+        <p class="hint">📋 ¡Registrate para participar!</p>
       `;
     }, 600);
   }
@@ -1210,12 +1209,29 @@ function mostrarApp() {
     renderNav('portada');
     showScreen('portada');
     cargarPortadaRanking();
-    // Actualizar boton CTA para usuario ya registrado
-    document.getElementById('portada-cta').innerHTML = `
-      <button class="btn-principal" onclick="showScreen('grupos')">HACER MIS PRONÓSTICOS</button>
-      <p class="hint" style="margin-top:8px;">📋 Fase de Grupos — cierra el 11 de junio 18hs (Argentina)</p>
-      <p class="hint" style="margin-top:6px; font-size:11px;">Cuando terminen los grupos, se habilitarán las siguientes fases.</p>
-    `;
+    // Actualizar boton CTA para usuario ya registrado — texto dinamico segun fase activa
+    const fasesActivas = [];
+    if (faseConfig.dieciseis && faseConfig.dieciseis.abierta) fasesActivas.push({ label: '16avos de Final', id: 'dieciseis', deadline: faseConfig.dieciseis.deadline });
+    if (faseConfig.octavos && faseConfig.octavos.abierta) fasesActivas.push({ label: 'Octavos de Final', id: 'octavos', deadline: faseConfig.octavos.deadline });
+    if (faseConfig.cuartos && faseConfig.cuartos.abierta) fasesActivas.push({ label: 'Cuartos de Final', id: 'cuartos', deadline: faseConfig.cuartos.deadline });
+    if (faseConfig.semis && faseConfig.semis.abierta) fasesActivas.push({ label: 'Semis y Final', id: 'semis', deadline: faseConfig.semis.deadline });
+    if (faseConfig.especiales_final && faseConfig.especiales_final.abierta) fasesActivas.push({ label: 'Especiales', id: 'especiales', deadline: faseConfig.especiales_final.deadline });
+
+    let ctaHtml = '';
+    if (fasesActivas.length > 0) {
+      const fa = fasesActivas[0];
+      const deadlineStr = fa.deadline ? (() => { const d = new Date(fa.deadline); return ` — cierra ${d.toLocaleDateString('es-AR')} ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}hs`; })() : '';
+      ctaHtml = `
+        <button class="btn-principal" onclick="showScreen('${fa.id}')">HACER MIS PRONÓSTICOS</button>
+        <p class="hint" style="margin-top:8px;">🔥 ${fa.label} abiertos${deadlineStr}</p>
+      `;
+    } else {
+      ctaHtml = `
+        <button class="btn-principal" onclick="showScreen('grupos')">VER MIS PRONÓSTICOS</button>
+        <p class="hint" style="margin-top:8px;">📋 Fase de Grupos cerrada — próxima fase se habilita pronto</p>
+      `;
+    }
+    document.getElementById('portada-cta').innerHTML = ctaHtml;
   }, 600);
 }
 
@@ -1795,7 +1811,8 @@ function renderAdminFasesControl() {
         </button>
         <input type="datetime-local" class="admin-input" id="deadline-${f.id}"
           value="${deadlineVal}" style="max-width:200px;"
-          placeholder="Cierre automático" />
+          placeholder="Cierre automático"
+          onchange="guardarDeadlineInput('${f.id}', this.value)" />
         <button class="btn-secundario" onclick="guardarDeadline('${f.id}')">Guardar fecha cierre</button>
       </div>`;
   }).join('');
@@ -1816,20 +1833,24 @@ async function toggleFase(faseId, abrir) {
   }
 }
 
+// Almacenar valores de deadline en memoria para no perderlos al re-render
+const deadlineValues = {};
+
+function guardarDeadlineInput(faseId, val) {
+  deadlineValues[faseId] = val;
+}
+
 async function guardarDeadline(faseId) {
-  // Leer el valor ANTES de cualquier re-render
+  // Intentar leer del DOM primero, luego del storage en memoria
   const el = document.getElementById('deadline-' + faseId);
-  if (!el) {
-    document.getElementById('admin-msg').innerHTML =
-      '<div class="alert alert-error">Error: no se encontró el campo de fecha.</div>';
-    return;
-  }
-  const val = el.value;
+  const val = (el && el.value) ? el.value : deadlineValues[faseId];
+
   if (!val) {
     document.getElementById('admin-msg').innerHTML =
       '<div class="alert alert-error">⚠️ Primero seleccioná una fecha y hora de cierre.</div>';
     return;
   }
+
   // Convertir hora local Argentina (UTC-3) a timestamp
   const dt = new Date(val);
   const argOffset = -3 * 60;
@@ -1840,9 +1861,9 @@ async function guardarDeadline(faseId) {
   try {
     await db.collection('config').doc('fases').set(faseConfig, { merge: true });
     updateCountdown();
+    delete deadlineValues[faseId];
     document.getElementById('admin-msg').innerHTML =
-      `<div class="alert alert-ok">✅ Fecha de cierre guardada para ${faseId}.</div>`;
-    // Re-render DESPUES de guardar para mostrar el valor correcto
+      '<div class="alert alert-ok">✅ Fecha de cierre guardada. El countdown ya aparece en la portada.</div>';
     renderAdminFasesControl();
   } catch(e) {
     document.getElementById('admin-msg').innerHTML =
