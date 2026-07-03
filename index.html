@@ -780,6 +780,17 @@
     <div id="admin-fases-control"></div>
   </div>
 
+  <!-- Turbo participantes nuevos -->
+  <div class="admin-fase-card">
+    <h3>🚀 TURBO — PARTICIPANTES NUEVOS</h3>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">
+      Activá el turbo (x10) para los que se suman tarde: cada acierto les suma decenas y trepan rápido.
+      Con el podio bloqueado, no pueden entrar al top 3 hasta que lo liberes. Después de activar/desactivar, tocá RECALCULAR PUNTAJES.
+    </p>
+    <div id="admin-turbo-podio" style="margin-bottom:14px;"></div>
+    <div id="admin-turbo-lista"></div>
+  </div>
+
   <!-- Resultados Grupos -->
   <div class="admin-fase-card">
     <h3>📋 RESULTADOS — FASE GRUPOS</h3>
@@ -972,27 +983,34 @@ async function cargarPortadaRanking() {
   const rankDiv = document.getElementById('portada-ranking');
   if (!rankDiv) return;
   try {
-    const snap = await db.collection('scores').orderBy('total', 'desc').limit(5).get();
+    // Traemos todos los scores para poder aplicar el tope de podio antes de recortar el top 5
+    const snap = await db.collection('scores').orderBy('total', 'desc').get();
     const tabla = document.getElementById('portada-ranking-tabla');
     // Filtrar anónimos y sin nombre
-    const docs = snap.docs.filter(doc => {
-      const d = doc.data();
-      return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
-    });
-    if (docs.length === 0) {
+    const items = snap.docs
+      .filter(doc => {
+        const d = doc.data();
+        return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
+      })
+      .map(doc => {
+        const d = doc.data();
+        return { id: doc.id, nombre: d.nombre, total: d.total || 0, esTurbo: !!d.esTurbo };
+      });
+    if (items.length === 0) {
       rankDiv.style.display = 'none';
       return;
     }
+    const top5 = ordenarRankingConCap(items).slice(0, 5);
     rankDiv.style.display = 'block';
     let html = '';
-    docs.forEach((doc, i) => {
-      const d = doc.data();
+    top5.forEach((x, i) => {
       const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
-      const esYo = doc.id === userId ? 'background:rgba(117,170,219,0.08);' : '';
+      const esYo = x.id === userId ? 'background:rgba(117,170,219,0.08);' : '';
+      const badge = x.esTurbo ? ' 🚀' : '';
       html += `<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #0D1E3A;${esYo}">
         <span style="font-family:'Bebas Neue',cursive;font-size:18px;color:var(--gris);min-width:28px;text-align:center;">${medalla || (i+1)}</span>
-        <span style="flex:1;font-size:15px;font-weight:${doc.id===userId?'700':'400'};color:${doc.id===userId?'var(--celeste)':'var(--blanco)'};">${d.nombre}${doc.id===userId?' 👈':''}</span>
-        <span style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--celeste);">${d.total||0}<span style="font-size:10px;color:var(--gris);"> pts</span></span>
+        <span style="flex:1;font-size:15px;font-weight:${x.id===userId?'700':'400'};color:${x.id===userId?'var(--celeste)':'var(--blanco)'};">${x.nombre}${badge}${x.id===userId?' 👈':''}</span>
+        <span style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--celeste);">${x.total}<span style="font-size:10px;color:var(--gris);"> pts</span></span>
       </div>`;
     });
     tabla.innerHTML = html;
@@ -1116,7 +1134,8 @@ let faseConfig = {
   octavos: { abierta: false, deadline: null },
   cuartos: { abierta: false, deadline: null },
   semis: { abierta: false, deadline: null },
-  especiales_final: { abierta: false, deadline: null }
+  especiales_final: { abierta: false, deadline: null },
+  turboLiberado: false
 };
 
 // Iniciar countdown despues de faseConfig
@@ -1663,6 +1682,19 @@ async function guardarEspeciales() {
 // ============================================================
 // RANKING
 // ============================================================
+// Ordena el ranking dejando a los turbo FUERA del podio (top 3) mientras
+// el tope esté activo. Cuando faseConfig.turboLiberado = true, compiten libre.
+// items: [{ id, nombre, total, esTurbo }]
+function ordenarRankingConCap(items) {
+  const ordenados = items.slice().sort((a, b) => (b.total || 0) - (a.total || 0));
+  const capActivo = !faseConfig.turboLiberado;
+  if (!capActivo) return ordenados;
+  const noTurbo = ordenados.filter(x => !x.esTurbo);
+  const podio = noTurbo.slice(0, 3);
+  const resto = ordenados.filter(x => !podio.includes(x));
+  return [...podio, ...resto];
+}
+
 async function cargarRanking() {
   try {
     const snap = await db.collection('scores').orderBy('total', 'desc').get();
@@ -1673,23 +1705,35 @@ async function cargarRanking() {
       return;
     }
 
-    const docsValidos = snap.docs.filter(doc => {
-      const d = doc.data();
-      return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
-    });
+    const items = snap.docs
+      .filter(doc => {
+        const d = doc.data();
+        return d.nombre && d.nombre !== 'Anónimo' && d.nombre.trim() !== '';
+      })
+      .map(doc => {
+        const d = doc.data();
+        return { id: doc.id, nombre: d.nombre, total: d.total || 0, esTurbo: !!d.esTurbo };
+      });
+
+    const ordenados = ordenarRankingConCap(items);
+    const hayTurbo = items.some(x => x.esTurbo);
+
     let html = '<table class="ranking-tabla"><thead><tr><th>Pos</th><th>Participante</th><th style="text-align:right">Puntos</th></tr></thead><tbody>';
-    docsValidos.forEach((doc, i) => {
-      const d = doc.data();
+    ordenados.forEach((x, i) => {
       const posClass = i === 0 ? 'oro' : i === 1 ? 'plata' : i === 2 ? 'bronce' : '';
       const medalla = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '';
-      const esYo = doc.id === userId ? ' style="background:rgba(117,170,219,0.06);"' : '';
+      const esYo = x.id === userId ? ' style="background:rgba(117,170,219,0.06);"' : '';
+      const badge = x.esTurbo ? ' <span title="Modo turbo" style="font-size:13px;">🚀</span>' : '';
       html += `<tr${esYo}>
         <td class="ranking-pos ${posClass}">${medalla || (i+1)}</td>
-        <td class="ranking-nombre">${d.nombre}${doc.id === userId ? ' 👈' : ''}</td>
-        <td class="ranking-pts">${d.total || 0}<span class="pts-label">pts</span></td>
+        <td class="ranking-nombre">${x.nombre}${badge}${x.id === userId ? ' 👈' : ''}</td>
+        <td class="ranking-pts">${x.total}<span class="pts-label">pts</span></td>
       </tr>`;
     });
     html += '</tbody></table>';
+    if (hayTurbo && !faseConfig.turboLiberado) {
+      html += '<p style="text-align:center;color:var(--gris);font-size:12px;margin-top:12px;">🚀 = participantes nuevos con puntaje turbo. Suben rápido, pero el podio se libera en semis.</p>';
+    }
     content.innerHTML = html;
   } catch(e) {
     document.getElementById('ranking-content').innerHTML =
@@ -1811,6 +1855,7 @@ async function renderAdmin() {
     if (faseDoc.exists) Object.assign(faseConfig, faseDoc.data());
   } catch(e) { console.error('Error recargando datos admin:', e); }
   renderAdminFasesControl();
+  renderAdminTurbo();
   renderAdminResultadosGrupos();
   renderAdminClasificadosDieciseis();
   renderAdminResultadosDieciseis();
@@ -1897,6 +1942,86 @@ async function guardarDeadline(faseId) {
   } catch(e) {
     document.getElementById('admin-msg').innerHTML =
       `<div class="alert alert-error">Error al guardar: ${e.message}</div>`;
+  }
+}
+
+// Multiplicador por defecto para participantes nuevos
+const TURBO_MULT = 10;
+
+async function renderAdminTurbo() {
+  const cont = document.getElementById('admin-turbo-lista');
+  const podioBox = document.getElementById('admin-turbo-podio');
+  if (!cont) return;
+
+  // Estado del bloqueo de podio
+  const liberado = !!faseConfig.turboLiberado;
+  podioBox.innerHTML = `
+    <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap; background:#071428; border:1px solid #1A2A4A; border-radius:8px; padding:12px;">
+      <span style="flex:1; min-width:180px; font-size:14px; color:var(--celeste-claro);">
+        Podio para turbo: <strong>${liberado ? '🔓 LIBERADO (compiten por el podio)' : '🔒 BLOQUEADO (fuera del top 3)'}</strong>
+      </span>
+      <button class="${liberado ? 'fase-lock-btn' : 'fase-unlock-btn'}" onclick="toggleTurboLiberado(${!liberado})">
+        ${liberado ? 'Volver a bloquear' : 'Liberar podio (semis)'}
+      </button>
+    </div>`;
+
+  try {
+    const usersSnap = await db.collection('users').get();
+    const turboMap = faseConfig.turbo || {};
+    const usuarios = usersSnap.docs
+      .map(d => ({ id: d.id, ...(d.data() || {}) }))
+      .filter(u => u.nombre && u.nombre.trim() !== '' && u.nombre !== 'Anónimo')
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+    if (usuarios.length === 0) {
+      cont.innerHTML = '<p style="color:var(--gris); font-size:13px;">Todavía no hay participantes registrados.</p>';
+      return;
+    }
+
+    cont.innerHTML = usuarios.map(u => {
+      const multU = turboMap[u.id] || 1;
+      const esTurbo = multU > 1;
+      return `
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
+          <span style="flex:1; min-width:140px; font-size:14px; color:var(--blanco);">
+            ${esTurbo ? '🚀 ' : ''}${u.nombre}${esTurbo ? ` <span style="color:var(--gris); font-size:12px;">(x${multU})</span>` : ''}
+          </span>
+          <button class="${esTurbo ? 'fase-lock-btn' : 'fase-unlock-btn'}" onclick="toggleTurbo('${u.id}', ${esTurbo ? 0 : TURBO_MULT})">
+            ${esTurbo ? 'Quitar turbo' : `Activar turbo x${TURBO_MULT}`}
+          </button>
+        </div>`;
+    }).join('');
+  } catch (e) {
+    cont.innerHTML = `<div class="alert alert-error">Error cargando participantes: ${e.message}</div>`;
+  }
+}
+
+async function toggleTurbo(uid, mult) {
+  const nuevo = mult > 1 ? mult : 1;
+  faseConfig.turbo = faseConfig.turbo || {};
+  faseConfig.turbo[uid] = nuevo;
+  try {
+    // Merge en config/fases (el admin sí tiene permiso de escritura acá)
+    await db.collection('config').doc('fases').set({ turbo: { [uid]: nuevo } }, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Turbo ${nuevo > 1 ? 'activado (x' + nuevo + ')' : 'quitado'}. Ahora tocá RECALCULAR PUNTAJES para aplicarlo.</div>`;
+    renderAdminTurbo();
+  } catch (e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+async function toggleTurboLiberado(liberar) {
+  faseConfig.turboLiberado = liberar;
+  try {
+    await db.collection('config').doc('fases').set({ turboLiberado: liberar }, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Podio turbo ${liberar ? 'LIBERADO — ahora pueden entrar al top 3' : 'BLOQUEADO — quedan fuera del podio'}.</div>`;
+    renderAdminTurbo();
+  } catch (e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
   }
 }
 
@@ -2155,13 +2280,17 @@ async function calcularPuntajes() {
   document.getElementById('admin-msg').innerHTML =
     '<div class="alert alert-info">⏳ Calculando puntajes...</div>';
   try {
-    const [predsSnap, usersSnap] = await Promise.all([
+    const [predsSnap, usersSnap, fasesDoc] = await Promise.all([
       db.collection('predictions').get(),
-      db.collection('users').get()
+      db.collection('users').get(),
+      db.collection('config').doc('fases').get()
     ]);
 
     const usuarios = {};
-    usersSnap.docs.forEach(d => { usuarios[d.id] = d.data().nombre; });
+    usersSnap.docs.forEach(d => { usuarios[d.id] = d.data() || {}; });
+
+    // Mapa de multiplicadores turbo, guardado en config/fases -> turbo: { uid: mult }
+    const turboMap = (fasesDoc.exists && fasesDoc.data().turbo) ? fasesDoc.data().turbo : {};
 
     const batch = db.batch();
 
@@ -2219,10 +2348,17 @@ async function calcularPuntajes() {
       if (p.sorpresa && resultados.sorpresa &&
           p.sorpresa.toLowerCase().trim() === resultados.sorpresa.toLowerCase().trim()) total += 7;
 
+      // Multiplicador turbo (participantes nuevos). Sin turbo => x1.
+      const info = usuarios[doc.id] || {};
+      const mult = (turboMap[doc.id] && turboMap[doc.id] > 1) ? turboMap[doc.id] : 1;
+      const totalFinal = total * mult;
+
       const scoreRef = db.collection('scores').doc(doc.id);
       batch.set(scoreRef, {
-        nombre: usuarios[doc.id] || 'Anónimo',
-        total,
+        nombre: info.nombre || 'Anónimo',
+        total: totalFinal,
+        esTurbo: mult > 1,
+        multiplicador: mult,
         updatedAt: new Date().toISOString()
       });
     });
