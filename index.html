@@ -1899,7 +1899,8 @@ async function toggleFase(faseId, abrir) {
   faseConfig[faseId] = faseConfig[faseId] || {};
   faseConfig[faseId].abierta = abrir;
   try {
-    await db.collection('config').doc('fases').set(faseConfig, { merge: true });
+    // Guardar SOLO esta fase (no todo el bloque) para no chocar con las reglas del config
+    await db.collection('config').doc('fases').set({ [faseId]: { abierta: abrir } }, { merge: true });
     updateNavLocks();
     renderAdminFasesControl();
     document.getElementById('admin-msg').innerHTML =
@@ -1933,7 +1934,8 @@ async function guardarDeadline(faseId) {
   faseConfig[faseId] = faseConfig[faseId] || {};
   faseConfig[faseId].deadline = dt.getTime();
   try {
-    await db.collection('config').doc('fases').set(faseConfig, { merge: true });
+    // Guardar SOLO el deadline de esta fase para no chocar con las reglas del config
+    await db.collection('config').doc('fases').set({ [faseId]: { deadline: dt.getTime() } }, { merge: true });
     updateCountdown();
     delete deadlineValues[faseId];
     document.getElementById('admin-msg').innerHTML =
