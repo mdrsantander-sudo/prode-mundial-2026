@@ -784,7 +784,7 @@
   <div class="admin-fase-card">
     <h3>🚀 TURBO — PARTICIPANTES NUEVOS</h3>
     <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">
-      Activá el turbo (x10) para los que se suman tarde: cada acierto les suma decenas y trepan rápido.
+      Activá el turbo (x2) para los que se suman tarde: cada acierto les vale el doble y trepan más rápido.
       Con el podio bloqueado, no pueden entrar al top 3 hasta que lo liberes. Después de activar/desactivar, tocá RECALCULAR PUNTAJES.
     </p>
     <div id="admin-turbo-podio" style="margin-bottom:14px;"></div>
@@ -1948,7 +1948,7 @@ async function guardarDeadline(faseId) {
 }
 
 // Multiplicador por defecto para participantes nuevos
-const TURBO_MULT = 10;
+const TURBO_MULT = 2;
 
 async function renderAdminTurbo() {
   const cont = document.getElementById('admin-turbo-lista');
@@ -2294,6 +2294,18 @@ async function calcularPuntajes() {
     // Mapa de multiplicadores turbo, guardado en config/fases -> turbo: { uid: mult }
     const turboMap = (fasesDoc.exists && fasesDoc.data().turbo) ? fasesDoc.data().turbo : {};
 
+    // Restricciones de índices válidos por participante y fase, para los que se
+    // sumaron tarde y cargaron predicciones de partidos que ya se habían jugado.
+    // Estructura: config/fases -> restricciones: { uid: { dieciseis: [13,14,15], ... } }
+    // Si un uid/fase no tiene restricción cargada, cuentan todos los índices (comportamiento normal).
+    const restricciones = (fasesDoc.exists && fasesDoc.data().restricciones) ? fasesDoc.data().restricciones : {};
+    function indicePermitido(uid, fase, i) {
+      const r = restricciones[uid] && restricciones[uid][fase];
+      if (!r) return true;
+      // Acepta el índice tanto si está guardado como número (13) o como texto ("13")
+      return r.some(x => Number(x) === i);
+    }
+
     const batch = db.batch();
 
     predsSnap.docs.forEach(doc => {
@@ -2309,25 +2321,29 @@ async function calcularPuntajes() {
       // 16avos (4 pts)
       for (let i = 0; i < 16; i++) {
         const key = 'die_' + i;
-        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 4;
+        if (indicePermitido(doc.id, 'dieciseis', i) &&
+            p[key] && resultados[key] && p[key] === resultados[key]) total += 4;
       }
 
       // Octavos (6 pts)
       for (let i = 0; i < 8; i++) {
         const key = 'oct_' + i;
-        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 6;
+        if (indicePermitido(doc.id, 'octavos', i) &&
+            p[key] && resultados[key] && p[key] === resultados[key]) total += 6;
       }
 
       // Cuartos (8 pts)
       for (let i = 0; i < 4; i++) {
         const key = 'cua_' + i;
-        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 8;
+        if (indicePermitido(doc.id, 'cuartos', i) &&
+            p[key] && resultados[key] && p[key] === resultados[key]) total += 8;
       }
 
       // Semis (12 pts)
       for (let i = 0; i < 2; i++) {
         const key = 'sem_' + i;
-        if (p[key] && resultados[key] && p[key] === resultados[key]) total += 12;
+        if (indicePermitido(doc.id, 'semis', i) &&
+            p[key] && resultados[key] && p[key] === resultados[key]) total += 12;
       }
 
       // Campeón (15 pts) y Finalista (8 pts)
