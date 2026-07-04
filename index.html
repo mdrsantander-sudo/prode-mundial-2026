@@ -1772,39 +1772,40 @@ async function cargarPronosticos() {
         return pick ? `<div class="pick-item"><span>Grupo ${g.id}</span><span>${pick}</span></div>` : '';
       }).join('');
 
-      // 16avos
+      // 16avos — se muestran siempre que haya pronósticos, aunque la fase ya esté cerrada
       const equipos16 = equiposClasificados.dieciseis || [];
       let dieciseis = '';
-      if (faseConfig.dieciseis && faseConfig.dieciseis.abierta) {
-        for (let i = 0; i < 16; i++) {
-          const pick = d['die_' + i];
-          if (pick) {
-            const eq1 = equipos16[i*2] || `Partido ${i+1} - Local`;
-            const eq2 = equipos16[i*2+1] || `Partido ${i+1} - Visitante`;
-            dieciseis += `<div class="pick-item"><span>⚔️ ${eq1} vs ${eq2}</span><span>${pick}</span></div>`;
-          }
+      for (let i = 0; i < 16; i++) {
+        const pick = d['die_' + i];
+        if (pick) {
+          const eq1 = equipos16[i*2] || `Partido ${i+1} - Local`;
+          const eq2 = equipos16[i*2+1] || `Partido ${i+1} - Visitante`;
+          dieciseis += `<div class="pick-item"><span>⚔️ ${eq1} vs ${eq2}</span><span>${pick}</span></div>`;
         }
       }
 
       // Octavos
       let octavos = '';
-      if (faseConfig.octavos && faseConfig.octavos.abierta) {
-        for (let i = 0; i < 8; i++) {
-          const pick = d['oct_' + i];
-          if (pick) octavos += `<div class="pick-item"><span>⚔️ Octavos P${i+1}</span><span>${pick}</span></div>`;
-        }
+      for (let i = 0; i < 8; i++) {
+        const pick = d['oct_' + i];
+        if (pick) octavos += `<div class="pick-item"><span>⚔️ Octavos P${i+1}</span><span>${pick}</span></div>`;
       }
 
       // Cuartos
       let cuartos = '';
-      if (faseConfig.cuartos && faseConfig.cuartos.abierta) {
-        for (let i = 0; i < 4; i++) {
-          const pick = d['cua_' + i];
-          if (pick) cuartos += `<div class="pick-item"><span>⚔️ Cuartos P${i+1}</span><span>${pick}</span></div>`;
-        }
+      for (let i = 0; i < 4; i++) {
+        const pick = d['cua_' + i];
+        if (pick) cuartos += `<div class="pick-item"><span>⚔️ Cuartos P${i+1}</span><span>${pick}</span></div>`;
       }
 
-      // Semis y Final
+      // Semis
+      let semis = '';
+      for (let i = 0; i < 2; i++) {
+        const pick = d['sem_' + i];
+        if (pick) semis += `<div class="pick-item"><span>⚔️ Semis P${i+1}</span><span>${pick}</span></div>`;
+      }
+
+      // Final
       const campeon = d.campeon ? `<div class="pick-item"><span>🏆 Campeón</span><span>${d.campeon}</span></div>` : '';
       const finalista = d.finalista ? `<div class="pick-item"><span>🥈 Finalista</span><span>${d.finalista}</span></div>` : '';
 
@@ -1815,7 +1816,7 @@ async function cargarPronosticos() {
       const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
       const sorpresa = d.sorpresa ? `<div class="pick-item"><span>🌟 Sorpresa</span><span>${d.sorpresa}</span></div>` : '';
 
-      const tieneAlgo = grupos || dieciseis || octavos || cuartos || campeon || goleador;
+      const tieneAlgo = grupos || dieciseis || octavos || cuartos || semis || campeon || finalista || goleador || arquero || sorpresa;
       if (!tieneAlgo) return;
 
       // Armar secciones con título
@@ -1824,6 +1825,7 @@ async function cargarPronosticos() {
       if (dieciseis) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">16avos de Final</div>${dieciseis}`;
       if (octavos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Octavos de Final</div>${octavos}`;
       if (cuartos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Cuartos de Final</div>${cuartos}`;
+      if (semis) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Semis</div>${semis}`;
       if (campeon || finalista) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Final</div>${campeon}${finalista}`;
       if (goleador || arquero || sorpresa) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Especiales</div>${goleador}${arquero}${sorpresa}`;
 
