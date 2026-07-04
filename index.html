@@ -815,7 +815,7 @@
   <!-- Resultados Octavos -->
   <div class="admin-fase-card">
     <h3>⚡ RESULTADOS — OCTAVOS</h3>
-    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Equipos que pasan a cuartos (ingresá los 16 clasificados).</p>
+    <p style="color: var(--gris); font-size: 13px; margin-bottom: 14px;">Equipos que juegan octavos (ingresá los 16 clasificados → se forman 8 llaves).</p>
     <div id="admin-resultados-octavos"></div>
   </div>
 
@@ -2144,9 +2144,9 @@ function renderAdminResultadosOctavos() {
   const equipos = equiposClasificados.octavos || [];
   document.getElementById('admin-resultados-octavos').innerHTML = `
     <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">
-      Ingresá los 32 clasificados en orden (se forman 16 llaves en pares: 1vs2, 3vs4, etc.)
+      Ingresá los 16 clasificados en orden (se forman 8 llaves en pares: 1vs2, 3vs4, etc.)
     </p>
-    ${Array.from({length: 32}, (_, i) => `
+    ${Array.from({length: 16}, (_, i) => `
       <div class="admin-resultado-row">
         <label>Clasificado ${i+1}:</label>
         <input type="text" class="admin-input" id="clas-oct-${i}"
@@ -2154,15 +2154,15 @@ function renderAdminResultadosOctavos() {
       </div>`
     ).join('')}
     <div class="mt16 flex-gap">
-      <button class="btn-accion" onclick="guardarClasificados('octavos', 32)">GUARDAR CLASIFICADOS OCTAVOS</button>
+      <button class="btn-accion" onclick="guardarClasificados('octavos', 16)">GUARDAR CLASIFICADOS OCTAVOS</button>
     </div>`;
 }
 
 function renderAdminResultadosCuartos() {
   const equipos = equiposClasificados.cuartos || [];
   document.getElementById('admin-resultados-cuartos').innerHTML = `
-    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">16 equipos que pasan a cuartos</p>
-    ${Array.from({length: 16}, (_, i) => `
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">8 equipos que juegan cuartos (se forman 4 llaves)</p>
+    ${Array.from({length: 8}, (_, i) => `
       <div class="admin-resultado-row">
         <label>Clasificado ${i+1}:</label>
         <input type="text" class="admin-input" id="clas-cua-${i}"
@@ -2170,7 +2170,7 @@ function renderAdminResultadosCuartos() {
       </div>`
     ).join('')}
     <div class="mt16 flex-gap">
-      <button class="btn-accion" onclick="guardarClasificados('cuartos', 16)">GUARDAR CLASIFICADOS CUARTOS</button>
+      <button class="btn-accion" onclick="guardarClasificados('cuartos', 8)">GUARDAR CLASIFICADOS CUARTOS</button>
     </div>`;
 }
 
@@ -2179,8 +2179,8 @@ function renderAdminResultadosFinal() {
   const resCampeon = resultados['campeon'] || '';
   const resFinalista = resultados['finalista'] || '';
   document.getElementById('admin-resultados-final').innerHTML = `
-    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">8 equipos semifinalistas</p>
-    ${Array.from({length: 8}, (_, i) => `
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">4 equipos semifinalistas (se forman 2 llaves)</p>
+    ${Array.from({length: 4}, (_, i) => `
       <div class="admin-resultado-row">
         <label>Semifinalista ${i+1}:</label>
         <input type="text" class="admin-input" id="clas-sem-${i}"
@@ -2188,7 +2188,7 @@ function renderAdminResultadosFinal() {
       </div>`
     ).join('')}
     <div class="mt16 flex-gap">
-      <button class="btn-accion" onclick="guardarClasificados('semis', 8)">GUARDAR SEMIFINALISTAS</button>
+      <button class="btn-accion" onclick="guardarClasificados('semis', 4)">GUARDAR SEMIFINALISTAS</button>
     </div>
     <hr class="divider">
     <div class="admin-resultado-row">
