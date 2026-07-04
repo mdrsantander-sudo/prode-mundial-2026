@@ -1865,6 +1865,14 @@ async function renderAdmin() {
   renderAdminEspeciales();
 }
 
+// Convierte un timestamp a formato datetime-local en HORA LOCAL (Argentina), no UTC.
+// Sin esto, el casillero mostraba la hora corrida +3hs y hacía "saltar" el valor.
+function tsToLocalInput(ts) {
+  const d = new Date(ts);
+  const local = new Date(ts - d.getTimezoneOffset() * 60000);
+  return local.toISOString().slice(0, 16);
+}
+
 function renderAdminFasesControl() {
   const fases = [
     { id: 'dieciseis', label: '16avos de Final' },
@@ -1877,7 +1885,7 @@ function renderAdminFasesControl() {
   document.getElementById('admin-fases-control').innerHTML = fases.map(f => {
     const abierta = faseConfig[f.id] && faseConfig[f.id].abierta;
     const deadlineVal = faseConfig[f.id] && faseConfig[f.id].deadline
-      ? new Date(faseConfig[f.id].deadline).toISOString().slice(0, 16) : '';
+      ? tsToLocalInput(faseConfig[f.id].deadline) : '';
     return `
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <span style="min-width:160px; font-size:14px; color: var(--celeste-claro);">${f.label}</span>
