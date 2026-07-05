@@ -2150,6 +2150,53 @@ async function guardarResultadosDieciseis() {
   }
 }
 
+// ── Cruces genéricos para fases de eliminación (octavos, cuartos, semis) ──
+// Arma las llaves en pares (1vs2, 3vs4...) a partir de los clasificados
+// ya cargados y deja elegir el ganador de cada partido.
+function htmlCrucesFase(fase, prefix, nLlaves, equipos) {
+  if (!equipos || equipos.length < 2) {
+    return '<div class="alert alert-info">Primero cargá y guardá los clasificados de arriba para armar los cruces.</div>';
+  }
+  let html = '';
+  for (let i = 0; i < nLlaves; i++) {
+    const e1 = equipos[i*2] || '';
+    const e2 = equipos[i*2+1] || '';
+    if (!e1 || !e2) continue;
+    const res = resultados[prefix + i] || '';
+    html += `
+      <div class="admin-resultado-row">
+        <label>Llave ${i+1}: ${e1} vs ${e2}</label>
+        <select class="admin-select" id="res-${prefix}${i}">
+          <option value="">-- Sin resultado --</option>
+          <option value="${e1}" ${res === e1 ? 'selected' : ''}>${e1}</option>
+          <option value="${e2}" ${res === e2 ? 'selected' : ''}>${e2}</option>
+        </select>
+      </div>`;
+  }
+  html += `<div class="mt16 flex-gap">
+    <button class="btn-accion" onclick="guardarCruces('${fase}','${prefix}',${nLlaves})">GUARDAR GANADORES ${fase.toUpperCase()}</button>
+  </div>`;
+  return html;
+}
+
+async function guardarCruces(fase, prefix, nLlaves) {
+  for (let i = 0; i < nLlaves; i++) {
+    const el = document.getElementById('res-' + prefix + i);
+    if (!el) continue;
+    const val = el.value;
+    if (val) resultados[prefix + i] = val;
+    else delete resultados[prefix + i];
+  }
+  try {
+    await db.collection('config').doc('resultados').set(resultados, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Ganadores de ${fase} guardados. Ahora tocá RECALCULAR PUNTAJES abajo.</div>`;
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
 function renderAdminResultadosOctavos() {
   const equipos = equiposClasificados.octavos || [];
   document.getElementById('admin-resultados-octavos').innerHTML = `
@@ -2165,7 +2212,10 @@ function renderAdminResultadosOctavos() {
     ).join('')}
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarClasificados('octavos', 16)">GUARDAR CLASIFICADOS OCTAVOS</button>
-    </div>`;
+    </div>
+    <hr class="divider">
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">🏆 Ganador de cada cruce (cargalos a medida que se juegan):</p>
+    ${htmlCrucesFase('octavos','oct_',8,equipos)}`;
 }
 
 function renderAdminResultadosCuartos() {
@@ -2181,7 +2231,10 @@ function renderAdminResultadosCuartos() {
     ).join('')}
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarClasificados('cuartos', 8)">GUARDAR CLASIFICADOS CUARTOS</button>
-    </div>`;
+    </div>
+    <hr class="divider">
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">🏆 Ganador de cada cruce (cargalos a medida que se juegan):</p>
+    ${htmlCrucesFase('cuartos','cua_',4,equipos)}`;
 }
 
 function renderAdminResultadosFinal() {
@@ -2200,6 +2253,9 @@ function renderAdminResultadosFinal() {
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarClasificados('semis', 4)">GUARDAR SEMIFINALISTAS</button>
     </div>
+    <hr class="divider">
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">🏆 Ganador de cada semifinal (el que pasa a la final):</p>
+    ${htmlCrucesFase('semis','sem_',2,equipos)}
     <hr class="divider">
     <div class="admin-resultado-row">
       <label>🏆 Campeón real:</label>
@@ -2225,7 +2281,11 @@ async function guardarClasificados(fase, cantidad) {
   try {
     await db.collection('config').doc('clasificados').set(equiposClasificados, { merge: true });
     document.getElementById('admin-msg').innerHTML =
-      `<div class="alert alert-ok">✅ Clasificados de ${fase} guardados (${lista.length} equipos).</div>`;
+      `<div class="alert alert-ok">✅ Clasificados de ${fase} guardados (${lista.length} equipos). Abajo ya se armaron los cruces para cargar los ganadores.</div>`;
+    // Redibuja el panel para que aparezcan los cruces con los equipos recién cargados
+    if (fase === 'octavos') renderAdminResultadosOctavos();
+    else if (fase === 'cuartos') renderAdminResultadosCuartos();
+    else if (fase === 'semis') renderAdminResultadosFinal();
   } catch(e) {
     document.getElementById('admin-msg').innerHTML =
       `<div class="alert alert-error">Error: ${e.message}</div>`;
