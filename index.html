@@ -1596,11 +1596,53 @@ async function guardarFase(fase) {
 // ============================================================
 // ESPECIALES
 // ============================================================
+
+// Listas fijas de candidatos. Se eligen tocando un botón (por índice) y se
+// guarda el texto EXACTO de la lista, tanto en la predicción como en el
+// resultado del admin. Así el match siempre coincide: no hay líos de tildes,
+// mayúsculas ni de escribir el nombre distinto.
+const CANDIDATOS_GOLEADOR = [
+  'Messi 🇦🇷',
+  'Mbappé 🇫🇷',
+  'Kane 🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+  'Dembélé 🇫🇷',
+  'Bellingham 🏴󠁧󠁢󠁥󠁮󠁧󠁿'
+];
+const CANDIDATOS_ARQUERO = [
+  'Dibu Martínez 🇦🇷',
+  'Unai Simón 🇪🇸',
+  'Maignan 🇫🇷',
+  'Pickford 🏴󠁧󠁢󠁥󠁮󠁧󠁿'
+];
+
+function especialesCerrados() {
+  return !adminMode && faseConfig.especiales_final.deadline &&
+    Date.now() > faseConfig.especiales_final.deadline;
+}
+
 function selectVictorias(n) {
   if (!gruposAbiertos()) return;
   predictions['victorias_arg'] = n;
   [0,1,2,3].forEach(i => {
     document.getElementById('vic-' + i).classList.toggle('selected', i === n);
+  });
+}
+
+function selectGoleador(i) {
+  if (especialesCerrados()) return;
+  predictions['goleador'] = CANDIDATOS_GOLEADOR[i];
+  CANDIDATOS_GOLEADOR.forEach((_, j) => {
+    const b = document.getElementById('gol-' + j);
+    if (b) b.classList.toggle('selected', j === i);
+  });
+}
+
+function selectArquero(i) {
+  if (especialesCerrados()) return;
+  predictions['arquero'] = CANDIDATOS_ARQUERO[i];
+  CANDIDATOS_ARQUERO.forEach((_, j) => {
+    const b = document.getElementById('arq-' + j);
+    if (b) b.classList.toggle('selected', j === i);
   });
 }
 
@@ -1618,57 +1660,43 @@ function renderEspeciales() {
       <div class="fase-locked" style="padding: 20px 0;">
         <div class="icono" style="font-size:32px;">🔒</div>
         <h3 style="font-size:20px;">DISPONIBLE ANTES DE LA FINAL</h3>
-        <p style="font-size:13px;">Goleador, Mejor Arquero y Sorpresa del torneo se habilitan justo antes de la gran final.</p>
+        <p style="font-size:13px;">Goleador y Mejor Arquero del torneo se habilitan justo antes de la gran final.</p>
       </div>`;
     return;
   }
 
-  const cerrado = !adminMode && faseConfig.especiales_final.deadline &&
-    Date.now() > faseConfig.especiales_final.deadline;
+  const cerrado = especialesCerrados();
+  const golSel = predictions['goleador'];
+  const arqSel = predictions['arquero'];
+
+  const botonesGol = CANDIDATOS_GOLEADOR.map((nombre, i) =>
+    `<button class="equipo-btn ${golSel === nombre ? 'selected' : ''}" id="gol-${i}"
+       onclick="selectGoleador(${i})" ${cerrado ? 'disabled' : ''}>${nombre}</button>`
+  ).join('');
+
+  const botonesArq = CANDIDATOS_ARQUERO.map((nombre, i) =>
+    `<button class="equipo-btn ${arqSel === nombre ? 'selected' : ''}" id="arq-${i}"
+       onclick="selectArquero(${i})" ${cerrado ? 'disabled' : ''}>${nombre}</button>`
+  ).join('');
 
   content.innerHTML = `
     <p style="color: var(--gris); font-size: 14px; margin-bottom: 14px;">
-      Completá tus picks antes de la final del 19 de julio.
+      Tocá tu pick para cada uno antes de la final del 19 de julio.
     </p>
 
     <div class="admin-resultado-row">
       <label style="color: var(--celeste-claro);">⚽ Goleador del torneo <span class="puntos-info">(10 pts)</span></label>
     </div>
-    <input type="text" class="admin-input" id="input-goleador"
-      value="${predictions['goleador'] || ''}"
-      placeholder="Ej: Lautaro Martínez"
-      ${cerrado ? 'disabled' : ''} style="margin-bottom: 14px; width: 100%; max-width: 340px;" />
+    <div style="margin-bottom: 18px; max-width: 340px;">${botonesGol}</div>
 
     <div class="admin-resultado-row">
       <label style="color: var(--celeste-claro);">🧤 Mejor arquero <span class="puntos-info">(8 pts)</span></label>
     </div>
-    <input type="text" class="admin-input" id="input-arquero"
-      value="${predictions['arquero'] || ''}"
-      placeholder="Ej: Dibu Martínez"
-      ${cerrado ? 'disabled' : ''} style="margin-bottom: 14px; width: 100%; max-width: 340px;" />
-
-    <div class="admin-resultado-row">
-      <label style="color: var(--celeste-claro);">🌟 Sorpresa del torneo <span class="puntos-info">(7 pts)</span></label>
-    </div>
-    <input type="text" class="admin-input" id="input-sorpresa"
-      value="${predictions['sorpresa'] || ''}"
-      placeholder="Ej: Marruecos"
-      ${cerrado ? 'disabled' : ''} style="width: 100%; max-width: 340px;" />
+    <div style="max-width: 340px;">${botonesArq}</div>
   `;
 }
 
 async function guardarEspeciales() {
-  if (!gruposAbiertos() && predictions['victorias_arg'] === undefined) {
-    // solo permitir especiales finales si esa fase está abierta
-  }
-  const goleador = document.getElementById('input-goleador');
-  const arquero = document.getElementById('input-arquero');
-  const sorpresa = document.getElementById('input-sorpresa');
-
-  if (goleador) predictions['goleador'] = goleador.value.trim();
-  if (arquero) predictions['arquero'] = arquero.value.trim();
-  if (sorpresa) predictions['sorpresa'] = sorpresa.value.trim();
-
   try {
     await db.collection('predictions').doc(userId).set(predictions, { merge: true });
     document.getElementById('especiales-msg').innerHTML =
@@ -1814,9 +1842,8 @@ async function cargarPronosticos() {
         ? `<div class="pick-item"><span>🇦🇷 Victorias ARG grupos</span><span>${d.victorias_arg} partido${d.victorias_arg !== 1 ? 's' : ''}</span></div>` : '';
       const goleador = d.goleador ? `<div class="pick-item"><span>⚽ Goleador</span><span>${d.goleador}</span></div>` : '';
       const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
-      const sorpresa = d.sorpresa ? `<div class="pick-item"><span>🌟 Sorpresa</span><span>${d.sorpresa}</span></div>` : '';
 
-      const tieneAlgo = grupos || dieciseis || octavos || cuartos || semis || campeon || finalista || goleador || arquero || sorpresa;
+      const tieneAlgo = grupos || dieciseis || octavos || cuartos || semis || campeon || finalista || goleador || arquero;
       if (!tieneAlgo) return;
 
       // Armar secciones con título
@@ -1827,7 +1854,7 @@ async function cargarPronosticos() {
       if (cuartos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Cuartos de Final</div>${cuartos}`;
       if (semis) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Semis</div>${semis}`;
       if (campeon || finalista) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Final</div>${campeon}${finalista}`;
-      if (goleador || arquero || sorpresa) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Especiales</div>${goleador}${arquero}${sorpresa}`;
+      if (goleador || arquero) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Especiales</div>${goleador}${arquero}`;
 
       html += `<div class="pronosticos-user">
         <h4>${nombre}</h4>
@@ -1980,6 +2007,7 @@ async function renderAdminTurbo() {
   try {
     const usersSnap = await db.collection('users').get();
     const turboMap = faseConfig.turbo || {};
+    const bonusMap = faseConfig.turboBonus || {};
     const usuarios = usersSnap.docs
       .map(d => ({ id: d.id, ...(d.data() || {}) }))
       .filter(u => u.nombre && u.nombre.trim() !== '' && u.nombre !== 'Anónimo')
@@ -1992,15 +2020,27 @@ async function renderAdminTurbo() {
 
     cont.innerHTML = usuarios.map(u => {
       const multU = turboMap[u.id] || 1;
+      const bonusU = bonusMap[u.id] || 0;
       const esTurbo = multU > 1;
+      let etiqueta, botones;
+      if (esTurbo) {
+        // Turbo activo: puede congelar (mantener puntos) o quitar del todo.
+        etiqueta = `🚀 ${u.nombre} <span style="color:var(--gris); font-size:12px;">(x${multU})</span>`;
+        botones = `
+          <button class="fase-unlock-btn" onclick="congelarTurbo('${u.id}')">Congelar (mantener puntos)</button>
+          <button class="fase-lock-btn" onclick="toggleTurbo('${u.id}', 0)">Quitar (sin puntos)</button>`;
+      } else if (bonusU > 0) {
+        // Ya congelado: suma normal pero conserva el bonus ganado con turbo.
+        etiqueta = `${u.nombre} <span style="color:var(--dorado); font-size:12px;">🔒 +${bonusU} pts congelados · ahora suma x1</span>`;
+        botones = `<button class="fase-lock-btn" onclick="borrarBonusTurbo('${u.id}')">Borrar bonus</button>`;
+      } else {
+        etiqueta = u.nombre;
+        botones = `<button class="fase-unlock-btn" onclick="toggleTurbo('${u.id}', ${TURBO_MULT})">Activar turbo x${TURBO_MULT}</button>`;
+      }
       return `
         <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px; flex-wrap:wrap;">
-          <span style="flex:1; min-width:140px; font-size:14px; color:var(--blanco);">
-            ${esTurbo ? '🚀 ' : ''}${u.nombre}${esTurbo ? ` <span style="color:var(--gris); font-size:12px;">(x${multU})</span>` : ''}
-          </span>
-          <button class="${esTurbo ? 'fase-lock-btn' : 'fase-unlock-btn'}" onclick="toggleTurbo('${u.id}', ${esTurbo ? 0 : TURBO_MULT})">
-            ${esTurbo ? 'Quitar turbo' : `Activar turbo x${TURBO_MULT}`}
-          </button>
+          <span style="flex:1; min-width:140px; font-size:14px; color:var(--blanco);">${etiqueta}</span>
+          ${botones}
         </div>`;
     }).join('');
   } catch (e) {
@@ -2017,6 +2057,49 @@ async function toggleTurbo(uid, mult) {
     await db.collection('config').doc('fases').set({ turbo: { [uid]: nuevo } }, { merge: true });
     document.getElementById('admin-msg').innerHTML =
       `<div class="alert alert-ok">✅ Turbo ${nuevo > 1 ? 'activado (x' + nuevo + ')' : 'quitado'}. Ahora tocá RECALCULAR PUNTAJES para aplicarlo.</div>`;
+    renderAdminTurbo();
+  } catch (e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// Congela el turbo: le fija los puntos que YA ganó con el x2 y lo pasa a x1.
+// El bonus = lo que sumó de más por el turbo hasta este momento
+// (total actual − lo que valdría sin multiplicar). De ahí en más suma normal.
+async function congelarTurbo(uid) {
+  try {
+    const scoreDoc = await db.collection('scores').doc(uid).get();
+    const d = scoreDoc.exists ? (scoreDoc.data() || {}) : {};
+    const total = d.total || 0;
+    const mult = d.multiplicador || 1;
+    const base = mult > 0 ? Math.round(total / mult) : total;
+    const bonus = total - base; // puntos extra que le dio el turbo hasta ahora
+
+    faseConfig.turbo = faseConfig.turbo || {};
+    faseConfig.turboBonus = faseConfig.turboBonus || {};
+    faseConfig.turbo[uid] = 1;
+    faseConfig.turboBonus[uid] = bonus;
+
+    await db.collection('config').doc('fases').set(
+      { turbo: { [uid]: 1 }, turboBonus: { [uid]: bonus } }, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Turbo congelado: se le guardan +${bonus} pts y desde ahora suma normal (x1). Tocá RECALCULAR PUNTAJES para que quede firme.</div>`;
+    renderAdminTurbo();
+  } catch (e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
+}
+
+// Borra el bonus congelado (por si te equivocaste). Vuelve a puntaje limpio x1.
+async function borrarBonusTurbo(uid) {
+  faseConfig.turboBonus = faseConfig.turboBonus || {};
+  faseConfig.turboBonus[uid] = 0;
+  try {
+    await db.collection('config').doc('fases').set({ turboBonus: { [uid]: 0 } }, { merge: true });
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-ok">✅ Bonus borrado. Tocá RECALCULAR PUNTAJES.</div>`;
     renderAdminTurbo();
   } catch (e) {
     document.getElementById('admin-msg').innerHTML =
@@ -2306,24 +2389,21 @@ async function guardarResultadosFinal() {
 }
 
 function renderAdminEspeciales() {
+  const optsGol = ['<option value="">— elegir —</option>']
+    .concat(CANDIDATOS_GOLEADOR.map(n =>
+      `<option value="${n}" ${resultados['goleador'] === n ? 'selected' : ''}>${n}</option>`)).join('');
+  const optsArq = ['<option value="">— elegir —</option>']
+    .concat(CANDIDATOS_ARQUERO.map(n =>
+      `<option value="${n}" ${resultados['arquero'] === n ? 'selected' : ''}>${n}</option>`)).join('');
+
   document.getElementById('admin-resultados-especiales').innerHTML = `
     <div class="admin-resultado-row">
       <label>⚽ Goleador real:</label>
-      <input type="text" class="admin-input" id="res-goleador" value="${resultados['goleador'] || ''}" placeholder="Nombre del goleador" />
+      <select class="admin-select" id="res-goleador">${optsGol}</select>
     </div>
     <div class="admin-resultado-row">
       <label>🧤 Mejor arquero real:</label>
-      <input type="text" class="admin-input" id="res-arquero" value="${resultados['arquero'] || ''}" placeholder="Nombre del arquero" />
-    </div>
-    <div class="admin-resultado-row">
-      <label>🌟 Sorpresa del torneo real:</label>
-      <input type="text" class="admin-input" id="res-sorpresa" value="${resultados['sorpresa'] || ''}" placeholder="País sorpresa" />
-    </div>
-    <div class="admin-resultado-row">
-      <label>🇦🇷 Victorias ARG reales:</label>
-      <select class="admin-select" id="res-victorias">
-        ${[0,1,2,3].map(n => `<option value="${n}" ${resultados['victorias_arg'] == n ? 'selected' : ''}>${n}</option>`).join('')}
-      </select>
+      <select class="admin-select" id="res-arquero">${optsArq}</select>
     </div>
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarResultadosEspeciales()">GUARDAR ESPECIALES</button>
@@ -2331,10 +2411,10 @@ function renderAdminEspeciales() {
 }
 
 async function guardarResultadosEspeciales() {
-  resultados['goleador'] = document.getElementById('res-goleador').value.trim();
-  resultados['arquero'] = document.getElementById('res-arquero').value.trim();
-  resultados['sorpresa'] = document.getElementById('res-sorpresa').value.trim();
-  resultados['victorias_arg'] = parseInt(document.getElementById('res-victorias').value);
+  // Solo goleador y arquero. Victorias ARG NO se toca acá: es de fase de grupos,
+  // ya está resuelta y guardada, y no queremos pisarla desde este panel.
+  resultados['goleador'] = document.getElementById('res-goleador').value;
+  resultados['arquero'] = document.getElementById('res-arquero').value;
   try {
     await db.collection('config').doc('resultados').set(resultados, { merge: true });
     document.getElementById('admin-msg').innerHTML =
@@ -2363,6 +2443,11 @@ async function calcularPuntajes() {
 
     // Mapa de multiplicadores turbo, guardado en config/fases -> turbo: { uid: mult }
     const turboMap = (fasesDoc.exists && fasesDoc.data().turbo) ? fasesDoc.data().turbo : {};
+
+    // Bonus turbo "congelado": cuando a un turbo se le corta el x2 pero se le
+    // dejan los puntos que ya había ganado con turbo. Estructura:
+    // config/fases -> turboBonus: { uid: puntosExtraFijos }. Se suma tal cual.
+    const turboBonusMap = (fasesDoc.exists && fasesDoc.data().turboBonus) ? fasesDoc.data().turboBonus : {};
 
     // Restricciones de índices válidos por participante y fase, para los que se
     // sumaron tarde y cargaron predicciones de partidos que ya se habían jugado.
@@ -2432,14 +2517,12 @@ async function calcularPuntajes() {
       if (p.arquero && resultados.arquero &&
           p.arquero.toLowerCase().trim() === resultados.arquero.toLowerCase().trim()) total += 8;
 
-      // Sorpresa (7 pts)
-      if (p.sorpresa && resultados.sorpresa &&
-          p.sorpresa.toLowerCase().trim() === resultados.sorpresa.toLowerCase().trim()) total += 7;
-
       // Multiplicador turbo (participantes nuevos). Sin turbo => x1.
+      // Si además tiene un bonus congelado, se lo sumamos fijo por encima.
       const info = usuarios[doc.id] || {};
       const mult = (turboMap[doc.id] && turboMap[doc.id] > 1) ? turboMap[doc.id] : 1;
-      const totalFinal = total * mult;
+      const bonus = turboBonusMap[doc.id] ? Number(turboBonusMap[doc.id]) : 0;
+      const totalFinal = total * mult + bonus;
 
       const scoreRef = db.collection('scores').doc(doc.id);
       batch.set(scoreRef, {
