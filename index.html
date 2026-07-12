@@ -1057,7 +1057,8 @@ function getFaseActiva() {
     { id: 'dieciseis', label: '🔥 16AVOS ABIERTOS' },
     { id: 'octavos', label: '🔥 OCTAVOS ABIERTOS' },
     { id: 'cuartos', label: '🔥 CUARTOS ABIERTOS' },
-    { id: 'semis', label: '🔥 SEMIS Y FINAL ABIERTOS' },
+    { id: 'semis', label: '🔥 SEMIS ABIERTAS' },
+    { id: 'final', label: '🔥 FINAL ABIERTA' },
     { id: 'especiales_final', label: '🔥 ESPECIALES ABIERTOS' }
   ];
   for (const f of fases) {
@@ -1134,6 +1135,7 @@ let faseConfig = {
   octavos: { abierta: false, deadline: null },
   cuartos: { abierta: false, deadline: null },
   semis: { abierta: false, deadline: null },
+  final: { abierta: false, deadline: null },
   especiales_final: { abierta: false, deadline: null },
   turboLiberado: false
 };
@@ -1324,7 +1326,7 @@ function showScreen(id) {
   if (id === 'dieciseis' && !faseConfig.dieciseis.abierta && !adminMode) return;
   if (id === 'octavos' && !faseConfig.octavos.abierta && !adminMode) return;
   if (id === 'cuartos' && !faseConfig.cuartos.abierta && !adminMode) return;
-  if (id === 'semis' && !faseConfig.semis.abierta && !adminMode) return;
+  if (id === 'semis' && !(faseConfig.semis.abierta || (faseConfig.final && faseConfig.final.abierta)) && !adminMode) return;
 
   showScreenDirect(id);
 
@@ -1356,8 +1358,8 @@ function renderNav(activeId) {
     items.push({ id: 'octavos', label: 'Octavos' });
   if (faseConfig.cuartos && faseConfig.cuartos.abierta)
     items.push({ id: 'cuartos', label: 'Cuartos' });
-  if (faseConfig.semis && faseConfig.semis.abierta)
-    items.push({ id: 'semis', label: 'Semis y Final' });
+  if ((faseConfig.semis && faseConfig.semis.abierta) || (faseConfig.final && faseConfig.final.abierta))
+    items.push({ id: 'semis', label: (faseConfig.final && faseConfig.final.abierta) ? 'Semis y Final' : 'Semis' });
 
   // Always after phases: Especiales, Ranking, Pronosticos
   items.push({ id: 'especiales', label: 'Especiales' });
@@ -1455,8 +1457,11 @@ async function guardarGrupos() {
 function renderFaseDinamica(fase) {
   const content = document.getElementById(fase + '-content');
   const config = faseConfig[fase];
+  const finalAbierta = faseConfig.final && faseConfig.final.abierta;
 
-  if (!config.abierta) {
+  // La pantalla de semis hace de contenedor para la Final (campeón/finalista).
+  // Si la Final está abierta dejamos entrar aunque semis ya esté cerrada.
+  if (!config.abierta && !(fase === 'semis' && (finalAbierta || adminMode))) {
     content.innerHTML = `
       <div class="fase-locked">
         <div class="icono">🔒</div>
@@ -1468,7 +1473,13 @@ function renderFaseDinamica(fase) {
   }
 
   const equiposDisponibles = equiposClasificados[fase] || [];
-  const cerrado = config.deadline && Date.now() > config.deadline && !adminMode;
+  let cerrado = config.deadline && Date.now() > config.deadline && !adminMode;
+  // Si entramos a semis solo porque la Final está abierta (semis ya cerrada),
+  // los picks de ganador de semis quedan en solo lectura.
+  if (fase === 'semis' && !config.abierta && !adminMode) cerrado = true;
+  // Cierre propio de la Final (campeón/finalista), según su deadline.
+  const finalCerrado = !adminMode && faseConfig.final && faseConfig.final.deadline &&
+    Date.now() > faseConfig.final.deadline;
 
   const configs = {
     dieciseis: { picks: 32, label: 'Ganador 16avos', pts: 4, prefix: 'die_' },
@@ -1526,15 +1537,17 @@ function renderFaseDinamica(fase) {
   });
   html += '</div>';
 
-  if (!cerrado) {
+  const puedeGuardar = !cerrado ||
+    (fase === 'semis' && (finalAbierta || adminMode) && !finalCerrado);
+  if (puedeGuardar) {
     html += `<div class="mt24 flex-gap">
       <button class="btn-accion" onclick="guardarFase('${fase}')">GUARDAR</button>
     </div>`;
   }
   html += `<div id="${fase}-msg" class="mt16"></div>`;
 
-  // Para semis agregar campeón y finalista
-  if (fase === 'semis') {
+  // Campeón y finalista: solo cuando la Final está abierta (o en modo admin).
+  if (fase === 'semis' && (finalAbierta || adminMode)) {
     const semifinalistas = equiposDisponibles;
     html += `<hr class="divider">
     <div class="card">
@@ -1544,8 +1557,8 @@ function renderFaseDinamica(fase) {
       const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
       const sel = predictions['campeon'] === e;
       html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
-        onclick="${cerrado ? '' : `selectFasePick('campeon', '${e}', this)`}"
-        ${cerrado ? 'style="cursor:default"' : ''}>
+        onclick="${finalCerrado ? '' : `selectFasePick('campeon', '${e}', this)`}"
+        ${finalCerrado ? 'style="cursor:default"' : ''}>
         <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
       </button>`;
     });
@@ -1558,8 +1571,8 @@ function renderFaseDinamica(fase) {
       const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
       const sel = predictions['finalista'] === e;
       html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
-        onclick="${cerrado ? '' : `selectFasePick('finalista', '${e}', this)`}"
-        ${cerrado ? 'style="cursor:default"' : ''}>
+        onclick="${finalCerrado ? '' : `selectFasePick('finalista', '${e}', this)`}"
+        ${finalCerrado ? 'style="cursor:default"' : ''}>
         <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
       </button>`;
     });
@@ -1907,7 +1920,8 @@ function renderAdminFasesControl() {
     { id: 'dieciseis', label: '16avos de Final' },
     { id: 'octavos', label: 'Octavos de Final' },
     { id: 'cuartos', label: 'Cuartos de Final' },
-    { id: 'semis', label: 'Semis y Final' },
+    { id: 'semis', label: 'Semis' },
+    { id: 'final', label: 'Final (campeón/finalista)' },
     { id: 'especiales_final', label: 'Especiales de la Final' }
   ];
 
