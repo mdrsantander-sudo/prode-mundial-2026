@@ -564,7 +564,7 @@
 
 <!-- HEADER -->
 <header id="app-header">
-  <div class="logo">PRODE <span>MUNDIAL 2026</span></div>
+  <div class="logo">PRODE <span>MUNDIAL 2026</span> <small id="app-version" style="font-size:10px; letter-spacing:1px; color:#7f8fa6; font-weight:normal;"></small></div>
   <div class="user-info">
     <span>Hola, <strong id="header-nombre">-</strong></span>
     <button id="btn-logout" onclick="logout()">Salir</button>
@@ -1130,6 +1130,14 @@ function updateCountdown() {
 let userId = null;
 let userName = null;
 let predictions = {};
+
+// Versión visible en el header. Sirve para saber de una si Vercel te está
+// sirviendo el archivo nuevo o uno cacheado. Si no ves este número, es cache.
+const APP_VERSION = 'v4';
+document.addEventListener('DOMContentLoaded', () => {
+  const v = document.getElementById('app-version');
+  if (v) v.textContent = APP_VERSION;
+});
 
 // Puntos por acertar el ganador del partido por el 3er puesto.
 // Si querés cambiar el valor, tocá solo este número.
