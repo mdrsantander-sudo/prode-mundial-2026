@@ -1474,13 +1474,32 @@ async function guardarGrupos() {
 // Si no se puede deducir con certeza (falta un resultado o el nombre no coincide
 // exacto con ninguno de los dos equipos de la llave), completo = false y se
 // devuelven los 4 semifinalistas para no dejar a nadie sin poder elegir.
+// Normaliza un nombre de equipo para comparar: saca emojis, banderas, espacios,
+// tildes y mayúsculas. Así "Francia 🇫🇷", "francia" y "Francia" son lo mismo.
+// Se usa SOLO para comparar; lo que se guarda sigue siendo el texto original.
+function normEq(s) {
+  return String(s == null ? '' : s)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-zA-Z]/g, '')
+    .toLowerCase();
+}
+
+// Devuelve el equipo del catálogo que corresponde a un nombre suelto,
+// aunque venga con el emoji pegado o con distinta acentuación.
+function buscarEquipo(nombre) {
+  const n = normEq(nombre);
+  return TODOS_LOS_EQUIPOS.find(x => normEq(x.nombre) === n) || null;
+}
+
 function llavesSemis() {
   const eq = (equiposClasificados.semis || []).filter(Boolean);
   const manual = (equiposClasificados.tercer_puesto || []).filter(Boolean);
 
   // 1) Override manual del admin: gana siempre.
   if (manual.length === 2) {
-    const gan = eq.filter(e => !manual.includes(e));
+    const manualNorm = manual.map(normEq);
+    const gan = eq.filter(e => !manualNorm.includes(normEq(e)));
     return {
       ganadores: gan.length === 2 ? gan : eq,
       perdedores: manual,
@@ -1490,15 +1509,19 @@ function llavesSemis() {
   }
 
   // 2) Deducción automática a partir de los ganadores de semis.
+  //    La comparación es tolerante (normEq), pero devolvemos SIEMPRE el nombre
+  //    tal cual está en clasificados, que es el que usan los botones y los picks.
   if (eq.length >= 4) {
     const ganadores = [], perdedores = [];
     let ok = true;
     for (let i = 0; i < 2; i++) {
       const a = eq[i*2], b = eq[i*2+1];
       const g = resultados['sem_' + i];
-      if (!a || !b || !g || (g !== a && g !== b)) { ok = false; break; }
-      ganadores.push(g);
-      perdedores.push(g === a ? b : a);
+      if (!a || !b || !g) { ok = false; break; }
+      const ng = normEq(g);
+      if (ng === normEq(a)) { ganadores.push(a); perdedores.push(b); }
+      else if (ng === normEq(b)) { ganadores.push(b); perdedores.push(a); }
+      else { ok = false; break; }
     }
     if (ok) return { ganadores, perdedores, completo: true, origen: 'semis' };
   }
@@ -1585,12 +1608,12 @@ function renderFaseDinamica(fase) {
       <div class="grupo-card">
         <h4>LLAVE ${idx + 1}</h4>
         ${par.map(e => {
-          const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+          const eq = buscarEquipo(e) || { nombre: e, flag: '🏳' };
           const sel = predictions[key] === e;
           return `<button class="equipo-btn ${sel ? 'selected' : ''}"
             onclick="${cerrado ? '' : `selectFasePick('${key}', '${e}', this)`}"
             ${cerrado ? 'style="cursor:default"' : ''}>
-            <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+            <span class="flag">${eq.flag}</span>${eq.nombre}${sel ? ' ✓' : ''}
           </button>`;
         }).join('')}
       </div>`;
@@ -1625,12 +1648,12 @@ function renderFaseDinamica(fase) {
     }
     html += '<div class="grupos-grid">';
     candidatosTercero.forEach(e => {
-      const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+      const eq = buscarEquipo(e) || { nombre: e, flag: '🏳' };
       const sel = predictions['tercero'] === e;
       html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
         onclick="${terceroCerrado ? '' : `selectFasePick('tercero', '${e}', this)`}"
         ${terceroCerrado ? 'style="cursor:default"' : ''}>
-        <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+        <span class="flag">${eq.flag}</span>${eq.nombre}${sel ? ' ✓' : ''}
       </button>`;
     });
     html += '</div></div>';
@@ -1646,12 +1669,12 @@ function renderFaseDinamica(fase) {
       <div class="card-titulo">🏆 Final — Campeón <span class="fase-badge">15 PTS</span></div>
       <div class="grupos-grid">`;
     semifinalistas.forEach(e => {
-      const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+      const eq = buscarEquipo(e) || { nombre: e, flag: '🏳' };
       const sel = predictions['campeon'] === e;
       html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
         onclick="${finalCerrado ? '' : `selectFasePick('campeon', '${e}', this)`}"
         ${finalCerrado ? 'style="cursor:default"' : ''}>
-        <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+        <span class="flag">${eq.flag}</span>${eq.nombre}${sel ? ' ✓' : ''}
       </button>`;
     });
     html += '</div></div>';
@@ -1660,12 +1683,12 @@ function renderFaseDinamica(fase) {
       <div class="card-titulo">🥈 Finalista <span class="fase-badge">8 PTS</span></div>
       <div class="grupos-grid">`;
     semifinalistas.forEach(e => {
-      const eq = TODOS_LOS_EQUIPOS.find(x => x.nombre === e) || { nombre: e, flag: '🏳' };
+      const eq = buscarEquipo(e) || { nombre: e, flag: '🏳' };
       const sel = predictions['finalista'] === e;
       html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
         onclick="${finalCerrado ? '' : `selectFasePick('finalista', '${e}', this)`}"
         ${finalCerrado ? 'style="cursor:default"' : ''}>
-        <span class="flag">${eq.flag}</span>${e}${sel ? ' ✓' : ''}
+        <span class="flag">${eq.flag}</span>${eq.nombre}${sel ? ' ✓' : ''}
       </button>`;
     });
     html += '</div></div>';
@@ -2523,6 +2546,17 @@ async function guardarParejaTercerPuesto() {
   }
 }
 
+// Opciones para campeón / finalista: los 2 ganadores de semis si ya se saben,
+// si no los 4 semifinalistas. El value es el nombre EXACTO de clasificados.
+function optsFinalistas(seleccionado) {
+  const ls = llavesSemis();
+  const lista = ls.completo ? ls.ganadores : (equiposClasificados.semis || []);
+  return ['<option value="">-- Sin resultado --</option>']
+    .concat(lista.map(e =>
+      `<option value="${e}" ${normEq(seleccionado) === normEq(e) ? 'selected' : ''}>${e}</option>`
+    )).join('');
+}
+
 function renderAdminResultadosFinal() {
   const equipos = equiposClasificados.semis || [];
   const resCampeon = resultados['campeon'] || '';
@@ -2545,13 +2579,14 @@ function renderAdminResultadosFinal() {
     <hr class="divider">
     ${htmlTercerPuestoAdmin(equipos)}
     <hr class="divider">
+    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">🏆 Resultado de la final (se elige de la lista: así el texto coincide siempre con el de los pronósticos):</p>
     <div class="admin-resultado-row">
       <label>🏆 Campeón real:</label>
-      <input type="text" class="admin-input" id="res-campeon" value="${resCampeon}" placeholder="Campeón" />
+      <select class="admin-select" id="res-campeon">${optsFinalistas(resCampeon)}</select>
     </div>
     <div class="admin-resultado-row">
       <label>🥈 Finalista real:</label>
-      <input type="text" class="admin-input" id="res-finalista" value="${resFinalista}" placeholder="Finalista" />
+      <select class="admin-select" id="res-finalista">${optsFinalistas(resFinalista)}</select>
     </div>
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarResultadosFinal()">GUARDAR FINAL</button>
@@ -2581,8 +2616,8 @@ async function guardarClasificados(fase, cantidad) {
 }
 
 async function guardarResultadosFinal() {
-  resultados['campeon'] = document.getElementById('res-campeon').value.trim();
-  resultados['finalista'] = document.getElementById('res-finalista').value.trim();
+  resultados['campeon'] = document.getElementById('res-campeon').value;
+  resultados['finalista'] = document.getElementById('res-finalista').value;
   const elTercero = document.getElementById('res-tercero');
   const extra = {};
   if (elTercero) {
@@ -2713,11 +2748,13 @@ async function calcularPuntajes() {
       }
 
       // 3er Puesto (6 pts)
-      if (p.tercero && resultados.tercero && p.tercero === resultados.tercero) total += PTS_TERCERO;
+      // Comparación tolerante: ignora emoji, tildes y mayúsculas, así una
+      // diferencia mínima de texto no le hace perder puntos a nadie.
+      if (p.tercero && resultados.tercero && normEq(p.tercero) === normEq(resultados.tercero)) total += PTS_TERCERO;
 
       // Campeón (15 pts) y Finalista (8 pts)
-      if (p.campeon && resultados.campeon && p.campeon === resultados.campeon) total += 15;
-      if (p.finalista && resultados.finalista && p.finalista === resultados.finalista) total += 8;
+      if (p.campeon && resultados.campeon && normEq(p.campeon) === normEq(resultados.campeon)) total += 15;
+      if (p.finalista && resultados.finalista && normEq(p.finalista) === normEq(resultados.finalista)) total += 8;
 
       // Victorias Argentina (5 pts)
       if (p.victorias_arg !== undefined && resultados.victorias_arg !== undefined &&
