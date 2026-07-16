@@ -1156,7 +1156,8 @@ let equiposClasificados = {
   dieciseis: [],
   octavos: [],
   cuartos: [],
-  semis: []
+  semis: [],
+  tercer_puesto: []   // opcional: override manual de quiénes juegan el 3er puesto
 };
 
 const ADMIN_KEY = 'prodemundial2026';
@@ -1237,7 +1238,7 @@ async function cargarDatos() {
 
     // Equipos clasificados
     const clasDoc = await db.collection('config').doc('clasificados').get();
-    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { octavos: [], cuartos: [], semis: [] };
+    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { dieciseis: [], octavos: [], cuartos: [], semis: [], tercer_puesto: [] };
 
   } catch(e) { console.error('Error cargando datos:', e); }
 }
@@ -1464,6 +1465,49 @@ async function guardarGrupos() {
 }
 
 // ============================================================
+// LLAVES DE SEMIS: quién va a la final y quién al 3er puesto
+// ============================================================
+// equiposClasificados.semis = [A, B, C, D]  ->  llave 1: A vs B | llave 2: C vs D
+// resultados.sem_0 = ganador llave 1 | resultados.sem_1 = ganador llave 2
+//
+// Devuelve { ganadores, perdedores, completo, origen }.
+// Si no se puede deducir con certeza (falta un resultado o el nombre no coincide
+// exacto con ninguno de los dos equipos de la llave), completo = false y se
+// devuelven los 4 semifinalistas para no dejar a nadie sin poder elegir.
+function llavesSemis() {
+  const eq = (equiposClasificados.semis || []).filter(Boolean);
+  const manual = (equiposClasificados.tercer_puesto || []).filter(Boolean);
+
+  // 1) Override manual del admin: gana siempre.
+  if (manual.length === 2) {
+    const gan = eq.filter(e => !manual.includes(e));
+    return {
+      ganadores: gan.length === 2 ? gan : eq,
+      perdedores: manual,
+      completo: true,
+      origen: 'manual'
+    };
+  }
+
+  // 2) Deducción automática a partir de los ganadores de semis.
+  if (eq.length >= 4) {
+    const ganadores = [], perdedores = [];
+    let ok = true;
+    for (let i = 0; i < 2; i++) {
+      const a = eq[i*2], b = eq[i*2+1];
+      const g = resultados['sem_' + i];
+      if (!a || !b || !g || (g !== a && g !== b)) { ok = false; break; }
+      ganadores.push(g);
+      perdedores.push(g === a ? b : a);
+    }
+    if (ok) return { ganadores, perdedores, completo: true, origen: 'semis' };
+  }
+
+  // 3) No se pudo deducir.
+  return { ganadores: eq, perdedores: eq, completo: false, origen: 'ninguno' };
+}
+
+// ============================================================
 // RENDER FASES DINÁMICAS (OCTAVOS / CUARTOS / SEMIS)
 // ============================================================
 function renderFaseDinamica(fase) {
@@ -1563,20 +1607,12 @@ function renderFaseDinamica(fase) {
   }
   html += `<div id="${fase}-msg" class="mt16 msg-${fase}"></div>`;
 
+  const ls = llavesSemis();
+
   // 3er Puesto: solo cuando esa fase está abierta (o en modo admin).
-  // Los candidatos son los 2 perdedores de las semis si ya están cargados
-  // los resultados sem_0 / sem_1; si no, se muestran los 4 semifinalistas.
+  // Candidatos = los 2 perdedores de las semis (o los 4 si no se puede deducir).
   if (fase === 'semis' && (terceroAbierto || adminMode)) {
-    let candidatosTercero = equiposDisponibles;
-    if (resultados['sem_0'] && resultados['sem_1'] && equiposDisponibles.length >= 4) {
-      const perdedores = [];
-      for (let i = 0; i < 2; i++) {
-        const a = equiposDisponibles[i*2], b = equiposDisponibles[i*2+1];
-        const ganador = resultados['sem_' + i];
-        if (a && b && ganador) perdedores.push(ganador === a ? b : a);
-      }
-      if (perdedores.length === 2) candidatosTercero = perdedores;
-    }
+    const candidatosTercero = ls.perdedores;
 
     html += `<hr class="divider">
     <div class="card">
@@ -1602,7 +1638,9 @@ function renderFaseDinamica(fase) {
 
   // Campeón y finalista: solo cuando la Final está abierta (o en modo admin).
   if (fase === 'semis' && (finalAbierta || adminMode)) {
-    const semifinalistas = equiposDisponibles;
+    // Una vez que están cargados los ganadores de semis, solo esos 2 pueden
+    // ser campeón o finalista. Antes de eso se muestran los 4.
+    const semifinalistas = ls.ganadores;
     html += `<hr class="divider">
     <div class="card">
       <div class="card-titulo">🏆 Final — Campeón <span class="fase-badge">15 PTS</span></div>
@@ -1968,7 +2006,7 @@ async function renderAdmin() {
       db.collection('config').doc('fases').get()
     ]);
     if (resDoc.exists) resultados = resDoc.data() || {};
-    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { dieciseis: [], octavos: [], cuartos: [], semis: [] };
+    if (clasDoc.exists) equiposClasificados = clasDoc.data() || { dieciseis: [], octavos: [], cuartos: [], semis: [], tercer_puesto: [] };
     if (faseDoc.exists) Object.assign(faseConfig, faseDoc.data());
   } catch(e) { console.error('Error recargando datos admin:', e); }
   renderAdminFasesControl();
@@ -2411,35 +2449,78 @@ function renderAdminResultadosCuartos() {
 }
 
 // ── 3er Puesto (admin) ──
-// Los candidatos son los 2 perdedores de las semis. Si todavía no están
-// cargados los ganadores sem_0 / sem_1, se ofrecen los 4 semifinalistas.
-function candidatosTercerPuesto(equipos) {
-  if (resultados['sem_0'] && resultados['sem_1'] && equipos.length >= 4) {
-    const perdedores = [];
-    for (let i = 0; i < 2; i++) {
-      const a = equipos[i*2], b = equipos[i*2+1];
-      const ganador = resultados['sem_' + i];
-      if (a && b && ganador) perdedores.push(ganador === a ? b : a);
-    }
-    if (perdedores.length === 2) return perdedores;
-  }
-  return equipos;
-}
-
+// Muestra qué dedujo la app, deja corregirlo a mano y cargar el ganador.
 function htmlTercerPuestoAdmin(equipos) {
-  const cands = candidatosTercerPuesto(equipos);
-  if (!cands.length) {
+  if (!equipos.length) {
     return '<div class="alert alert-info">Primero cargá los semifinalistas para poder definir el 3er puesto.</div>';
   }
+  const ls = llavesSemis();
+  const manual = (equiposClasificados.tercer_puesto || []).filter(Boolean);
+
+  // Diagnóstico: por qué se ven 2 o 4 opciones.
+  let diag = '';
+  if (ls.origen === 'manual') {
+    diag = `<div class="alert alert-ok">✅ Definido a mano: juegan el 3er puesto <b>${ls.perdedores.join(' vs ')}</b>. A la final van <b>${ls.ganadores.join(' y ')}</b>.</div>`;
+  } else if (ls.origen === 'semis') {
+    diag = `<div class="alert alert-ok">✅ Deducido de las semis: juegan el 3er puesto <b>${ls.perdedores.join(' vs ')}</b>. A la final van <b>${ls.ganadores.join(' y ')}</b>.</div>`;
+  } else {
+    diag = `<div class="alert alert-error">⚠️ No puedo deducir quiénes juegan el 3er puesto, así que a los participantes les aparecen los 4 semifinalistas. Motivo: faltan los ganadores de semis arriba, o el nombre cargado no coincide exacto con el del semifinalista. Solución rápida: cargá los 2 equipos a mano acá abajo.</div>`;
+  }
+
+  const inputsManual = `
+    <p style="color:var(--gris); font-size:13px; margin:10px 0;">✍️ Definir a mano quiénes juegan el 3er puesto (opcional — si lo cargás, manda esto por encima de todo):</p>
+    ${[0,1].map(i => `
+      <div class="admin-resultado-row">
+        <label>3er puesto — equipo ${i+1}:</label>
+        <select class="admin-select" id="tp-equipo-${i}">
+          <option value="">-- Automático --</option>
+          ${equipos.map(e => `<option value="${e}" ${manual[i] === e ? 'selected' : ''}>${e}</option>`).join('')}
+        </select>
+      </div>`).join('')}
+    <div class="mt16 flex-gap">
+      <button class="btn-accion" onclick="guardarParejaTercerPuesto()">GUARDAR QUIÉNES JUEGAN EL 3ER PUESTO</button>
+    </div>`;
+
   const res = resultados['tercero'] || '';
   const opts = ['<option value="">-- Sin resultado --</option>']
-    .concat(cands.map(e => `<option value="${e}" ${res === e ? 'selected' : ''}>${e}</option>`)).join('');
+    .concat(ls.perdedores.map(e => `<option value="${e}" ${res === e ? 'selected' : ''}>${e}</option>`)).join('');
+
   return `
-    <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">🥉 Ganador del partido por el 3er puesto (${PTS_TERCERO} pts):</p>
+    ${diag}
+    ${inputsManual}
+    <p style="color:var(--gris); font-size:13px; margin:14px 0 10px;">🥉 Ganador del partido por el 3er puesto (${PTS_TERCERO} pts):</p>
     <div class="admin-resultado-row">
       <label>🥉 3er puesto real:</label>
       <select class="admin-select" id="res-tercero">${opts}</select>
     </div>`;
+}
+
+async function guardarParejaTercerPuesto() {
+  const a = document.getElementById('tp-equipo-0').value;
+  const b = document.getElementById('tp-equipo-1').value;
+  const lista = [a, b].filter(Boolean);
+  if (lista.length === 1) {
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-error">Cargá los DOS equipos, o dejá los dos en Automático.</div>';
+    return;
+  }
+  if (lista.length === 2 && a === b) {
+    document.getElementById('admin-msg').innerHTML =
+      '<div class="alert alert-error">Los dos equipos no pueden ser el mismo.</div>';
+    return;
+  }
+  equiposClasificados.tercer_puesto = lista;
+  try {
+    await db.collection('config').doc('clasificados')
+      .set({ tercer_puesto: lista }, { merge: true });
+    document.getElementById('admin-msg').innerHTML = lista.length === 2
+      ? `<div class="alert alert-ok">✅ 3er puesto: juegan ${lista.join(' vs ')}.</div>`
+      : '<div class="alert alert-ok">✅ Volvió a modo automático (se deduce de los ganadores de semis).</div>';
+    renderAdminResultadosFinal();
+  } catch(e) {
+    document.getElementById('admin-msg').innerHTML =
+      `<div class="alert alert-error">Error: ${e.message}</div>`;
+  }
 }
 
 function renderAdminResultadosFinal() {
