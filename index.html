@@ -1133,7 +1133,7 @@ let predictions = {};
 
 // Versión visible en el header. Sirve para saber de una si Vercel te está
 // sirviendo el archivo nuevo o uno cacheado. Si no ves este número, es cache.
-const APP_VERSION = 'v4';
+const APP_VERSION = 'v5';
 document.addEventListener('DOMContentLoaded', () => {
   const v = document.getElementById('app-version');
   if (v) v.textContent = APP_VERSION;
@@ -1565,7 +1565,7 @@ function renderFaseDinamica(fase) {
   // Si entramos a semis solo porque la Final está abierta (semis ya cerrada),
   // los picks de ganador de semis quedan en solo lectura.
   if (fase === 'semis' && !config.abierta && !adminMode) cerrado = true;
-  // Cierre propio de la Final (campeón/finalista), según su deadline.
+  // Cierre propio de la Final (campeón), según su deadline.
   const finalCerrado = !adminMode && faseConfig.final && faseConfig.final.deadline &&
     Date.now() > faseConfig.final.deadline;
   // Cierre propio del 3er Puesto, según su deadline.
@@ -1667,10 +1667,10 @@ function renderFaseDinamica(fase) {
     html += '</div></div>';
   }
 
-  // Campeón y finalista: solo cuando la Final está abierta (o en modo admin).
+  // Campeón: solo cuando la Final está abierta (o en modo admin).
   if (fase === 'semis' && (finalAbierta || adminMode)) {
     // Una vez que están cargados los ganadores de semis, solo esos 2 pueden
-    // ser campeón o finalista. Antes de eso se muestran los 4.
+    // ser campeón. Antes de eso se muestran los 4.
     const semifinalistas = ls.ganadores;
     html += `<hr class="divider">
     <div class="card">
@@ -1687,19 +1687,6 @@ function renderFaseDinamica(fase) {
     });
     html += '</div></div>';
 
-    html += `<div class="card">
-      <div class="card-titulo">🥈 Finalista <span class="fase-badge">8 PTS</span></div>
-      <div class="grupos-grid">`;
-    semifinalistas.forEach(e => {
-      const eq = buscarEquipo(e) || { nombre: e, flag: '🏳' };
-      const sel = predictions['finalista'] === e;
-      html += `<button class="equipo-btn ${sel ? 'selected' : ''}"
-        onclick="${finalCerrado ? '' : `selectFasePick('finalista', '${e}', this)`}"
-        ${finalCerrado ? 'style="cursor:default"' : ''}>
-        <span class="flag">${eq.flag}</span>${eq.nombre}${sel ? ' ✓' : ''}
-      </button>`;
-    });
-    html += '</div></div>';
   }
 
   // Botón de guardar al pie: si abajo hay tarjetas (3er puesto / final),
@@ -1991,7 +1978,7 @@ async function cargarPronosticos() {
 
       // Final
       const campeon = d.campeon ? `<div class="pick-item"><span>🏆 Campeón</span><span>${d.campeon}</span></div>` : '';
-      const finalista = d.finalista ? `<div class="pick-item"><span>🥈 Finalista</span><span>${d.finalista}</span></div>` : '';
+
 
       // Especiales
       const victorias = (d.victorias_arg !== undefined && d.victorias_arg !== null)
@@ -1999,7 +1986,7 @@ async function cargarPronosticos() {
       const goleador = d.goleador ? `<div class="pick-item"><span>⚽ Goleador</span><span>${d.goleador}</span></div>` : '';
       const arquero = d.arquero ? `<div class="pick-item"><span>🧤 Arquero</span><span>${d.arquero}</span></div>` : '';
 
-      const tieneAlgo = grupos || dieciseis || octavos || cuartos || semis || tercero || campeon || finalista || goleador || arquero;
+      const tieneAlgo = grupos || dieciseis || octavos || cuartos || semis || tercero || campeon || goleador || arquero;
       if (!tieneAlgo) return;
 
       // Armar secciones con título
@@ -2010,7 +1997,7 @@ async function cargarPronosticos() {
       if (cuartos) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Cuartos de Final</div>${cuartos}`;
       if (semis) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Semis</div>${semis}`;
       if (tercero) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">3er Puesto</div>${tercero}`;
-      if (campeon || finalista) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Final</div>${campeon}${finalista}`;
+      if (campeon) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Final</div>${campeon}`;
       if (goleador || arquero) secciones += `<div style="font-size:11px;color:var(--gris);text-transform:uppercase;letter-spacing:2px;margin:10px 0 4px;">Especiales</div>${goleador}${arquero}`;
 
       html += `<div class="pronosticos-user">
@@ -2066,7 +2053,7 @@ function renderAdminFasesControl() {
     { id: 'cuartos', label: 'Cuartos de Final' },
     { id: 'semis', label: 'Semis' },
     { id: 'tercer_puesto', label: '3er Puesto' },
-    { id: 'final', label: 'Final (campeón/finalista)' },
+    { id: 'final', label: 'Final (campeón)' },
     { id: 'especiales_final', label: 'Especiales de la Final' }
   ];
 
@@ -2554,7 +2541,7 @@ async function guardarParejaTercerPuesto() {
   }
 }
 
-// Opciones para campeón / finalista: los 2 ganadores de semis si ya se saben,
+// Opciones para campeón: los 2 ganadores de semis si ya se saben,
 // si no los 4 semifinalistas. El value es el nombre EXACTO de clasificados.
 function optsFinalistas(seleccionado) {
   const ls = llavesSemis();
@@ -2568,7 +2555,6 @@ function optsFinalistas(seleccionado) {
 function renderAdminResultadosFinal() {
   const equipos = equiposClasificados.semis || [];
   const resCampeon = resultados['campeon'] || '';
-  const resFinalista = resultados['finalista'] || '';
   document.getElementById('admin-resultados-final').innerHTML = `
     <p style="color:var(--gris); font-size:13px; margin-bottom:10px;">4 equipos semifinalistas (se forman 2 llaves)</p>
     ${Array.from({length: 4}, (_, i) => `
@@ -2592,10 +2578,7 @@ function renderAdminResultadosFinal() {
       <label>🏆 Campeón real:</label>
       <select class="admin-select" id="res-campeon">${optsFinalistas(resCampeon)}</select>
     </div>
-    <div class="admin-resultado-row">
-      <label>🥈 Finalista real:</label>
-      <select class="admin-select" id="res-finalista">${optsFinalistas(resFinalista)}</select>
-    </div>
+
     <div class="mt16 flex-gap">
       <button class="btn-accion" onclick="guardarResultadosFinal()">GUARDAR FINAL</button>
     </div>`;
@@ -2625,7 +2608,6 @@ async function guardarClasificados(fase, cantidad) {
 
 async function guardarResultadosFinal() {
   resultados['campeon'] = document.getElementById('res-campeon').value;
-  resultados['finalista'] = document.getElementById('res-finalista').value;
   const elTercero = document.getElementById('res-tercero');
   const extra = {};
   if (elTercero) {
@@ -2760,9 +2742,10 @@ async function calcularPuntajes() {
       // diferencia mínima de texto no le hace perder puntos a nadie.
       if (p.tercero && resultados.tercero && normEq(p.tercero) === normEq(resultados.tercero)) total += PTS_TERCERO;
 
-      // Campeón (15 pts) y Finalista (8 pts)
+      // Campeón (15 pts).
+      // El Finalista se quitó: con solo 2 equipos en la final era el reverso
+      // exacto del campeón, así que no medía nada. No suma puntos.
       if (p.campeon && resultados.campeon && normEq(p.campeon) === normEq(resultados.campeon)) total += 15;
-      if (p.finalista && resultados.finalista && normEq(p.finalista) === normEq(resultados.finalista)) total += 8;
 
       // Victorias Argentina (5 pts)
       if (p.victorias_arg !== undefined && resultados.victorias_arg !== undefined &&
